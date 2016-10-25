@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -64,7 +66,14 @@ public class MainActivity extends ActionBarActivity {
                                     "Thurs - Rainy - 64/51",
                                     "Fri - Foggy - 70/46",
                                     "Sat - Sunny - 76/68"};
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
+
+            ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
+            list.setAdapter(adapter);
+
             return rootView;
+
         }
     }
 }
