@@ -3,6 +3,7 @@ package com.example.android.sunshine.app;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
     }
+    public ArrayAdapter<String> adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +47,7 @@ public class ForecastFragment extends Fragment {
                 "Fri - Foggy - 70/46",
                 "Sat - Sunny - 76/68"};
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
+        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
 
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(adapter);
@@ -80,12 +82,22 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, Void>{
+    public class FetchWeatherTask extends AsyncTask<String, Void, String[]>{
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected void onPostExecute(String[] Result){
+
+            adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,Result);
+
+            ListView list = (ListView) getActivity().findViewById(R.id.listview_forecast);
+            list.setAdapter(adapter);
+
+        }
+
+        @Override
+        protected String[] doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -123,7 +135,7 @@ public class ForecastFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                //Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -154,6 +166,16 @@ public class ForecastFragment extends Fragment {
                 forecastJsonStr = buffer.toString();
 
                 Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
+
+                WeatherDataParser ParsedForecastData = new WeatherDataParser();
+                try{
+                    String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
+                    //Log.v(LOG_TAG,"Seven Day Data: " + ForecastData[6]);
+                    return ForecastData;
+                }catch(JSONException jsonex){
+                    Log.e(LOG_TAG, "Error", jsonex);
+                }
+
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
@@ -175,5 +197,6 @@ public class ForecastFragment extends Fragment {
             return null;
         }
     }
-}
 
+
+}
