@@ -34,7 +34,7 @@ import java.util.zip.Inflater;
  */
 
 public class ForecastFragment extends Fragment {
-
+    public final static String EXTRA_TEXT = "com.example.android.sunshine.MESSAGE";
     public ForecastFragment() {
     }
     public ArrayAdapter<String> adapter;
@@ -62,13 +62,9 @@ public class ForecastFragment extends Fragment {
                 Activity context = getActivity();
                 String Forecast = adapter.getItem(position);
 
-                int duration = Toast.LENGTH_SHORT;
 
-                Toast toast = Toast.makeText(context, Forecast, duration);
-
-                toast.show();
-
-                Intent detailActivityIntent = new Intent(getActivity(), DetailActivity.class);
+                Intent detailActivityIntent = new Intent(context, DetailActivity.class);
+                detailActivityIntent.putExtra(EXTRA_TEXT, Forecast);
                 startActivity(detailActivityIntent);
 
             }
@@ -148,6 +144,7 @@ public class ForecastFragment extends Fragment {
                 final String DAYS_PARAM = "cnt";
                 final String APPID_PARAM = "APPID";
 
+
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM,params[0])
                         .appendQueryParameter(FORMAT_PARAM,format)
@@ -157,11 +154,30 @@ public class ForecastFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                //Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+
+                //picture search URI
+                final String CLOUDSIGHT_BASE_URL = "http://api.cloudsightapi.com/image_requests?";
+                final String AUTHORIZATION_PARAM = "Authorization";
+                final String IMAGE_URL_PARAM = "image_request[remote_image_url]";
+                final String LOCALE_PARAM = "image_request[locale]";
+
+                Uri searchpicUri = Uri.parse(CLOUDSIGHT_BASE_URL).buildUpon()
+                        .appendQueryParameter(IMAGE_URL_PARAM, "http://www.precisionplasticball.com/wp-content/themes/ppb-default/img/materials-module-figure.jpg")
+                        .appendQueryParameter(LOCALE_PARAM, "en")
+                        .build();
+
+                URL pictureUrl = new URL(searchpicUri.toString());
+                Log.v(LOG_TAG, "picture URL " + searchpicUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
+                /*urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
+                urlConnection.connect();*/
+
+                urlConnection = (HttpURLConnection) pictureUrl.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.addRequestProperty("Authorization", "CloudSight waWnmJu7yxqlJ_vKxcvoXg");
                 urlConnection.connect();
 
                 // Read the input stream into a String
