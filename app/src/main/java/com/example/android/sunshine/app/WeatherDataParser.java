@@ -44,6 +44,13 @@ public class WeatherDataParser {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
+
+    public String getRetrivalStatusJSON(String pixJsonStr) throws JSONException{
+        JSONObject pictureData = new JSONObject(pixJsonStr);
+        String status = pictureData.getString("status");
+        return status;
+    }
+
     public String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
             throws JSONException {
 

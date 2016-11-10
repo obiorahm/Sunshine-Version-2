@@ -181,38 +181,46 @@ public class ForecastFragment extends Fragment {
                 urlConnection.connect();
 
                 // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String status = "not completed";
+                while (status == "not completed"){
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        // Nothing to do.
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                    }
 
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                forecastJsonStr = buffer.toString();
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
+                    forecastJsonStr = buffer.toString();
 
-                Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
+                    Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
 
-                WeatherDataParser ParsedForecastData = new WeatherDataParser();
-                try{
-                    String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
-                    //Log.v(LOG_TAG,"Seven Day Data: " + ForecastData[6]);
-                    return ForecastData;
-                }catch(JSONException jsonex){
-                    Log.e(LOG_TAG, "Error", jsonex);
+                    WeatherDataParser ParsedForecastData = new WeatherDataParser();
+                    try{
+                        //String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
+                        status = ParsedForecastData.getRetrivalStatusJSON(forecastJsonStr);
+                        Log.v(LOG_TAG,"Seven Day Data: " + status);
+
+
+                    }catch(JSONException jsonex){
+                        Log.e(LOG_TAG, "Error", jsonex);
+                    }
+
                 }
+                String[] placeholder = {"mma","obi"};
+                return placeholder;
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -232,7 +240,7 @@ public class ForecastFragment extends Fragment {
                 }
             }
 
-            return null;
+            //return null;
         }
     }
 
