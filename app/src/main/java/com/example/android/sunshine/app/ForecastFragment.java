@@ -39,6 +39,8 @@ public class ForecastFragment extends Fragment {
     }
     public ArrayAdapter<String> adapter;
 
+    public static final String EXTRA_TEXT = "com.example.android.sunshine.app.EXTRA_TEXT";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,7 +70,8 @@ public class ForecastFragment extends Fragment {
 
                 toast.show();
 
-                Intent detailActivityIntent = new Intent(getActivity(), DetailActivity.class);
+                Intent detailActivityIntent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(EXTRA_TEXT, Forecast);
                 startActivity(detailActivityIntent);
 
             }

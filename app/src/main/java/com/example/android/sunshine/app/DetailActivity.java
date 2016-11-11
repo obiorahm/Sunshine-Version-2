@@ -16,6 +16,7 @@
 
         package com.example.android.sunshine.app;
 
+        import android.content.Intent;
         import android.os.Bundle;
         import android.support.v4.app.Fragment;
         import android.support.v7.app.ActionBarActivity;
@@ -24,6 +25,7 @@
         import android.view.MenuItem;
         import android.view.View;
         import android.view.ViewGroup;
+        import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -31,6 +33,15 @@ public class DetailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        Intent intent = getIntent();
+        String weatherData = intent.getStringExtra(ForecastFragment.EXTRA_TEXT);
+        TextView textView = new TextView(this);
+        textView.setText(weatherData);
+
+        ViewGroup layout = (ViewGroup) findViewById(R.id.container);
+        layout.addView(textView);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
