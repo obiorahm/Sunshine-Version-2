@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -106,7 +107,9 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(final String[] Result){
 
-            adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,Result);
+            String[] placeholder = {"mma", "nneoma"};
+
+            adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,placeholder);
 
             ListView list = (ListView) getActivity().findViewById(R.id.listview_forecast);
             list.setAdapter(adapter);
@@ -163,7 +166,7 @@ public class ForecastFragment extends Fragment {
                 final String LOCALE_PARAM = "image_request[locale]";
 
                 Uri searchpicUri = Uri.parse(CLOUDSIGHT_BASE_URL).buildUpon()
-                        .appendQueryParameter(IMAGE_URL_PARAM, "http://www.precisionplasticball.com/wp-content/themes/ppb-default/img/materials-module-figure.jpg")
+                        .appendQueryParameter(IMAGE_URL_PARAM, "http://kingofwallpapers.com/chair/chair-005.jpg")
                         .appendQueryParameter(LOCALE_PARAM, "en")
                         .build();
 
@@ -178,15 +181,22 @@ public class ForecastFragment extends Fragment {
                 urlConnection = (HttpURLConnection) pictureUrl.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.addRequestProperty("Authorization", "CloudSight waWnmJu7yxqlJ_vKxcvoXg");
+                urlConnection.setReadTimeout(1000);
+                urlConnection.setConnectTimeout(1500);
                 urlConnection.connect();
 
                 // Read the input stream into a String
                 String status = "not completed";
+                InputStream inputStream = null;
+                StringBuffer buffer = new StringBuffer();
+
+
                 while (status == "not completed"){
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
+                    inputStream = urlConnection.getInputStream();
+
                     if (inputStream == null) {
                         // Nothing to do.
+                        Log.v(LOG_TAG, "input streams the culprit");
                         return null;
                     }
                     reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -201,6 +211,7 @@ public class ForecastFragment extends Fragment {
 
                     if (buffer.length() == 0) {
                         // Stream was empty.  No point in parsing.
+                        Log.v(LOG_TAG, "buffers the culprit");
                         return null;
                     }
                     forecastJsonStr = buffer.toString();
@@ -210,17 +221,24 @@ public class ForecastFragment extends Fragment {
                     WeatherDataParser ParsedForecastData = new WeatherDataParser();
                     try{
                         //String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
-                        status = ParsedForecastData.getRetrivalStatusJSON(forecastJsonStr);
+                        JSONObject pictureData = new JSONObject(forecastJsonStr);
+                        if (pictureData.getString("status").equals("completed")){
+                            status = "completed";
+                        }
+
                         Log.v(LOG_TAG,"Seven Day Data: " + status);
 
 
                     }catch(JSONException jsonex){
                         Log.e(LOG_TAG, "Error", jsonex);
                     }
-
+                    //buffer = new StringBuffer();
+                buffer.setLength(0);
                 }
                 String[] placeholder = {"mma","obi"};
+                Log.v(LOG_TAG,"Seven Day Data: " + status + (status == "completed"));
                 return placeholder;
+
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
