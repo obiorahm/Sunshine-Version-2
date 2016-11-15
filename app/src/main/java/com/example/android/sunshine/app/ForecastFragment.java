@@ -19,6 +19,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -123,6 +128,7 @@ public class ForecastFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+            BufferedReader reader1 = null;
 
             if (params.length == 0){
                 return null;
@@ -130,25 +136,31 @@ public class ForecastFragment extends Fragment {
 
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
+            String tokenStr = null;
 
             String format = "json";
             String units = "metric";
             int numDays = 7;
+
+            String API_KEY = "waWnmJu7yxqlJ_vKxcvoXg";
+
+            HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+            JsonFactory JSON_FACTORY = new JacksonFactory();
 
             try {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
 
-                final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
+                /*final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
                 final String QUERY_PARAM = "q";
                 final String FORMAT_PARAM = "mode";
                 final String UNITS_PARAM = "units";
                 final String DAYS_PARAM = "cnt";
-                final String APPID_PARAM = "APPID";
+                final String APPID_PARAM = "APPID";*/
 
 
-                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                /*Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM,params[0])
                         .appendQueryParameter(FORMAT_PARAM,format)
                         .appendQueryParameter(UNITS_PARAM, units)
@@ -157,11 +169,10 @@ public class ForecastFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                Log.v(LOG_TAG, "Built URI " + builtUri.toString());*/
 
                 //picture search URI
-                final String CLOUDSIGHT_BASE_URL = "http://api.cloudsightapi.com/image_requests?";
-                final String AUTHORIZATION_PARAM = "Authorization";
+                /*final String CLOUDSIGHT_BASE_URL = "http://api.cloudsightapi.com/image_requests?";
                 final String IMAGE_URL_PARAM = "image_request[remote_image_url]";
                 final String LOCALE_PARAM = "image_request[locale]";
 
@@ -171,72 +182,146 @@ public class ForecastFragment extends Fragment {
                         .build();
 
                 URL pictureUrl = new URL(searchpicUri.toString());
-                Log.v(LOG_TAG, "picture URL " + searchpicUri.toString());
+                Log.v(LOG_TAG, "picture URL " + searchpicUri.toString());*/
 
                 // Create the request to OpenWeatherMap, and open the connection
                 /*urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();*/
 
-                urlConnection = (HttpURLConnection) pictureUrl.openConnection();
+                /*urlConnection = (HttpURLConnection) pictureUrl.openConnection();
                 urlConnection.setRequestMethod("POST");
                 urlConnection.addRequestProperty("Authorization", "CloudSight waWnmJu7yxqlJ_vKxcvoXg");
-                urlConnection.setReadTimeout(1000);
-                urlConnection.setConnectTimeout(1500);
-                urlConnection.connect();
+                urlConnection.setReadTimeout(15000);
+                urlConnection.setConnectTimeout(20000);
+                urlConnection.connect();*/
 
                 // Read the input stream into a String
-                String status = "not completed";
-                InputStream inputStream = null;
+
+                /*InputStream inputStream = null;
                 StringBuffer buffer = new StringBuffer();
 
 
-                while (status == "not completed"){
-                    inputStream = urlConnection.getInputStream();
 
-                    if (inputStream == null) {
+                inputStream = urlConnection.getInputStream();
+
+                if (inputStream == null) {
+                    // Nothing to do.
+                    Log.v(LOG_TAG, "input streams the culprit");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    Log.v(LOG_TAG, "buffers the culprit");
+                    return null;
+                }
+                forecastJsonStr = buffer.toString();
+
+                Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
+
+                WeatherDataParser ParsedForecastData = new WeatherDataParser();
+                try{
+                    //String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
+                    JSONObject pictureData = new JSONObject(forecastJsonStr);
+                    if (pictureData.getString("status").equals("completed")){
+
+                    }
+                    String token = pictureData.getString("token");
+
+//use picture token for search URI
+                    String CLOUDSIGHT_BASE_RESPONSE = "http://api.cloudsightapi.com/image_responses/:" + token;
+
+
+                    Uri searchtokenUri = Uri.parse(CLOUDSIGHT_BASE_RESPONSE).buildUpon()
+                            .build();
+
+                    URL picturetokenUrl = new URL(searchtokenUri.toString());
+                    Log.v(LOG_TAG, "picture URL " + searchtokenUri.toString());
+
+
+                    urlConnection = (HttpURLConnection) picturetokenUrl.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.addRequestProperty("Authorization", "CloudSight waWnmJu7yxqlJ_vKxcvoXg");
+                    urlConnection.setReadTimeout(15000);
+                    urlConnection.setConnectTimeout(20000);
+                    urlConnection.connect();
+
+                    // Read the input stream into a String
+
+                    InputStream inputStream1 = null;
+                    StringBuffer buffer1 = new StringBuffer();
+
+
+
+                    inputStream1 = urlConnection.getInputStream();
+
+                    if (inputStream1 == null) {
                         // Nothing to do.
                         Log.v(LOG_TAG, "input streams the culprit");
                         return null;
                     }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
+                    reader1 = new BufferedReader(new InputStreamReader(inputStream1));
 
-                    String line;
-                    while ((line = reader.readLine()) != null) {
+                    String line1;
+                    while ((line1 = reader1.readLine()) != null) {
                         // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                         // But it does make debugging a *lot* easier if you print out the completed
                         // buffer for debugging.
-                        buffer.append(line + "\n");
+                        buffer1.append(line + "\n");
                     }
 
-                    if (buffer.length() == 0) {
+                    if (buffer1.length() == 0) {
                         // Stream was empty.  No point in parsing.
                         Log.v(LOG_TAG, "buffers the culprit");
                         return null;
                     }
-                    forecastJsonStr = buffer.toString();
+                    tokenStr = buffer1.toString();
 
-                    Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
+                    Log.v(LOG_TAG, "Forecast JSON String: " + tokenStr);
 
-                    WeatherDataParser ParsedForecastData = new WeatherDataParser();
-                    try{
-                        //String[] ForecastData = ParsedForecastData.getWeatherDataFromJson(forecastJsonStr, 7);
-                        JSONObject pictureData = new JSONObject(forecastJsonStr);
-                        if (pictureData.getString("status").equals("completed")){
-                            status = "completed";
-                        }
+                }catch(JSONException jsonex){
+                    Log.e(LOG_TAG, "Error", jsonex);
+                }*/
 
-                        Log.v(LOG_TAG,"Seven Day Data: " + status);
+                CSApi api = new CSApi(
+                  HTTP_TRANSPORT,
+                        JSON_FACTORY,
+                        API_KEY
+                );
+
+                CSPostConfig imageToPost = CSPostConfig.newBuilder()
+                        .withRemoteImageUrl("http://kingofwallpapers.com/chair/chair-005.jpg")
+                        .build();
+
+                CSPostResult portResult = api.postImage(imageToPost);
 
 
-                    }catch(JSONException jsonex){
-                        Log.e(LOG_TAG, "Error", jsonex);
-                    }
-                    //buffer = new StringBuffer();
-                buffer.setLength(0);
+
+                System.out.println("Post result: " + portResult);
+
+                try {
+                    Thread.sleep(30000);
+                }catch (InterruptedException e){
+                    Log.e(LOG_TAG,"Error",e);
                 }
+
+
+                CSGetResult scoredResult = api.getImage(portResult);
+
+                System.out.println(scoredResult);
+
+
                 String[] placeholder = {"mma","obi"};
-                Log.v(LOG_TAG,"Seven Day Data: " + status + (status == "completed"));
                 return placeholder;
 
 
