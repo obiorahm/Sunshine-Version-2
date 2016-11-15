@@ -61,14 +61,8 @@ public class ForecastFragment extends Fragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
-                Activity context = getActivity();
+                //Activity context = getActivity();
                 String Forecast = adapter.getItem(position);
-
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, Forecast, duration);
-
-                toast.show();
 
                 Intent detailActivityIntent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(EXTRA_TEXT, Forecast);
@@ -101,6 +95,9 @@ public class ForecastFragment extends Fragment {
             FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
             fetchWeatherTask.execute("94043");
             return true;
+        }else if(id == R.id.action_settings){
+            Intent settingActivityIntent = new Intent(getActivity(), SettingActivity.class);
+            startActivity(settingActivityIntent);
         }
 
         return super.onOptionsItemSelected(item);
