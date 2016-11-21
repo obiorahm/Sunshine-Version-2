@@ -39,12 +39,12 @@ public class DetailActivity extends ActionBarActivity {
         TextView textView = new TextView(this);
         textView.setText(weatherData);
 
-        ViewGroup layout = (ViewGroup) findViewById(R.id.container);
+        ViewGroup layout = (ViewGroup) findViewById(R.id.det_container);
         layout.addView(textView);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.det_container, new PlaceholderFragment())
                     .commit();
         }
     }

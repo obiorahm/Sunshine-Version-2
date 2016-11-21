@@ -53,6 +53,10 @@ public class MainActivity extends ActionBarActivity {
             Intent settingActivityIntent = new Intent(this, SettingActivity.class);
             startActivity(settingActivityIntent);
             return true;
+        }else if(id == R.id.action_map_location){
+            Intent mapLocationActivityIntent = new Intent(this, MapActivity.class);
+            startActivity(mapLocationActivityIntent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
