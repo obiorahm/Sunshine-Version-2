@@ -8,6 +8,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * Created by mgo983 on 11/21/16.
  */
@@ -16,7 +19,10 @@ public class CameraActivity extends ActionBarActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final Uri mLocationForPhotos = Uri.fromFile(Environment.getExternalStorageDirectory());
-    String targetFilename = "sunshinephoto.jpg";
+
+    String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+    String targetFilename = "sun" + currentDateTimeString.replace(" ","") + ".jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -33,7 +39,7 @@ public class CameraActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap thumbnail = data.getExtras().getParcelable("data");
+            //Bitmap thumbnail = data.getExtras().getParcelable("data");
             // Do other work with full size photo saved in mLocationForPhotos
 
         }
