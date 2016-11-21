@@ -19,7 +19,10 @@
         import android.content.Intent;
         import android.os.Bundle;
         import android.support.v4.app.Fragment;
+        import android.support.v4.app.ShareCompat;
+        import android.support.v4.view.MenuItemCompat;
         import android.support.v7.app.ActionBarActivity;
+        import android.support.v7.widget.ShareActionProvider;
         import android.view.LayoutInflater;
         import android.view.Menu;
         import android.view.MenuItem;
@@ -29,13 +32,14 @@
 
 public class DetailActivity extends ActionBarActivity {
 
+    private ShareActionProvider mShareActionProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        String weatherData = intent.getStringExtra(ForecastFragment.EXTRA_TEXT);
+        String weatherData = getWeatherText();
         TextView textView = new TextView(this);
         textView.setText(weatherData);
 
@@ -53,11 +57,28 @@ public class DetailActivity extends ActionBarActivity {
 
     }
 
+    private String getWeatherText(){
+        Intent intent = getIntent();
+        String weatherData = intent.getStringExtra(ForecastFragment.EXTRA_TEXT);
+        return weatherData;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        String playStoreLink = getWeatherText();
+        String yourShareText = "What is this called? " + playStoreLink;
+        Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+                .setType("text/plain").setText(yourShareText).getIntent();
+        // Set the share Intent
+        mShareActionProvider.setShareIntent(shareIntent);
         return true;
     }
 
