@@ -3,6 +3,7 @@
     package="com.example.android.sunshine.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.sunshine.app.MainActivity" />
         </activity>
+        <activity
+            android:name=".CameraActivity">
+            <intent-filter>
+                <action android:name="android.media.action.IMAGE_CAPTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+    </activity>
     </application>
 
 </manifest>
