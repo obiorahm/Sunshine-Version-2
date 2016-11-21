@@ -2,10 +2,12 @@ package com.example.android.sunshine.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,12 +48,7 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray = {"Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/46",
-                "Weds - Cloudy - 72/63",
-                "Thurs - Rainy - 64/51",
-                "Fri - Foggy - 70/46",
-                "Sat - Sunny - 76/68"};
+        String[] forecastArray = {};
 
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
 
@@ -79,6 +76,7 @@ public class ForecastFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -92,8 +90,7 @@ public class ForecastFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-            fetchWeatherTask.execute("94043");
+            updateWeather();
             return true;
         }else if(id == R.id.action_settings){
             Intent settingActivityIntent = new Intent(getActivity(), SettingActivity.class);
@@ -103,6 +100,27 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateWeather();
+    }
+
+    public void updateWeather(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String preferredlocation = sharedPref.getString(getString(R.string.pref_location_key),getString(R.string.pref_location_default));
+
+        String preferredMetric = sharedPref.getString(getString(R.string.pref_temp_unit_key),getString(R.string.pref_temp_unit_defaultValue));
+
+
+
+
+        Log.v("MY_TAG", "The preferred metric is " + preferredMetric);
+
+        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
+        fetchWeatherTask.execute(preferredlocation, preferredMetric);
+        //fetchWeatherTask.execute("94043");
+    }
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>{
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
@@ -133,7 +151,10 @@ public class ForecastFragment extends Fragment {
             String forecastJsonStr = null;
 
             String format = "json";
-            String units = "metric";
+            String units ;
+
+            units = (params[1].equals("1")) ? "imperial": "metric";
+            Log.v(LOG_TAG, "The unit " + (params[1] == "1"));
             int numDays = 7;
 
             try {
@@ -158,6 +179,8 @@ public class ForecastFragment extends Fragment {
 
                 URL url = new URL(builtUri.toString());
                 //Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                Log.v(LOG_TAG, "The second parameter " + params[1]);
+                Log.v(LOG_TAG, "The unit " + units);
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
