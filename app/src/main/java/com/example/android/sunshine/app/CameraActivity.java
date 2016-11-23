@@ -47,6 +47,7 @@ public class CameraActivity extends ActionBarActivity {
             Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra(EXTRA_IMAGE, (Parcelable) mLocationForPhotos);
             intent.putExtra(EXTRA_TARGET, targetFilename);
+
             startActivity(intent);
 
         }

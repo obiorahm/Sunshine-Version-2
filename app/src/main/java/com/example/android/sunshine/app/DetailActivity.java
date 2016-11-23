@@ -20,6 +20,7 @@
         import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;
         import android.net.Uri;
+        import android.os.AsyncTask;
         import android.os.Bundle;
         import android.os.Environment;
         import android.provider.MediaStore;
@@ -37,7 +38,15 @@
         import android.widget.ImageView;
         import android.widget.TextView;
 
+        import com.google.api.client.http.HttpTransport;
+        import com.google.api.client.http.javanet.NetHttpTransport;
+        import com.google.api.client.json.JsonFactory;
+        import com.google.api.client.json.jackson2.JacksonFactory;
+
+        import java.io.BufferedReader;
         import java.io.File;
+        import java.io.IOException;
+        import java.net.HttpURLConnection;
         import java.net.URL;
 
 public class DetailActivity extends ActionBarActivity {
@@ -49,13 +58,13 @@ public class DetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        String weatherData = getWeatherText();
+        /*String weatherData = getWeatherText();
         TextView textView = new TextView(this);
         textView.setText(weatherData);
 
 
         ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
-        layout.addView(textView);
+        layout.addView(textView);*/
 
         if (savedInstanceState == null) {
 
@@ -98,15 +107,23 @@ public class DetailActivity extends ActionBarActivity {
 
         if(imgFile.exists()){
 
+            //run CloudSight Search
+            FetchImageDescription fetchImageDescription = new FetchImageDescription();
+            fetchImageDescription.execute(imgFile);
+
             Log.v("PRINTING", "File exists");
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
             ImageView myImage = new ImageView(this);
 
+            //ImageView myImage = (ImageView) this.findViewById(R.id.captured_image);
+
             myImage.setImageBitmap(myBitmap);
 
             ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
+
             layout.addView(myImage);
+
         }
 
 
@@ -152,6 +169,106 @@ public class DetailActivity extends ActionBarActivity {
 
             View rootView = inflater.inflate(R.layout.activity_detail, container, false);
             return rootView;
+        }
+    }
+
+    public class FetchImageDescription extends AsyncTask<File, Void,CSGetResult> {
+
+        private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
+
+        @Override
+        protected void onPostExecute(final CSGetResult Result) {
+
+            String[] placeholder = {"mma", "nneoma"};
+
+            System.out.print("the result of image processing"+Result);
+
+            //adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, placeholder);
+
+            //ListView list = (ListView) getActivity().findViewById(R.id.listview_forecast);
+            //list.setAdapter(adapter);
+
+            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
+
+            TextView textView = new TextView(DetailActivity.this);
+            textView.setText(Result.getName());
+
+            layout.addView(textView);
+
+
+        }
+
+
+        @Override
+        protected CSGetResult doInBackground(File... params) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            BufferedReader reader1 = null;
+
+            if (params.length == 0){
+                return null;
+            }
+
+
+            String API_KEY = "waWnmJu7yxqlJ_vKxcvoXg";
+
+            HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+            JsonFactory JSON_FACTORY = new JacksonFactory();
+
+            try {
+
+                CSApi api = new CSApi(
+                        HTTP_TRANSPORT,
+                        JSON_FACTORY,
+                        API_KEY
+                );
+
+                CSPostConfig imageToPost = CSPostConfig.newBuilder()
+                        .withImage(params[0]).build();
+
+                CSPostResult portResult = api.postImage(imageToPost);
+
+
+
+                System.out.println("Post result: " + portResult);
+
+                try {
+                    Thread.sleep(30000);
+                }catch (InterruptedException e){
+                    Log.e(LOG_TAG,"Error",e);
+                }
+
+
+                CSGetResult scoredResult = api.getImage(portResult);
+
+                System.out.println(scoredResult);
+
+
+                //String[] placeholder = {"mma","obi"};
+                return scoredResult;
+
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
+                return null;
+            } finally{
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            //return null;
         }
     }
 }
