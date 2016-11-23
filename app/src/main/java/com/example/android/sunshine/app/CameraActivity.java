@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 
@@ -16,7 +17,8 @@ import java.util.Date;
  */
 
 public class CameraActivity extends ActionBarActivity {
-
+    public final static String EXTRA_IMAGE = "com.example.android.sunshine.IMAGE";
+    public final static String EXTRA_TARGET = "com.example.android.sunshine.TARGET";
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final Uri mLocationForPhotos = Uri.fromFile(Environment.getExternalStorageDirectory());
 
@@ -41,6 +43,11 @@ public class CameraActivity extends ActionBarActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             //Bitmap thumbnail = data.getExtras().getParcelable("data");
             // Do other work with full size photo saved in mLocationForPhotos
+
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra(EXTRA_IMAGE, (Parcelable) mLocationForPhotos);
+            intent.putExtra(EXTRA_TARGET, targetFilename);
+            startActivity(intent);
 
         }
     }

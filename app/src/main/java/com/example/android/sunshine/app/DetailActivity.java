@@ -17,18 +17,28 @@
         package com.example.android.sunshine.app;
 
         import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
+        import android.net.Uri;
         import android.os.Bundle;
+        import android.os.Environment;
+        import android.provider.MediaStore;
         import android.support.v4.app.Fragment;
         import android.support.v4.app.ShareCompat;
         import android.support.v4.view.MenuItemCompat;
         import android.support.v7.app.ActionBarActivity;
         import android.support.v7.widget.ShareActionProvider;
+        import android.util.Log;
         import android.view.LayoutInflater;
         import android.view.Menu;
         import android.view.MenuItem;
         import android.view.View;
         import android.view.ViewGroup;
+        import android.widget.ImageView;
         import android.widget.TextView;
+
+        import java.io.File;
+        import java.net.URL;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -42,6 +52,7 @@ public class DetailActivity extends ActionBarActivity {
         String weatherData = getWeatherText();
         TextView textView = new TextView(this);
         textView.setText(weatherData);
+
 
         ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
         layout.addView(textView);
@@ -63,6 +74,14 @@ public class DetailActivity extends ActionBarActivity {
         return weatherData;
     }
 
+    private Uri getImage(){
+        Intent intent = getIntent();
+        Uri ImgDirectory = intent.getExtras().getParcelable(CameraActivity.EXTRA_IMAGE);
+        String FileName = intent.getStringExtra(CameraActivity.EXTRA_TARGET);
+        Uri FullFilePath = Uri.withAppendedPath(ImgDirectory,FileName);
+        return FullFilePath;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,10 +92,32 @@ public class DetailActivity extends ActionBarActivity {
 
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
-        String playStoreLink = getWeatherText();
-        String yourShareText = "What is this called? " + playStoreLink;
+        Uri fullFilePath = getImage();
+        File imgFile = new  File(fullFilePath.toString());
+        System.out.print("Saw " +   imgFile.exists());
+
+        if(imgFile.exists()){
+
+            Log.v("PRINTING", "File exists");
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+            ImageView myImage = new ImageView(this);
+
+            myImage.setImageBitmap(myBitmap);
+
+            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
+            layout.addView(myImage);
+        }
+
+
+
+
+        //Uri screenshotUri = Uri.parse(url);
         Intent shareIntent = ShareCompat.IntentBuilder.from(this)
-                .setType("text/plain").setText(yourShareText).getIntent();
+                .setType("image/jpeg").getIntent();
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fullFilePath);
+
+
         // Set the share Intent
         mShareActionProvider.setShareIntent(shareIntent);
         return true;
