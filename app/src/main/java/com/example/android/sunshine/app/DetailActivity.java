@@ -102,7 +102,7 @@ public class DetailActivity extends ActionBarActivity {
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         Uri fullFilePath = getImage();
-        Log.v("PRINTING", fullFilePath.toString());
+        //Log.v("PRINTING", fullFilePath.toString());
         File imgFile = new  File(fullFilePath.toString().replace("file://",""));
 
         if(imgFile.exists()){
@@ -115,8 +115,6 @@ public class DetailActivity extends ActionBarActivity {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
             ImageView myImage = new ImageView(this);
-
-            //ImageView myImage = (ImageView) this.findViewById(R.id.captured_image);
 
             myImage.setImageBitmap(myBitmap);
 
@@ -181,12 +179,7 @@ public class DetailActivity extends ActionBarActivity {
 
             String[] placeholder = {"mma", "nneoma"};
 
-            System.out.print("the result of image processing"+Result);
-
-            //adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, placeholder);
-
-            //ListView list = (ListView) getActivity().findViewById(R.id.listview_forecast);
-            //list.setAdapter(adapter);
+            System.out.print("the result of image processing"+ Result);
 
             ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
 
