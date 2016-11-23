@@ -93,8 +93,8 @@ public class DetailActivity extends ActionBarActivity {
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         Uri fullFilePath = getImage();
-        File imgFile = new  File(fullFilePath.toString());
-        System.out.print("Saw " +   imgFile.exists());
+        Log.v("PRINTING", fullFilePath.toString());
+        File imgFile = new  File(fullFilePath.toString().replace("file://",""));
 
         if(imgFile.exists()){
 
