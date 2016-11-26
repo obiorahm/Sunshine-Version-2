@@ -57,8 +57,7 @@ public class DetailActivity extends ActionBarActivity {
 
     private String getWeatherText(){
         Intent intent = getIntent();
-        String weatherData = intent.getStringExtra(ForecastFragment.EXTRA_TEXT);
-        return weatherData;
+        return intent.getStringExtra(ForecastFragment.EXTRA_TEXT);
     }
 
     @Override
@@ -72,8 +71,7 @@ public class DetailActivity extends ActionBarActivity {
 
         String shareText = getWeatherText();
 
-        String playStoreLink = shareText;
-        String yourShareText = "What is this called ? " + playStoreLink;
+        String yourShareText = "What is this called ? " + shareText + " # sunshineapp";
         Intent shareIntent = ShareCompat.IntentBuilder.from(this)
                 .setType("text/plain").setText(yourShareText).getIntent();
         // Set the share Intent
