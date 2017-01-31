@@ -36,6 +36,7 @@
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.ImageView;
+        import android.widget.ProgressBar;
         import android.widget.TextView;
 
         import com.google.api.client.http.HttpTransport;
@@ -114,13 +115,14 @@ public class DetailActivity extends ActionBarActivity {
             Log.v("PRINTING", "File exists");
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
-            ImageView myImage = new ImageView(this);
+            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
+
+            ImageView myImage = (ImageView) layout.findViewById(R.id.captured_image);
+            //ImageView myImage = new ImageView(this);
 
             myImage.setImageBitmap(myBitmap);
 
-            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
-
-            layout.addView(myImage);
+            //layout.addView(myImage);
 
         }
 
@@ -161,41 +163,48 @@ public class DetailActivity extends ActionBarActivity {
         public PlaceholderFragment() {
         }
 
-        @Override
+        /*@Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.activity_detail, container, false);
+
             return rootView;
-        }
+        }*/
     }
 
-    public class FetchImageDescription extends AsyncTask<File, Void,CSGetResult> {
+    public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
 
         private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
 
         @Override
-        protected void onPostExecute(final CSGetResult Result) {
+        protected void onPostExecute(final  /*String[] Result*/ CSGetResult Result) {
 
             String[] placeholder = {"mma", "nneoma"};
 
             System.out.print("the result of image processing"+ Result);
 
-            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
+            //ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
 
-            TextView textView = new TextView(DetailActivity.this);
+            //TextView textView = new TextView(DetailActivity.this);
+            TextView textView = (TextView) findViewById(R.id.search_result);
+            //textView.setText(placeholder[0]);
             textView.setText(Result.getName());
 
-            layout.addView(textView);
+
+            //layout.addView(textView);
 
 
         }
 
 
         @Override
-        protected CSGetResult doInBackground(File... params) {
+        protected /*String[]*/ CSGetResult doInBackground(File... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
+
+
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             BufferedReader reader1 = null;
@@ -262,6 +271,9 @@ public class DetailActivity extends ActionBarActivity {
             }
 
             //return null;
+
+            //String[] placeholder = {"mma", "nneoma"};
+            //return placeholder;
         }
     }
 }
