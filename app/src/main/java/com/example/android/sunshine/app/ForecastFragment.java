@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.zip.Inflater;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by mmaob_000 on 10/26/2016.
@@ -57,7 +59,13 @@ public class ForecastFragment extends Fragment {
                 "Fri - Foggy - 70/46",
                 "Sat - Sunny - 76/68"};
 
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
+        String[] imageUrls = {"http://ab.pbimgs.com/pbimgs/ab/images/dp/wcm/201640/0079/trieste-side-chair-o.jpg",
+                "https://i.imgur.com/tGbaZCY.jpg", "http://ab.pbimgs.com/pbimgs/ab/images/dp/wcm/201640/0079/trieste-side-chair-o.jpg",
+                "https://i.imgur.com/tGbaZCY.jpg", "http://ab.pbimgs.com/pbimgs/ab/images/dp/wcm/201640/0079/trieste-side-chair-o.jpg",
+                "https://i.imgur.com/tGbaZCY.jpg"};
+
+        adapter = new CustomAdapter(getActivity(), forecastArray, imageUrls );
+        //adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,forecastArray);
 
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(adapter);
@@ -117,7 +125,12 @@ public class ForecastFragment extends Fragment {
 
             String[] placeholder = {"mma", "nneoma"};
 
-            adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,placeholder);
+            String[] imageUrls = {"https://i.imgur.com/tGbaZCY.jpg",
+                                    "https://i.imgur.com/tGbaZCY.jpg"};
+
+
+            adapter = new CustomAdapter(getActivity(), Result, imageUrls);
+            //adapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast,R.id.list_item_forecast_textview,Result);
 
             ListView list = (ListView) getActivity().findViewById(R.id.listview_forecast);
             list.setAdapter(adapter);

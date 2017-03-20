@@ -163,22 +163,22 @@ public class DetailActivity extends ActionBarActivity {
         public PlaceholderFragment() {
         }
 
-        /*@Override
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            View rootView = inflater.inflate(R.layout.activity_detail, container, false);
+            View rootView = inflater.inflate(R.layout.fagment_detail, container, false);
 
             return rootView;
-        }*/
+        }
     }
 
-    public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
+    public class FetchImageDescription extends AsyncTask<File, Void, String[] /*CSGetResult*/> {
 
         private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
 
         @Override
-        protected void onPostExecute(final  /*String[] Result*/ CSGetResult Result) {
+        protected void onPostExecute(final  String[] Result /*CSGetResult Result*/) {
 
             String[] placeholder = {"mma", "nneoma"};
 
@@ -188,18 +188,20 @@ public class DetailActivity extends ActionBarActivity {
 
             //TextView textView = new TextView(DetailActivity.this);
             TextView textView = (TextView) findViewById(R.id.search_result);
-            //textView.setText(placeholder[0]);
-            textView.setText(Result.getName());
+            textView.setText(placeholder[0]);
+            //textView.setText(Result.getName());
 
+
+
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
+            //progressBar.setVisibility(View.INVISIBLE);
 
             //layout.addView(textView);
 
-
         }
 
-
         @Override
-        protected /*String[]*/ CSGetResult doInBackground(File... params) {
+        protected String[] /*CSGetResult*/ doInBackground(File... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
 
@@ -219,7 +221,7 @@ public class DetailActivity extends ActionBarActivity {
             HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
             JsonFactory JSON_FACTORY = new JacksonFactory();
 
-            try {
+            /*try {
 
                 CSApi api = new CSApi(
                         HTTP_TRANSPORT,
@@ -268,12 +270,12 @@ public class DetailActivity extends ActionBarActivity {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-            }
+            }*/
 
             //return null;
 
-            //String[] placeholder = {"mma", "nneoma"};
-            //return placeholder;
+            String[] placeholder = {"mma", "nneoma"};
+            return placeholder;
         }
     }
 }

@@ -4,22 +4,4 @@
     android:orientation="vertical"
     tools:context="com.example.android.sunshine.app.DetailActivity" tools:ignore="MergeRootFrame">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/search_result"/>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:id="@+id/captured_image"/>
-
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-
-
 </LinearLayout>
