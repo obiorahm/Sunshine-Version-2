@@ -35,6 +35,7 @@
         import android.view.MenuItem;
         import android.view.View;
         import android.view.ViewGroup;
+        import android.widget.Button;
         import android.widget.ImageView;
         import android.widget.ProgressBar;
         import android.widget.TextView;
@@ -49,10 +50,17 @@
         import java.io.IOException;
         import java.net.HttpURLConnection;
         import java.net.URL;
+        import java.util.Locale;
 
-public class DetailActivity extends ActionBarActivity {
+        import android.speech.tts.TextToSpeech;
+        import android.speech.tts.TextToSpeech.OnInitListener;
+        import android.view.View.OnClickListener;
+
+public class DetailActivity extends ActionBarActivity implements  OnInitListener{
 
     private ShareActionProvider mShareActionProvider;
+    private int MY_DATA_CHECK_CODE = 0;
+    private TextToSpeech myTTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,10 @@ public class DetailActivity extends ActionBarActivity {
         ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
         layout.addView(textView);*/
 
+        Intent checkTTSIntent = new Intent();
+        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+
         if (savedInstanceState == null) {
 
 
@@ -75,7 +87,34 @@ public class DetailActivity extends ActionBarActivity {
                     .commit();
         }
 
+    }
 
+    //checks whether the user has the TTS data installed. If it is not, the user will be prompted to install it.
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                myTTS = new TextToSpeech(this, this);
+            }
+            else {
+                Intent installTTSIntent = new Intent();
+                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installTTSIntent);
+            }
+        }
+    }
+
+
+    public void speakWords(View view){
+        TextView textToSpeak = (TextView) findViewById(R.id.search_result);
+        String  speech = textToSpeak.getText().toString();
+        myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
+    }
+
+    public void onInit (int initStatus){
+        if (initStatus == TextToSpeech.SUCCESS) {
+            myTTS.setLanguage(Locale.US);
+        }
     }
 
     private String getWeatherText(){
@@ -173,12 +212,12 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
-    public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
+    public class FetchImageDescription extends AsyncTask<File, Void, String[] /*CSGetResult*/> {
 
         private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
 
         @Override
-        protected void onPostExecute(final CSGetResult Result /* String[] Result*/ ) {
+        protected void onPostExecute(final /*CSGetResult Result*/  String[] Result ) {
 
             String[] placeholder = {"mma", "nneoma"};
 
@@ -188,8 +227,8 @@ public class DetailActivity extends ActionBarActivity {
 
             //TextView textView = new TextView(DetailActivity.this);
             TextView textView = (TextView) findViewById(R.id.search_result);
-            //textView.setText(Result[0]);
-            textView.setText(Result.getName().toUpperCase());
+            textView.setText(Result[0]);
+            //textView.setText(Result.getName().toUpperCase());
 
 
 
@@ -202,7 +241,7 @@ public class DetailActivity extends ActionBarActivity {
         }
 
         @Override
-        protected /*String[]*/ CSGetResult doInBackground(File... params) {
+        protected String[] /*CSGetResult*/ doInBackground(File... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
 
@@ -222,7 +261,7 @@ public class DetailActivity extends ActionBarActivity {
             HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
             JsonFactory JSON_FACTORY = new JacksonFactory();
 
-            try {
+            /*try {
 
                 CSApi api = new CSApi(
                         HTTP_TRANSPORT,
@@ -251,8 +290,8 @@ public class DetailActivity extends ActionBarActivity {
                 System.out.println(scoredResult);
 
 
-                //String[] placeholder = {"mma","obi"};
-                return scoredResult;
+                String[] placeholder = {"mma","obi"};
+                //return scoredResult;
 
 
             } catch (IOException e) {
@@ -271,12 +310,12 @@ public class DetailActivity extends ActionBarActivity {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-            }
+            }*/
 
             //return null;
 
-            //String[] placeholder = {"mma", "nneoma"};
-            //return placeholder;
+            String[] placeholder = {"mma", "nneoma"};
+            return placeholder;
         }
     }
 }
