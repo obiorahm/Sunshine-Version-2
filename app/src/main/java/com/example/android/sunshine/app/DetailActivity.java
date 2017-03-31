@@ -189,12 +189,13 @@ public class DetailActivity extends ActionBarActivity {
             //TextView textView = new TextView(DetailActivity.this);
             TextView textView = (TextView) findViewById(R.id.search_result);
             //textView.setText(Result[0]);
-            textView.setText(Result.getName());
+            textView.setText(Result.getName().toUpperCase());
+
 
 
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
-            //progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
 
             //layout.addView(textView);
 
