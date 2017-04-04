@@ -35,8 +35,10 @@
         import android.view.MenuItem;
         import android.view.View;
         import android.view.ViewGroup;
+        import android.widget.ArrayAdapter;
         import android.widget.Button;
         import android.widget.ImageView;
+        import android.widget.ListView;
         import android.widget.ProgressBar;
         import android.widget.TextView;
 
@@ -63,6 +65,8 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     private TextToSpeech myTTS;
     //private Uri fullFilePath = getImage();;
 
+
+    public ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,6 +249,11 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             TextView textView = (TextView) findViewById(R.id.search_result);
             //textView.setText(Result[0]);
             textView.setText(Result.getName().toUpperCase());
+
+            //list
+            adapter = new ButtonTextAdapter(getApplicationContext(), Result.getName().split(" "));
+            ListView list = (ListView) findViewById(R.id.list_view_word);
+            list.setAdapter(adapter);
 
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
