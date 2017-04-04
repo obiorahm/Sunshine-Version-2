@@ -61,8 +61,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     private ShareActionProvider mShareActionProvider;
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
-    //private Uri fullFilePath = getImage();;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +74,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
         ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
         layout.addView(textView);*/
-
-
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -109,21 +105,16 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     }
 
 
-    public void speakWords(){
-        System.out.print("I am activated");
+    public void speakWords(View view){
         TextView textToSpeak = (TextView) findViewById(R.id.search_result);
         String  speech = textToSpeak.getText().toString();
-        myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
-        System.out.print("what's up with this text to speech thing");
-
+        myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
     }
 
     public void onInit (int initStatus){
-
         if (initStatus == TextToSpeech.SUCCESS) {
             myTTS.setLanguage(Locale.US);
         }
-        captureAndSearchImage();
     }
 
     private String getWeatherText(){
@@ -140,7 +131,15 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         return FullFilePath;
     }
 
-    private void captureAndSearchImage(){
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.detail, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         Uri fullFilePath = getImage();
         //Log.v("PRINTING", fullFilePath.toString());
@@ -165,17 +164,8 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             //layout.addView(myImage);
 
         }
-    }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.detail, menu);
-
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-
-       /* mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
 
         //Uri screenshotUri = Uri.parse(url);
@@ -185,15 +175,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
 
         // Set the share Intent
-        mShareActionProvider.setShareIntent(shareIntent);*/
-
-       Button button = (Button) findViewById(R.id.text_to_speech);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                speakWords();
-            }
-        });
+        mShareActionProvider.setShareIntent(shareIntent);
         return true;
     }
 
@@ -223,17 +205,19 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fagment_detail, container, false);
+
             return rootView;
         }
     }
 
-    public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
+    public class FetchImageDescription extends AsyncTask<File, Void, String[] /*CSGetResult*/> {
 
         private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
 
         @Override
-        protected void onPostExecute(final CSGetResult Result /* String[] Result*/ ) {
+        protected void onPostExecute(final /*CSGetResult Result*/  String[] Result ) {
 
             String[] placeholder = {"mma", "nneoma"};
 
@@ -243,8 +227,10 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
             //TextView textView = new TextView(DetailActivity.this);
             TextView textView = (TextView) findViewById(R.id.search_result);
-            //textView.setText(Result[0]);
-            textView.setText(Result.getName().toUpperCase());
+            textView.setText(Result[0]);
+            //textView.setText(Result.getName().toUpperCase());
+
+
 
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
@@ -255,7 +241,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         }
 
         @Override
-        protected /*String[]*/ CSGetResult doInBackground(File... params) {
+        protected String[] /*CSGetResult*/ doInBackground(File... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
 
@@ -275,7 +261,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
             JsonFactory JSON_FACTORY = new JacksonFactory();
 
-            try {
+            /*try {
 
                 CSApi api = new CSApi(
                         HTTP_TRANSPORT,
@@ -304,8 +290,8 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
                 System.out.println(scoredResult);
 
 
-                //String[] placeholder = {"mma","obi"};
-                return scoredResult;
+                String[] placeholder = {"mma","obi"};
+                //return scoredResult;
 
 
             } catch (IOException e) {
@@ -324,22 +310,12 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-            }
+            }*/
 
             //return null;
 
-            //String[] placeholder = {"school boy", "nneoma"};
-            //return placeholder;
+            String[] placeholder = {"mma", "nneoma"};
+            return placeholder;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        // Don't forget to shutdown tts!
-        if (myTTS != null) {
-            myTTS.stop();
-            myTTS.shutdown();
-        }
-        super.onDestroy();
     }
 }
