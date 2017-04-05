@@ -37,6 +37,7 @@
         import android.view.ViewGroup;
         import android.widget.ArrayAdapter;
         import android.widget.Button;
+        import android.widget.ImageButton;
         import android.widget.ImageView;
         import android.widget.ListView;
         import android.widget.ProgressBar;
@@ -114,11 +115,10 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
 
     public void speakWords(){
-        System.out.print("I am activated");
         TextView textToSpeak = (TextView) findViewById(R.id.search_result);
         String  speech = textToSpeak.getText().toString();
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
-        System.out.print("what's up with this text to speech thing");
+
 
     }
 
@@ -191,7 +191,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         // Set the share Intent
         mShareActionProvider.setShareIntent(shareIntent);*/
 
-       Button button = (Button) findViewById(R.id.text_to_speech);
+       ImageButton button = (ImageButton) findViewById(R.id.text_to_speech);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -251,7 +251,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             textView.setText(Result.getName().toUpperCase());
 
             //list
-            adapter = new ButtonTextAdapter(getApplicationContext(), Result.getName().split(" "));
+            adapter = new ButtonTextAdapter(getApplicationContext(), Result.getName().split(" "), myTTS);
             ListView list = (ListView) findViewById(R.id.list_view_word);
             list.setAdapter(adapter);
 
