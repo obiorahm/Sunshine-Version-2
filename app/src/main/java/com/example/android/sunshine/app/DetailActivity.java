@@ -16,9 +16,12 @@
 
         package com.example.android.sunshine.app;
 
+        import android.content.Context;
         import android.content.Intent;
         import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;
+        import android.graphics.Matrix;
+        import android.media.ExifInterface;
         import android.net.Uri;
         import android.os.AsyncTask;
         import android.os.Bundle;
@@ -144,6 +147,62 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         return FullFilePath;
     }
 
+    private int imageOrientation (String fileName){
+        int FAILURE = 10;
+        try{
+            ExifInterface exif = new ExifInterface(fileName);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED) ;
+            return orientation;
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+     return FAILURE;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private void captureAndSearchImage(){
 
         Uri fullFilePath = getImage();
@@ -157,7 +216,9 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             fetchImageDescription.execute(imgFile);
 
             Log.v("PRINTING", "File exists");
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            //rotate bitmap
+            Bitmap myBitmap = rotateBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()),imageOrientation(imgFile.getAbsolutePath()));
+            //Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
             ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
 
@@ -350,5 +411,34 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             myTTS.shutdown();
         }
         super.onDestroy();
+    }
+
+    public int getCameraPhotoOrientation(Context context, Uri imageUri, String imagePath){
+        int rotate = 0;
+        try {
+            context.getContentResolver().notifyChange(imageUri, null);
+            File imageFile = new File(imagePath);
+
+            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+
+            Log.i("RotateImage", "Exif orientation: " + orientation);
+            Log.i("RotateImage", "Rotate value: " + rotate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rotate;
     }
 }
