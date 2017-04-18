@@ -7,5 +7,7 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_speak">Speak</string>
     <string name="title_activity_detail">Image Search</string>
+    <string name="gallery">Gallery</string>
+    <string name="Capture">Capture</string>
 
 </resources>
