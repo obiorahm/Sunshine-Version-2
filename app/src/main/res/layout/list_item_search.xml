@@ -11,6 +11,7 @@
         android:id="@+id/list_item_word_textview"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="5dp"
         >
 
     </TextView>

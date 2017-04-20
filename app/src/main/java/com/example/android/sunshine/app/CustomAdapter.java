@@ -48,7 +48,7 @@ public class CustomAdapter extends ArrayAdapter {
 
         Picasso.with(context).load(imageUrls[position]).into(imageView);
 
-        txtTitle.setText(web[position]);
+        txtTitle.setText(web[position].toUpperCase());
 
         return view;
     }

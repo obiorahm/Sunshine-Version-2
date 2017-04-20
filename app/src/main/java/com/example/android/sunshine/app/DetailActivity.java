@@ -77,15 +77,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        /*String weatherData = getWeatherText();
-        TextView textView = new TextView(this);
-        textView.setText(weatherData);
-
-
-        ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
-        layout.addView(textView);*/
-
-
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -319,6 +310,9 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
+
+            ImageButton imgButton  = (ImageButton) findViewById(R.id.text_to_speech);
+            imgButton.setVisibility(View.VISIBLE);
 
             //layout.addView(textView);
 
