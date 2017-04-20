@@ -56,6 +56,7 @@
         import java.io.IOException;
         import java.net.HttpURLConnection;
         import java.net.URL;
+        import java.util.ArrayList;
         import java.util.Locale;
 
         import android.speech.tts.TextToSpeech;
@@ -67,6 +68,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     private ShareActionProvider mShareActionProvider;
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
+    private Uri imageFile = null;
     //private Uri fullFilePath = getImage();;
 
 
@@ -196,7 +198,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     }
     private void captureAndSearchImage(){
 
-        Uri fullFilePath = getImage();
+        Uri fullFilePath = imageFile = getImage();
         //Log.v("PRINTING", fullFilePath.toString());
         File imgFile = new  File(fullFilePath.toString().replace("file://",""));
 
@@ -302,11 +304,21 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             //textView.setText(Result[0]);
             textView.setText(Result.getName().toUpperCase());
 
+            ArrayList<String> mylist = new ArrayList<String>();
+            mylist.add(Result.getName());
+            String [] listofWords = Result.getName().split(" ");
+
             //list
-            adapter = new ButtonTextAdapter(getApplicationContext(), Result.getName().split(" "), myTTS);
+            ButtonTextAdapter adapter = new ButtonTextAdapter(getApplicationContext(), mylist.toArray(new String[mylist.size()]), myTTS);
+
+            adapter.addImage(imageFile.toString());
+            adapter.addItem(Result.getName());
+            for (int i = 0; i < listofWords.length; i++){
+                adapter.addItem(listofWords[i]);
+            }
+
             ListView list = (ListView) findViewById(R.id.list_view_word);
             list.setAdapter(adapter);
-
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
@@ -322,8 +334,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         protected /*String[]*/ CSGetResult doInBackground(File... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
-
-
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
