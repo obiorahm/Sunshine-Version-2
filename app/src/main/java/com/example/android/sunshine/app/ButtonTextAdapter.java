@@ -30,7 +30,7 @@ import java.util.TreeSet;
 public class ButtonTextAdapter extends ArrayAdapter {
 
     private final Context context;
-    private final String[] web;
+    //private final String[] web;
     private final TextToSpeech myTTS;
 
     private ArrayList mData = new ArrayList();
@@ -47,10 +47,10 @@ public class ButtonTextAdapter extends ArrayAdapter {
 
     private LayoutInflater inflater;
     public ButtonTextAdapter(Context context,
-                         String[] web, TextToSpeech myTTS) {
-        super(context, R.layout.list_item_search, web);
+                         TextToSpeech myTTS) {
+        super(context, R.layout.list_item_search);
         this.context = context;
-        this.web = web;
+        //this.web = web;
         this.myTTS = myTTS;
         //this.imageUrls = imageUrls;
         inflater = LayoutInflater.from(context);
@@ -108,13 +108,13 @@ public class ButtonTextAdapter extends ArrayAdapter {
                     // view = inflater.inflate(R.layout.list_item_search,parent,false);
                     view = inflater.inflate(R.layout.list_item_search, null, false);
                     final TextView txtTitle = (TextView) view.findViewById(R.id.list_item_word_textview);
-                    txtTitle.setText((String) mData.get(position));
+                    txtTitle.setText(mData.get(position).toString().toUpperCase());
                     ImageButton button = (ImageButton) view.findViewById(R.id.imagebutton_area);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // Perform action on click
-                            String  speech = txtTitle.getText().toString().toUpperCase();
+                            String  speech = txtTitle.getText().toString();
                             myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
                         }
                     });
@@ -130,20 +130,6 @@ public class ButtonTextAdapter extends ArrayAdapter {
             }
         }
         return view;
-    }
-
-    public void setupTextandSpeech(View view, String word ){
-        final TextView txtTitle = (TextView) view.findViewById(R.id.list_item_word_textview);
-        txtTitle.setText(word);
-        ImageButton button = (ImageButton) view.findViewById(R.id.imagebutton_area);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Perform action on click
-                String  speech = txtTitle.getText().toString().toUpperCase();
-                myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
-            }
-        });
     }
 
 

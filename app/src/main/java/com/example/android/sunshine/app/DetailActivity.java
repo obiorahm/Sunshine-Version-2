@@ -122,6 +122,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
         if (initStatus == TextToSpeech.SUCCESS) {
             myTTS.setLanguage(Locale.US);
+            myTTS.setSpeechRate(0.5f);
         }
         captureAndSearchImage();
     }
@@ -140,62 +141,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         return FullFilePath;
     }
 
-    private int imageOrientation (String fileName){
-        int FAILURE = 10;
-        try{
-            ExifInterface exif = new ExifInterface(fileName);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED) ;
-            return orientation;
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-     return FAILURE;
-    }
 
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                matrix.setScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                matrix.setRotate(180);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_TRANSPOSE:
-                matrix.setRotate(90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_TRANSVERSE:
-                matrix.setRotate(-90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(-90);
-                break;
-            default:
-                return bitmap;
-        }
-        try {
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
-            return bmRotated;
-        }
-        catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     private void captureAndSearchImage(){
 
         Uri fullFilePath = imageFile = getImage();
@@ -208,19 +154,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             FetchImageDescription fetchImageDescription = new FetchImageDescription();
             fetchImageDescription.execute(imgFile);
 
-/*            Log.v("PRINTING", "File exists");
-            //rotate bitmap
-            Bitmap myBitmap = rotateBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()),imageOrientation(imgFile.getAbsolutePath()));
-            //Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
-            ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
-
-            ImageView myImage = (ImageView) layout.findViewById(R.id.captured_image);
-            //ImageView myImage = new ImageView(this);
-
-            myImage.setImageBitmap(myBitmap);
-
-            //layout.addView(myImage);*/
 
         }
     }
@@ -298,16 +231,14 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             System.out.print("the result of image processing"+ Result);
 
 
-/*            TextView textView = (TextView) findViewById(R.id.search_result);
-
-            textView.setText(Result.getName().toUpperCase());*/
 
             ArrayList<String> mylist = new ArrayList<String>();
-            mylist.add(Result.getName());
-            String [] listofWords = Result.getName().split(" ");
+            String searchResult = Result.getName();
+            //mylist.add(searchResult);
+            String [] listofWords = searchResult.split(" ");
 
             //list
-            ButtonTextAdapter adapter = new ButtonTextAdapter(getApplicationContext(), mylist.toArray(new String[mylist.size()]), myTTS);
+            ButtonTextAdapter adapter = new ButtonTextAdapter(getApplicationContext(), myTTS);
 
             adapter.addImage(imageFile.toString());
             adapter.addItem(Result.getName());
@@ -321,10 +252,6 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
 
-/*            ImageButton imgButton  = (ImageButton) findViewById(R.id.text_to_speech);
-            imgButton.setVisibility(View.VISIBLE);*/
-
-            //layout.addView(textView);
 
         }
 

@@ -7,7 +7,7 @@
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:id="@+id/list_item_word_textview"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
