@@ -110,13 +110,13 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
     }
 
 
-    public void speakWords(){
+    /*public void speakWords(){
         TextView textToSpeak = (TextView) findViewById(R.id.search_result);
         String  speech = textToSpeak.getText().toString();
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
 
-    }
+    }*/
 
     public void onInit (int initStatus){
 
@@ -208,7 +208,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             FetchImageDescription fetchImageDescription = new FetchImageDescription();
             fetchImageDescription.execute(imgFile);
 
-            Log.v("PRINTING", "File exists");
+/*            Log.v("PRINTING", "File exists");
             //rotate bitmap
             Bitmap myBitmap = rotateBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath()),imageOrientation(imgFile.getAbsolutePath()));
             //Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -220,7 +220,7 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
             myImage.setImageBitmap(myBitmap);
 
-            //layout.addView(myImage);
+            //layout.addView(myImage);*/
 
         }
     }
@@ -245,13 +245,13 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
         // Set the share Intent
         mShareActionProvider.setShareIntent(shareIntent);*/
 
-       ImageButton button = (ImageButton) findViewById(R.id.text_to_speech);
+       /*ImageButton button = (ImageButton) findViewById(R.id.text_to_speech);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
                 speakWords();
             }
-        });
+        });*/
         return true;
     }
 
@@ -297,12 +297,10 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
 
             System.out.print("the result of image processing"+ Result);
 
-            //ViewGroup layout = (ViewGroup) findViewById(R.id.detail_container);
 
-            //TextView textView = new TextView(DetailActivity.this);
-            TextView textView = (TextView) findViewById(R.id.search_result);
-            //textView.setText(Result[0]);
-            textView.setText(Result.getName().toUpperCase());
+/*            TextView textView = (TextView) findViewById(R.id.search_result);
+
+            textView.setText(Result.getName().toUpperCase());*/
 
             ArrayList<String> mylist = new ArrayList<String>();
             mylist.add(Result.getName());
@@ -323,8 +321,8 @@ public class DetailActivity extends ActionBarActivity implements  OnInitListener
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
 
-            ImageButton imgButton  = (ImageButton) findViewById(R.id.text_to_speech);
-            imgButton.setVisibility(View.VISIBLE);
+/*            ImageButton imgButton  = (ImageButton) findViewById(R.id.text_to_speech);
+            imgButton.setVisibility(View.VISIBLE);*/
 
             //layout.addView(textView);
 
