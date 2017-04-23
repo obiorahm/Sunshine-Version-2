@@ -38,8 +38,25 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                Intent cameraActivityIntent = new Intent(getActivity(), CameraActivity.class);
-                startActivity(cameraActivityIntent);
+               /* Intent cameraActivityIntent = new Intent(getActivity(), CameraActivity.class);
+                startActivity(cameraActivityIntent);*/
+                CameraFragment nextFrag= new CameraFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container,nextFrag)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+
+        ImageButton galleryButton = (ImageButton) rootView.findViewById(R.id.gallery);
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                // Perform action on click
+                Intent galleryActivityIntent = new Intent(getActivity(), GalleryActivity.class);
+                startActivity(galleryActivityIntent);
             }
         });
 
