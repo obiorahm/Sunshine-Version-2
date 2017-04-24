@@ -53,7 +53,7 @@ public class CameraFragment extends Fragment {    public final static String EXT
 
             DetailFragment nextFrag= new DetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(EXTRA_IMAGE,(Parcelable) mLocationForPhotos);
+            bundle.putParcelable(EXTRA_IMAGE,mLocationForPhotos);
             bundle.putString(EXTRA_TARGET, targetFilename);
 
             nextFrag.setArguments(bundle);

@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -78,6 +80,17 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         captureAndSearchImage();
     }
 
+    private void writeToFile(String data, String fileName, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
     private Uri getImage() {
         Intent intent = getActivity().getIntent();
         //Uri ImgDirectory = intent.getExtras().getParcelable(CameraActivity.EXTRA_IMAGE);
@@ -110,6 +123,8 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     }
 
 
+
+
     public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
 
         private final String LOG_TAG = DetailFragment.FetchImageDescription.class.getSimpleName();
@@ -126,6 +141,10 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             String searchResult = Result.getName();
             //mylist.add(searchResult);
             String[] listofWords = searchResult.split(" ");
+
+            //Save the retrieved text
+            writeToFile(searchResult,imageFile.toString(),getActivity());
+
 
             //list
             ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS);
