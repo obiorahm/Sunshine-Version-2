@@ -2,28 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
+    android:paddingBottom="2dp"
     android:orientation="horizontal">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="2"
         android:id="@+id/list_item_word_textview"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:paddingLeft="5dp"
+        android:drawableRight="@drawable/ic_volume_up_black_24dp"
+        android:drawablePadding="5dp"
+        android:inputType="textCapSentences"
         >
 
     </TextView>
 
 
-    <ImageButton android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+    <!--ImageButton android:layout_height="match_parent"
+        android:layout_width="wrap_content"
         android:src="@drawable/ic_volume_up_black_24dp"
-        android:id="@+id/imagebutton_area">
+        android:id="@+id/imagebutton_area"
+        >
 
-    </ImageButton>
+    </ImageButton> -->
 
 
 </LinearLayout>

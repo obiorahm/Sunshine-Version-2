@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.speech.tts.TextToSpeech;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,14 +109,24 @@ public class ButtonTextAdapter extends ArrayAdapter {
                     // view = inflater.inflate(R.layout.list_item_search,parent,false);
                     view = inflater.inflate(R.layout.list_item_search, null, false);
                     final TextView txtTitle = (TextView) view.findViewById(R.id.list_item_word_textview);
-                    txtTitle.setText(mData.get(position).toString().toUpperCase());
-                    ImageButton button = (ImageButton) view.findViewById(R.id.imagebutton_area);
+                    txtTitle.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                    txtTitle.setText(mData.get(position).toString());
+                    /*ImageButton button = (ImageButton) view.findViewById(R.id.imagebutton_area);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // Perform action on click
                             String  speech = txtTitle.getText().toString();
                             myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+                        }
+                    });*/
+
+                    txtTitle.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String  speech = txtTitle.getText().toString();
+                            myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+
                         }
                     });
                     break;

@@ -142,8 +142,12 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             //mylist.add(searchResult);
             String[] listofWords = searchResult.split(" ");
 
+            String[] FileNameArray = imageFile.toString().split("/");
+
+            String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
+
             //Save the retrieved text
-            writeToFile(searchResult,imageFile.toString(),getActivity());
+            writeToFile(searchResult,TxtFileName,getActivity());
 
 
             //list
