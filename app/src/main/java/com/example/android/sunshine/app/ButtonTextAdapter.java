@@ -18,6 +18,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -109,17 +113,23 @@ public class ButtonTextAdapter extends ArrayAdapter {
                     // view = inflater.inflate(R.layout.list_item_search,parent,false);
                     view = inflater.inflate(R.layout.list_item_search, null, false);
                     final TextView txtTitle = (TextView) view.findViewById(R.id.list_item_word_textview);
-                    txtTitle.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                    txtTitle.setText(mData.get(position).toString());
-                    /*ImageButton button = (ImageButton) view.findViewById(R.id.imagebutton_area);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Perform action on click
-                            String  speech = txtTitle.getText().toString();
-                            myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+                    String[] newString = mData.get(position).toString().split("&&");
+                    txtTitle.setText(newString[0]);
+
+                        String ImageUrl = "";
+                        if (newString.length > 1){
+                            try{
+                                ImageUrl = getImageUrl(newString[1]);
+                            }catch (JSONException e){
+                                Log.e("JSONException", e + "");
+                            }
+
+                            ImageView imageView = (ImageView) view.findViewById(R.id.search_image);
+                            Picasso.with(context).load(Uri.parse(ImageUrl)).into(imageView);
                         }
-                    });*/
+
+
+
 
                     txtTitle.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -143,5 +153,16 @@ public class ButtonTextAdapter extends ArrayAdapter {
         return view;
     }
 
+    private String getImageUrl(String JSONString) throws JSONException {
+
+            final JSONObject obj = new JSONObject(JSONString);
+            final JSONArray payLoad = obj.getJSONArray("payload");
+            final JSONObject firstElement = payLoad.getJSONObject(0);
+            final String ImageUrl = firstElement.getJSONObject("svg").getString("png_thumb");
+            Log.v("JSON Url", ImageUrl);
+
+            return ImageUrl;
+
+    }
 
 }

@@ -3,7 +3,15 @@
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:paddingBottom="2dp"
+    android:paddingLeft="10dp"
     android:orientation="horizontal">
+
+    <ImageView android:layout_height="match_parent"
+        android:layout_width="70dp"
+        android:id="@+id/search_image"
+        android:src="@drawable/ic_volume_up_black_24dp"
+        android:paddingLeft="10dp">
+        </ImageView>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
@@ -11,9 +19,9 @@
         android:id="@+id/list_item_word_textview"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:paddingLeft="5dp"
-        android:drawableRight="@drawable/ic_volume_up_black_24dp"
-        android:drawablePadding="5dp"
+        android:paddingLeft="20dp"
+        android:drawableRight="@drawable/ic_volume_up_black_18dp"
+        android:drawablePadding="10dp"
         android:inputType="textCapSentences"
         >
 

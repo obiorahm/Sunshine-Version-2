@@ -2,6 +2,9 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Path;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
@@ -13,12 +16,20 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -30,6 +41,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
     public final static String ARG_OBJECT = "IMGFILENAME";
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
+    private ButtonTextAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -55,7 +67,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 myTTS = new TextToSpeech(this, this);
 
-                ButtonTextAdapter adapter = new ButtonTextAdapter(this, myTTS);
+                adapter = new ButtonTextAdapter(this, myTTS);
 
                 Intent args = this.getIntent();
 
@@ -69,13 +81,20 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
                     String TxtFileContent = readFromFile(this, TxtFileName);
                     String[] listOfWords = TxtFileContent.split(" ");
 
+                    FetchClipArt fetchClipArt = new FetchClipArt();
+
                     adapter.addImage(imgFile.toString());
                     Log.v("Textfile content is ", TxtFileContent);
+
+
                     if (TxtFileContent != ""){
-                        adapter.addItem(TxtFileContent);
-                        for (int i = 0; i < listOfWords.length; i++) {
-                            adapter.addItem(listOfWords[i]);
-                        }
+                        adapter.addItem(TxtFileContent + "&&");
+                        fetchClipArt.execute(listOfWords);
+
+                        /*for (int i = 0; i < listOfWords.length; i++) {
+
+                            //adapter.addItem(listOfWords[i] + "&&" + "imageurl" );
+                        }*/
 
                     }
                 }
@@ -98,7 +117,121 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
             myTTS.setLanguage(Locale.US);
             myTTS.setSpeechRate(0.5f);
         }
+
+
     }
+
+
+    public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+
+        private final String LOG_TAG = OpenGalleryObjectFragment.FetchClipArt.class.getSimpleName();
+
+        @Override
+        protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {
+
+                for (int i = 0; i < Result.size(); i++){
+                    ArrayList<String> currResult = Result.get(i);
+                    adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
+
+                }
+
+
+        }
+
+        @Override
+        protected /*String[]*/ ArrayList<ArrayList<String>> doInBackground(String[]...params) {
+
+            ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
+
+
+            if (params.length == 0)
+                return null;
+
+
+            //ClipArtJson = getJSONData("https://openclipart.org/search/json/","table",params[0]);
+            for (int i = 0; i < params[0].length; i++){
+
+                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][i]));
+            }
+
+            return ClipArtJson;
+        }
+
+        protected  ArrayList<String> getJSONData(String baseUrl, String apiKey, String queryParameter){
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
+
+            try{
+                final String CLIPART_BASE_URL = baseUrl;
+                final String API_KEY = apiKey;
+                final String QUERY = "query";
+                final String AMOUNT = "amount";
+
+                Uri buildUri = null;
+
+                buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+                        .appendQueryParameter(QUERY, queryParameter)
+                        .appendQueryParameter(AMOUNT,"1")
+                        .build();
+
+                URL url = new URL(buildUri.toString());
+                Log.v(LOG_TAG,"The built Uri " + url);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if(inputStream == null){
+                    return null;
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null){
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0){
+                    return null;
+                }
+
+                ClipArtJsonStr.add(queryParameter);
+                ClipArtJsonStr.add(buffer.toString());
+//                ClipArtJsonStr = buffer.toString();
+                //Log.v(LOG_TAG, "Clip art JSON String " + ClipArtJsonStr.get(1));
+
+                return ClipArtJsonStr;
+
+            }catch (IOException e){
+                Log.e(LOG_TAG, "Error", e);
+                return null;
+            }finally {
+                if(urlConnection != null){
+                    urlConnection.disconnect();
+                }
+                if(reader != null){
+                    try{
+                        reader.close();
+                    }catch (final IOException e){
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+
+
+
+        }
+        }
+
+
+
+
 
     private String readFromFile(Context context, String fileName) {
 
