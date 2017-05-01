@@ -20,11 +20,11 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     private ButtonTextAdapter adapter;
     private String[] params;
 
-    public FetchClipArt(ButtonTextAdapter newAdapter, String[] newParams){
+    public FetchClipArt(ButtonTextAdapter newAdapter){
         adapter = newAdapter;
     }
 
-    private final String LOG_TAG = OpenGalleryObjectFragment.FetchClipArt.class.getSimpleName();
+    private final String LOG_TAG = FetchClipArt.class.getSimpleName();
 
     @Override
     protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {

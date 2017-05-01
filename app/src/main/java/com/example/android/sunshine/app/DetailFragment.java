@@ -40,6 +40,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     private Uri imageFile = null;
 
     public ArrayAdapter<String> adapter;
+    public ButtonTextAdapter btnAdapter;
 
     public DetailFragment() {
     }
@@ -137,9 +138,8 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             System.out.print("the result of image processing" + Result);
 
 
-            ArrayList<String> mylist = new ArrayList<String>();
             String searchResult = Result.getName();
-            //mylist.add(searchResult);
+
             String[] listofWords = searchResult.split(" ");
 
             String[] FileNameArray = imageFile.toString().split("/");
@@ -153,11 +153,16 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             //list
             ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS);
 
+            //fetchClipArt
+            FetchClipArt fetchClipArt = new FetchClipArt(adapter);
+
             adapter.addImage(imageFile.toString());
+
             adapter.addItem(Result.getName());
-            for (int i = 0; i < listofWords.length; i++) {
+            fetchClipArt.execute(listofWords);
+/*            for (int i = 0; i < listofWords.length; i++) {
                 adapter.addItem(listofWords[i]);
-            }
+            }*/
 
             ListView list = (ListView) getActivity().findViewById(R.id.list_view_word);
             list.setAdapter(adapter);

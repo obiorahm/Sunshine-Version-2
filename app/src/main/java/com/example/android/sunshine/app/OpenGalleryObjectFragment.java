@@ -81,7 +81,8 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
                     String TxtFileContent = readFromFile(this, TxtFileName);
                     String[] listOfWords = TxtFileContent.split(" ");
 
-                    FetchClipArt fetchClipArt = new FetchClipArt();
+                    //FetchClipArt fetchClipArt = new FetchClipArt(adapter);
+                    FetchClipArt fetchClipArt = new FetchClipArt(adapter);
 
                     adapter.addImage(imgFile.toString());
                     Log.v("Textfile content is ", TxtFileContent);
@@ -122,7 +123,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
     }
 
 
-    public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+    /*public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
 
         private final String LOG_TAG = OpenGalleryObjectFragment.FetchClipArt.class.getSimpleName();
 
@@ -139,7 +140,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
         }
 
         @Override
-        protected /*String[]*/ ArrayList<ArrayList<String>> doInBackground(String[]...params) {
+        protected ArrayList<ArrayList<String>> doInBackground(String[]...params) {
 
             ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
 
@@ -227,7 +228,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
         }
-        }
+        }*/
 
 
 
