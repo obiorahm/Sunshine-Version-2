@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
     private ButtonTextAdapter adapter;
-    private String[] params;
+
 
     public FetchClipArt(ButtonTextAdapter newAdapter){
         adapter = newAdapter;
@@ -32,9 +32,9 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         for (int i = 0; i < Result.size(); i++){
             ArrayList<String> currResult = Result.get(i);
             adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
+            Log.v("OnPostExecuteResult: ", currResult.get(0));
 
         }
-
 
     }
 
@@ -46,9 +46,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         if (params.length == 0)
             return null;
-
-
-        //ClipArtJson = getJSONData("https://openclipart.org/search/json/","table",params[0]);
 
         for (int i = 0; i < params[0].length; i++){
 

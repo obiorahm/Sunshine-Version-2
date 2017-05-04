@@ -39,8 +39,8 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     private TextToSpeech myTTS;
     private Uri imageFile = null;
 
-    public ArrayAdapter<String> adapter;
-    public ButtonTextAdapter btnAdapter;
+    //public ArrayAdapter<String> adapter;
+    //public ButtonTextAdapter btnAdapter;
 
     public DetailFragment() {
     }
@@ -94,9 +94,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
     private Uri getImage() {
         Intent intent = getActivity().getIntent();
-        //Uri ImgDirectory = intent.getExtras().getParcelable(CameraActivity.EXTRA_IMAGE);
-        //String FileName = intent.getStringExtra(CameraActivity.EXTRA_TARGET);
-        //Uri FullFilePath = Uri.withAppendedPath(ImgDirectory, FileName);
 
         Bundle bundle = this.getArguments();
         if (bundle != null){
@@ -140,7 +137,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
             String searchResult = Result.getName();
 
-            String[] listofWords = searchResult.split(" ");
+            String[] listOfWords = searchResult.split(" ");
 
             String[] FileNameArray = imageFile.toString().split("/");
 
@@ -148,7 +145,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
             //Save the retrieved text
             writeToFile(searchResult,TxtFileName,getActivity());
-
 
             //list
             ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS);
@@ -159,10 +155,8 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             adapter.addImage(imageFile.toString());
 
             adapter.addItem(Result.getName());
-            fetchClipArt.execute(listofWords);
-/*            for (int i = 0; i < listofWords.length; i++) {
-                adapter.addItem(listofWords[i]);
-            }*/
+            fetchClipArt.execute(listOfWords);
+
 
             ListView list = (ListView) getActivity().findViewById(R.id.list_view_word);
             list.setAdapter(adapter);
@@ -180,7 +174,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            BufferedReader reader1 = null;
 
             if (params.length == 0){
                 return null;
@@ -220,8 +213,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
                 System.out.println(scoredResult);
 
-
-                //String[] placeholder = {"mma","obi"};
                 return scoredResult;
 
 
@@ -243,10 +234,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
                 }
             }
 
-            //return null;
-
-            //String[] placeholder = {"school boy", "nneoma"};
-            //return placeholder;
         }
 
     }

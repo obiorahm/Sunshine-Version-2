@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -35,11 +36,9 @@ import java.util.TreeSet;
 public class ButtonTextAdapter extends ArrayAdapter {
 
     private final Context context;
-    //private final String[] web;
     private final TextToSpeech myTTS;
 
     private ArrayList mData = new ArrayList();
-    //private final String[] imageUrls;
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_IMAGE = 1;
@@ -55,9 +54,7 @@ public class ButtonTextAdapter extends ArrayAdapter {
                          TextToSpeech myTTS) {
         super(context, R.layout.list_item_search);
         this.context = context;
-        //this.web = web;
         this.myTTS = myTTS;
-        //this.imageUrls = imageUrls;
         inflater = LayoutInflater.from(context);
 
     }
@@ -104,18 +101,31 @@ public class ButtonTextAdapter extends ArrayAdapter {
     }
 
     @Override
+    public boolean hasStableIds() {
+        return true;
+    }
+
+    @Override
     public View getView(int position, View view, ViewGroup parent) {
 
         int type = getItemViewType(position);
+        final ViewHolder mHolder;
         if (null == view){
             switch (type){
                 case TYPE_ITEM:
-                    // view = inflater.inflate(R.layout.list_item_search,parent,false);
-                    view = inflater.inflate(R.layout.list_item_search, null, false);
-                    final TextView txtTitle = (TextView) view.findViewById(R.id.list_item_word_textview);
+                    view = inflater.inflate(R.layout.list_item_search, null);
+                    break;
+                case TYPE_IMAGE:
+                    view = inflater.inflate(R.layout.list_item_image, null);
+            }
+        }
+            switch (type){
+                case TYPE_ITEM:
+                    mHolder = new ViewHolder();
+                    mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
                     String[] newString = mData.get(position).toString().split("&&");
-                    txtTitle.setText(newString[0]);
-
+                    mHolder.mText.setText(newString[0]);
+                    Log.v("GetView Function ", newString[0]);
                         String ImageUrl = "";
                         if (newString.length > 1){
                             try{
@@ -124,32 +134,32 @@ public class ButtonTextAdapter extends ArrayAdapter {
                                 Log.e("JSONException", e + "");
                             }
 
-                            ImageView imageView = (ImageView) view.findViewById(R.id.search_image);
-                            Picasso.with(context).load(Uri.parse(ImageUrl)).into(imageView);
+                            mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
+                            Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
                         }
 
-
-
-
-                    txtTitle.setOnClickListener(new View.OnClickListener() {
+                    mHolder.mText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String  speech = txtTitle.getText().toString();
+                            String  speech = mHolder.mText.getText().toString();
                             myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
                         }
                     });
+
+                    view.setTag(mHolder);
                     break;
                 case TYPE_IMAGE:
-                    view = inflater.inflate(R.layout.list_item_image, null,true);
+                    mHolder = new ViewHolder();
 
                     File imgFile = new  File(mData.get(position).toString().replace("file://",""));
 
-                    final ImageView imageView = (ImageView) view.findViewById(R.id.list_captured_image);
-                    Picasso.with(context).load(imgFile).into(imageView);
+                    mHolder.mImage = (ImageView) view.findViewById(R.id.list_captured_image);
+                    Glide.with(context).load(imgFile).into(mHolder.mImage);
+                    view.setTag(mHolder);
                     break;
             }
-        }
+
         return view;
     }
 
@@ -164,5 +174,15 @@ public class ButtonTextAdapter extends ArrayAdapter {
             return ImageUrl;
 
     }
+
+    private static class ImageViewHolder{
+        public ImageView mImage;
+    }
+
+    private static class ViewHolder extends ImageViewHolder{
+        private TextView mText;
+    }
+
+
 
 }

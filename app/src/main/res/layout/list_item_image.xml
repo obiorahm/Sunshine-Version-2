@@ -5,6 +5,7 @@
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
+        android:scaleType="centerInside"
         android:paddingBottom="5dp"
         android:id="@+id/list_captured_image"/>
 </LinearLayout>

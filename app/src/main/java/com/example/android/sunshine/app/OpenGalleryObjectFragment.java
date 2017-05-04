@@ -75,13 +75,11 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
                 if (args != null) {
                     String[] FileNameArray = args.getStringExtra(GalleryObjectFragment.IMGFILENAME).split("/");
                     File imgFile = new File(args.getStringExtra(GalleryObjectFragment.IMGFILENAME));
-                    Log.v("I got here! ", "I got here!");
 
                     String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
                     String TxtFileContent = readFromFile(this, TxtFileName);
                     String[] listOfWords = TxtFileContent.split(" ");
 
-                    //FetchClipArt fetchClipArt = new FetchClipArt(adapter);
                     FetchClipArt fetchClipArt = new FetchClipArt(adapter);
 
                     adapter.addImage(imgFile.toString());
@@ -91,12 +89,6 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
                     if (TxtFileContent != ""){
                         adapter.addItem(TxtFileContent + "&&");
                         fetchClipArt.execute(listOfWords);
-
-                        /*for (int i = 0; i < listOfWords.length; i++) {
-
-                            //adapter.addItem(listOfWords[i] + "&&" + "imageurl" );
-                        }*/
-
                     }
                 }
                 ListView list = (ListView) this.findViewById(R.id.list_view_word);
@@ -121,117 +113,6 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
     }
-
-
-    /*public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
-
-        private final String LOG_TAG = OpenGalleryObjectFragment.FetchClipArt.class.getSimpleName();
-
-        @Override
-        protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {
-
-                for (int i = 0; i < Result.size(); i++){
-                    ArrayList<String> currResult = Result.get(i);
-                    adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
-
-                }
-
-
-        }
-
-        @Override
-        protected ArrayList<ArrayList<String>> doInBackground(String[]...params) {
-
-            ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
-
-
-            if (params.length == 0)
-                return null;
-
-
-            //ClipArtJson = getJSONData("https://openclipart.org/search/json/","table",params[0]);
-            for (int i = 0; i < params[0].length; i++){
-
-                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][i]));
-            }
-
-            return ClipArtJson;
-        }
-
-        protected  ArrayList<String> getJSONData(String baseUrl, String apiKey, String queryParameter){
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
-
-            try{
-                final String CLIPART_BASE_URL = baseUrl;
-                final String API_KEY = apiKey;
-                final String QUERY = "query";
-                final String AMOUNT = "amount";
-
-                Uri buildUri = null;
-
-                buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
-                        .appendQueryParameter(QUERY, queryParameter)
-                        .appendQueryParameter(AMOUNT,"1")
-                        .build();
-
-                URL url = new URL(buildUri.toString());
-                Log.v(LOG_TAG,"The built Uri " + url);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if(inputStream == null){
-                    return null;
-                }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null){
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0){
-                    return null;
-                }
-
-                ClipArtJsonStr.add(queryParameter);
-                ClipArtJsonStr.add(buffer.toString());
-//                ClipArtJsonStr = buffer.toString();
-                //Log.v(LOG_TAG, "Clip art JSON String " + ClipArtJsonStr.get(1));
-
-                return ClipArtJsonStr;
-
-            }catch (IOException e){
-                Log.e(LOG_TAG, "Error", e);
-                return null;
-            }finally {
-                if(urlConnection != null){
-                    urlConnection.disconnect();
-                }
-                if(reader != null){
-                    try{
-                        reader.close();
-                    }catch (final IOException e){
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-
-
-
-        }
-        }*/
-
-
-
 
 
     private String readFromFile(Context context, String fileName) {
