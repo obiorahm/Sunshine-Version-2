@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_gridview"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        ></GridView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="whatever"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:drawableRight="@drawable/ic_volume_up_black_18dp"
+        android:drawableEnd="@drawable/ic_volume_up_black_18dp"
+        android:id="@+id/grid_text"
+        android:textSize="14pt"
+        android:background="@color/button_material_light"/>
+</FrameLayout>

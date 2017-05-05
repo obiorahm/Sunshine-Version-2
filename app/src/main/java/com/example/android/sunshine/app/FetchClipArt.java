@@ -1,8 +1,15 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,24 +24,50 @@ import java.util.ArrayList;
  */
 
 public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
-    private ButtonTextAdapter adapter;
+    private AphasiaAdapter adapter;
+    private Context context;
 
 
     public FetchClipArt(ButtonTextAdapter newAdapter){
         adapter = newAdapter;
     }
 
+    public FetchClipArt(ImageGridAdapter newAdapter, Context newContext)
+    {
+        adapter = newAdapter;
+        context = newContext;
+    }
+
     private final String LOG_TAG = FetchClipArt.class.getSimpleName();
 
     @Override
     protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {
+        if (adapter instanceof ButtonTextAdapter){
+            for (int i = 0; i < Result.size(); i++){
+                ArrayList<String> currResult = Result.get(i);
+                adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
+                Log.v("OnPostExecuteResult: ", currResult.get(0));
 
-        for (int i = 0; i < Result.size(); i++){
-            ArrayList<String> currResult = Result.get(i);
-            adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
-            Log.v("OnPostExecuteResult: ", currResult.get(0));
+            }
+        }else{
+            ArrayList<String> ImageUrls = new ArrayList<>();
+            JSONHandler jsonHandler = new JSONHandler();
+            for (int i = 0; i < 10; i++){
+                try{
+                    ImageUrls.add(jsonHandler.getImageUrl(Result.get(0).get(1), i));
+
+                }catch(JSONException e){}
+            }
+
+            String[] ImgStringArr = new String[ImageUrls.size()];
+            ImgStringArr= ImageUrls.toArray(ImgStringArr);
+
+            adapter = new ImageGridAdapter(context, ImgStringArr);
+            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            gridView.setAdapter(adapter);
 
         }
+
 
     }
 
@@ -46,16 +79,23 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         if (params.length == 0)
             return null;
+        if (adapter instanceof  ButtonTextAdapter){
+            for (int i = 0; i < params[0].length; i++){
 
-        for (int i = 0; i < params[0].length; i++){
 
-            ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][i]));
+                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][i], "1"));
+            }
+        }else{
+                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][0], "10"));
+
         }
+
+
 
         return ClipArtJson;
     }
 
-    protected  ArrayList<String> getJSONData(String baseUrl, String apiKey, String queryParameter){
+    protected  ArrayList<String> getJSONData(String baseUrl, String apiKey, String queryParameter, String amount){
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -67,11 +107,14 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             final String QUERY = "query";
             final String AMOUNT = "amount";
 
+            final String SORT = "sort";
+
             Uri buildUri = null;
 
             buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY, queryParameter)
-                    .appendQueryParameter(AMOUNT,"1")
+                    .appendQueryParameter(AMOUNT,amount)
+                    .appendQueryParameter(SORT, "downloads")
                     .build();
 
             URL url = new URL(buildUri.toString());
@@ -100,8 +143,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
             ClipArtJsonStr.add(queryParameter);
             ClipArtJsonStr.add(buffer.toString());
-//                ClipArtJsonStr = buffer.toString();
-            //Log.v(LOG_TAG, "Clip art JSON String " + ClipArtJsonStr.get(1));
+
 
             return ClipArtJsonStr;
 
@@ -120,9 +162,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 }
             }
         }
-
-
-
 
     }
 }

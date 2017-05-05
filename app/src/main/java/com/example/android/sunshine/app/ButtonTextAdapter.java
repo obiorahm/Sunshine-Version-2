@@ -1,6 +1,8 @@
 package com.example.android.sunshine.app;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -33,7 +35,7 @@ import java.util.TreeSet;
 
 
 
-public class ButtonTextAdapter extends ArrayAdapter {
+public class ButtonTextAdapter extends AphasiaAdapter {
 
     private final Context context;
     private final TextToSpeech myTTS;
@@ -45,6 +47,8 @@ public class ButtonTextAdapter extends ArrayAdapter {
     private static final int TYPE_MAX_COUNT= TYPE_IMAGE + 1;
 
     private TreeSet imageSet = new TreeSet();
+
+    final static String SEARCH_PARAM = "SEARCH_PARAM";
 
 
 
@@ -59,6 +63,7 @@ public class ButtonTextAdapter extends ArrayAdapter {
 
     }
 
+    @Override
     public void addItem(final String item){
         mData.add(item);
         notifyDataSetChanged();
@@ -123,8 +128,10 @@ public class ButtonTextAdapter extends ArrayAdapter {
                 case TYPE_ITEM:
                     mHolder = new ViewHolder();
                     mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
-                    String[] newString = mData.get(position).toString().split("&&");
+                    final String[] newString = mData.get(position).toString().split("&&");
+
                     mHolder.mText.setText(newString[0]);
+
                     Log.v("GetView Function ", newString[0]);
                         String ImageUrl = "";
                         if (newString.length > 1){
@@ -136,6 +143,17 @@ public class ButtonTextAdapter extends ArrayAdapter {
 
                             mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
                             Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+
+                            mHolder.mImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent ImageExplanationActivity = new Intent(getContext(), ImageExplanationFragment.class);
+                                    ImageExplanationActivity.putExtra(SEARCH_PARAM, newString[0]);
+                                    context.startActivity(ImageExplanationActivity);
+
+
+                                }
+                            });
                         }
 
                     mHolder.mText.setOnClickListener(new View.OnClickListener() {
