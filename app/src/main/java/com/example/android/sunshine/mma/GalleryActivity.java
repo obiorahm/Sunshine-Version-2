@@ -1,19 +1,10 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 

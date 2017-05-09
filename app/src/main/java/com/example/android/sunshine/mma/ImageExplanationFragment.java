@@ -1,22 +1,12 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Layout;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.Locale;
 
 

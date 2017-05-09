@@ -2,6 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/detail_container"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.android.sunshine.app.DetailActivity" tools:ignore="MergeRootFrame">
+    tools:context="com.example.android.sunshine.mma.DetailActivity" tools:ignore="MergeRootFrame">
 
 </LinearLayout>

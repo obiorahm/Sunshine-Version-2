@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.util.Log;
 
@@ -15,10 +15,11 @@ public class JSONHandler {
     public String getImageUrl(String JSONString, int position) throws JSONException {
 
         try{
+            final String ImageUrl;
             final JSONObject obj = new JSONObject(JSONString);
             final JSONArray payLoad = obj.getJSONArray("payload");
             final JSONObject firstElement = payLoad.getJSONObject(position);
-            final String ImageUrl = firstElement.getJSONObject("svg").getString("png_thumb");
+            ImageUrl = firstElement.getJSONObject("svg").getString("png_thumb");
             Log.v("JSON Url", ImageUrl);
 
             return ImageUrl;

@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -26,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -154,7 +152,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
             adapter.addImage(imageFile.toString());
 
-            adapter.addItem(Result.getName());
+            adapter.addItem(Result.getName() + "&&" + imageFile);
             fetchClipArt.execute(listOfWords);
 
 

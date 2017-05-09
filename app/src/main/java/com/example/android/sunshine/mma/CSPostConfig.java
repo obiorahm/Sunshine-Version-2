@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import com.google.api.client.http.MultipartContent;
 import com.google.api.client.http.FileContent;

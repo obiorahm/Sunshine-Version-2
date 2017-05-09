@@ -1,7 +1,6 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 
 /**

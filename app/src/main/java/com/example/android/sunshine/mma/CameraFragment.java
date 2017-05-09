@@ -1,12 +1,10 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -16,7 +14,7 @@ import java.util.Date;
  * Created by mgo983 on 4/22/17.
  */
 
-public class CameraFragment extends Fragment {
+public class CameraFragment extends android.support.v4.app.Fragment {
     public final static String EXTRA_IMAGE = "com.example.android.sunshine.IMAGE";
     public final static String EXTRA_TARGET = "com.example.android.sunshine.TARGET";
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -30,7 +28,6 @@ public class CameraFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //setCameraDisplayOrientation(this,);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.withAppendedPath(mLocationForPhotos, targetFilename));
@@ -51,11 +48,10 @@ public class CameraFragment extends Fragment {
             bundle.putString(EXTRA_TARGET, targetFilename);
 
             nextFrag.setArguments(bundle);
-            this.getFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .replace(R.id.container,nextFrag)
                     .addToBackStack(null)
                     .commit();
-
 
 
         }

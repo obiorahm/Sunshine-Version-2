@@ -1,29 +1,19 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.speech.tts.TextToSpeech;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -133,16 +123,27 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText.setText(newString[0]);
 
                     Log.v("GetView Function ", newString[0]);
-                        String ImageUrl = "";
-                        if (newString.length > 1){
-                            try{
-                                ImageUrl = getImageUrl(newString[1]);
-                            }catch (JSONException e){
-                                Log.e("JSONException", e + "");
-                            }
+
 
                             mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
-                            Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+                            if (position != 1) {
+                                String ImageUrl = "";
+
+                                try {
+                                    JSONHandler jsonHandler = new JSONHandler();
+                                    ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                } catch (JSONException e) {
+                                    Log.e("JSONException", e + "");
+                                }
+                                Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+                            }else{
+                                File imgFile = new  File(newString[1].toString().replace("file://",""));
+
+                                Glide.with(context).load(imgFile).into(mHolder.mImage);
+
+                            }
+
+
 
                             mHolder.mImage.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -154,7 +155,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                                 }
                             });
-                        }
+
 
                     mHolder.mText.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -181,17 +182,6 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         return view;
     }
 
-    private String getImageUrl(String JSONString) throws JSONException {
-
-            final JSONObject obj = new JSONObject(JSONString);
-            final JSONArray payLoad = obj.getJSONArray("payload");
-            final JSONObject firstElement = payLoad.getJSONObject(0);
-            final String ImageUrl = firstElement.getJSONObject("svg").getString("png_thumb");
-            Log.v("JSON Url", ImageUrl);
-
-            return ImageUrl;
-
-    }
 
     private static class ImageViewHolder{
         public ImageView mImage;

@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;

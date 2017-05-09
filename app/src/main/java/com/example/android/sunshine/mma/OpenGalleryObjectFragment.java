@@ -1,25 +1,14 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Path;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,9 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -73,7 +59,8 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
                 if (args != null) {
-                    String[] FileNameArray = args.getStringExtra(GalleryObjectFragment.IMGFILENAME).split("/");
+                    String FileName = args.getStringExtra(GalleryObjectFragment.IMGFILENAME);
+                    String[] FileNameArray = FileName.split("/");
                     File imgFile = new File(args.getStringExtra(GalleryObjectFragment.IMGFILENAME));
 
                     String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
@@ -87,7 +74,7 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
                     if (TxtFileContent != ""){
-                        adapter.addItem(TxtFileContent + "&&");
+                        adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
                         fetchClipArt.execute(listOfWords);
                     }
                 }

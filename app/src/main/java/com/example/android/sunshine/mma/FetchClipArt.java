@@ -1,12 +1,10 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONException;

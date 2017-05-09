@@ -1,17 +1,8 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.mma;
 
-import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
