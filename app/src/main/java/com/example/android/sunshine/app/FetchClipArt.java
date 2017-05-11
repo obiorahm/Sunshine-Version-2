@@ -40,11 +40,14 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
     @Override
     protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {
+        if (Result == null)
+            return;
         if (adapter instanceof ButtonTextAdapter){
             for (int i = 0; i < Result.size(); i++){
                 ArrayList<String> currResult = Result.get(i);
-                adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
-                Log.v("OnPostExecuteResult: ", currResult.get(0));
+                if (currResult.get(0) != null){
+                    adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
+                }
 
             }
         }else{

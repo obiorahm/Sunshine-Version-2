@@ -50,11 +50,4 @@ public class ImageGridAdapter extends AphasiaAdapter {
         return convertView;
     }
 
-    public void respondToClick(){
-
-    }
-
-    public void respondToClick(final String fileName){
-
-    }
 }

@@ -77,7 +77,8 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
                     if (TxtFileContent != ""){
                         adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
-                        if (isNetworkConnected())
+                        CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
+                        if (checkInternetConnection.isNetworkConnected())
                             fetchClipArt.execute(listOfWords);
                     }
                 }
@@ -102,12 +103,6 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
         }
 
 
-    }
-
-    public boolean isNetworkConnected() {
-        final ConnectivityManager conMgr = (ConnectivityManager)  this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
     }
 
     private String readFromFile(Context context, String fileName) {

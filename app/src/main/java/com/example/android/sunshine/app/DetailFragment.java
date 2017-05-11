@@ -153,7 +153,9 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             adapter.addImage(imageFile.toString());
 
             adapter.addItem(Result.getName() + "&&" + imageFile);
-            if (isNetworkConnected()) {
+
+            CheckInternetConnection checkInternetConnection = new CheckInternetConnection(getActivity());
+            if (checkInternetConnection.isNetworkConnected()) {
                 //fetchClipArt
                 FetchClipArt fetchClipArt = new FetchClipArt(adapter);
                 fetchClipArt.execute(listOfWords);
@@ -168,11 +170,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
         }
 
-        public boolean isNetworkConnected() {
-            final ConnectivityManager conMgr = (ConnectivityManager)  getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-            return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
-        }
 
         @Override
         protected /*String[]*/ CSGetResult doInBackground(File... params) {

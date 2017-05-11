@@ -19,7 +19,7 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
     public ImageExplanationFragment(){}
     public ImageGridAdapter adapter;
 
-    FetchClipArt fetchClipArt;
+    //FetchClipArt fetchClipArt;
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
@@ -34,14 +34,23 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
         Intent intent = this.getIntent();
         String searchParam = intent.getStringExtra(ButtonTextAdapter.SEARCH_PARAM);
         String [] searchParams = {""};
-        searchParams[0] = searchParam;
+        String searchParamToUpperCase = searchParam.substring(0,1).toUpperCase() + searchParam.substring(1);
+        searchParams[0] = searchParamToUpperCase;
 
+        CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
 
-        fetchClipArt = new FetchClipArt(adapter,this);
-        fetchClipArt.execute(searchParams);
+        if (checkInternetConnection.isNetworkConnected()){
+
+            FetchClipArt fetchClipArt = new FetchClipArt(adapter,this);
+            fetchClipArt.execute(searchParams);
+        }
+
 
         TextView textView = (TextView) findViewById(R.id.grid_text);
-        textView.setText(searchParam);
+        textView.setText(searchParamToUpperCase);
+
+        TextView textView1 = (TextView) findViewById(R.id.share_text);
+
 
         //Prepare for text to speech
         Intent checkTTSIntent = new Intent();
@@ -59,7 +68,7 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
 
                 if (args != null) {
 
-                    final TextView textView = (TextView) findViewById(R.id.grid_text);
+                    final TextView textView = (TextView) findViewById(R.id.speak_text);
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
