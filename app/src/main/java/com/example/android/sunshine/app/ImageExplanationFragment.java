@@ -19,6 +19,8 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
     public ImageExplanationFragment(){}
     public ImageGridAdapter adapter;
 
+
+
     //FetchClipArt fetchClipArt;
 
     private int MY_DATA_CHECK_CODE = 0;
