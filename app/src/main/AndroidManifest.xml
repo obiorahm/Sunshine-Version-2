@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.sunshine.mma">
+    package="com.example.android.sunshine.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +12,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".NewMainActivity"
-            android:label="Aphasia">
+            android:name="com.example.android.sunshine.app.NewMainActivity"
+            android:label="Viz">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,14 +21,14 @@
             </intent-filter>
         </activity>
         <activity
-        android:name=".GalleryActivity">
+        android:name="com.example.android.sunshine.app.GalleryActivity">
         <intent-filter>
             <action android:name="android.media.action.GALLERY" />
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
     </activity>
         <activity
-            android:name=".OpenGalleryObjectFragment">
+            android:name="com.example.android.sunshine.app.OpenGalleryObjectFragment">
             <intent-filter>
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -35,7 +36,7 @@
         </activity>
 
         <activity
-            android:name=".ImageExplanationFragment">
+            android:name="com.example.android.sunshine.app.ImageExplanationFragment">
             <intent-filter>
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />

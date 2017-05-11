@@ -1,4 +1,4 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 /**
  * Created by mgo983 on 4/3/17.

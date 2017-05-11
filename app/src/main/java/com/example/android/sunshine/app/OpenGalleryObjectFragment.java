@@ -1,7 +1,9 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
@@ -75,7 +77,8 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
                     if (TxtFileContent != ""){
                         adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
-                        fetchClipArt.execute(listOfWords);
+                        if (isNetworkConnected())
+                            fetchClipArt.execute(listOfWords);
                     }
                 }
                 ListView list = (ListView) this.findViewById(R.id.list_view_word);
@@ -101,6 +104,11 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
     }
 
+    public boolean isNetworkConnected() {
+        final ConnectivityManager conMgr = (ConnectivityManager)  this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
+    }
 
     private String readFromFile(Context context, String fileName) {
 

@@ -1,4 +1,4 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -120,7 +121,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
                     final String[] newString = mData.get(position).toString().split("&&");
 
-                    mHolder.mText.setText(newString[0]);
+                    mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
 
                     Log.v("GetView Function ", newString[0]);
 
@@ -130,18 +131,26 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                                 String ImageUrl = "";
 
                                 try {
-                                    JSONHandler jsonHandler = new JSONHandler();
-                                    ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                    if (newString[1] != null){
+                                        JSONHandler jsonHandler = new JSONHandler();
+                                        ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                    }
                                 } catch (JSONException e) {
                                     Log.e("JSONException", e + "");
                                 }
-                                Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+                                if (ImageUrl != null){
+                                    Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+                                }
+
                             }else{
                                 File imgFile = new  File(newString[1].toString().replace("file://",""));
 
                                 Glide.with(context).load(imgFile).into(mHolder.mImage);
 
                             }
+
+                            mHolder.mProgressBar = (ProgressBar) view.findViewById(R.id.image_load_complete);
+                            mHolder.mProgressBar.setVisibility(View.INVISIBLE);
 
 
 
@@ -179,6 +188,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     break;
             }
 
+
         return view;
     }
 
@@ -189,6 +199,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     private static class ViewHolder extends ImageViewHolder{
         private TextView mText;
+        private ProgressBar mProgressBar;
     }
 
 

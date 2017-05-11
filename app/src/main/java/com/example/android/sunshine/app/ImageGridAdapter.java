@@ -1,4 +1,4 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -36,7 +36,7 @@ public class ImageGridAdapter extends AphasiaAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (null == convertView){
             convertView = inflater.inflate(R.layout.item_grid,parent,false);
 
@@ -46,6 +46,15 @@ public class ImageGridAdapter extends AphasiaAdapter {
                 .load(imageUrls[position])
                 .into((ImageView) convertView);
 
+
         return convertView;
+    }
+
+    public void respondToClick(){
+
+    }
+
+    public void respondToClick(final String fileName){
+
     }
 }

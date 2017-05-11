@@ -12,15 +12,43 @@
         android:stretchMode="columnWidth"
         android:gravity="center"
         ></GridView>
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="whatever"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
         android:layout_gravity="bottom"
         android:gravity="center"
-        android:drawableRight="@drawable/ic_volume_up_black_18dp"
-        android:drawableEnd="@drawable/ic_volume_up_black_18dp"
-        android:id="@+id/grid_text"
-        android:textSize="14pt"
-        android:background="@color/button_material_light"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="whatever"
+            android:id="@+id/grid_text"
+            android:textSize="14pt"
+
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_volume_up_black_18dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_share_black_18dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            />
+
+
+    </LinearLayout>
+
+
 </FrameLayout>

@@ -1,7 +1,9 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -147,22 +149,29 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             //list
             ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS);
 
-            //fetchClipArt
-            FetchClipArt fetchClipArt = new FetchClipArt(adapter);
 
             adapter.addImage(imageFile.toString());
 
             adapter.addItem(Result.getName() + "&&" + imageFile);
-            fetchClipArt.execute(listOfWords);
+            if (isNetworkConnected()) {
+                //fetchClipArt
+                FetchClipArt fetchClipArt = new FetchClipArt(adapter);
+                fetchClipArt.execute(listOfWords);
 
 
-            ListView list = (ListView) getActivity().findViewById(R.id.list_view_word);
-            list.setAdapter(adapter);
-
+                ListView list = (ListView) getActivity().findViewById(R.id.list_view_word);
+                list.setAdapter(adapter);
+            }
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
 
 
+        }
+
+        public boolean isNetworkConnected() {
+            final ConnectivityManager conMgr = (ConnectivityManager)  getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
         }
 
         @Override

@@ -1,4 +1,4 @@
-package com.example.android.sunshine.mma;
+package com.example.android.sunshine.app;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.GenericUrl;

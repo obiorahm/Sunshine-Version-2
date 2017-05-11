@@ -1,0 +1,79 @@
+package com.example.android.sunshine.app;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import java.io.File;
+
+/**
+ * Created by mgo983 on 4/21/17.
+ */
+
+public class GalleryActivity extends FragmentActivity {
+
+    public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
+
+    //GalleryPagerAdapter galleryPagerAdapter;
+
+    ImageGridAdapter imageGridAdapter;
+
+    ViewPager viewPager;
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.gallery);
+
+        String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                .getAbsolutePath();
+        String targetPath = ExternalStorageDirectoryPath + "/Aphasia/";
+
+        Toast.makeText(getApplicationContext(), targetPath, Toast.LENGTH_LONG).show();
+        File targetDirectory = new File(targetPath);
+
+        //galleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
+        //viewPager = (ViewPager) findViewById(R.id.gallery_container);
+
+        File[] files = targetDirectory.listFiles();
+        int fileLength = files.length;
+        final String[] fileNames = new String[fileLength];
+        for (int i = 0; i < fileLength; i++){
+            fileNames[i] = files[i].getAbsolutePath();
+        }
+
+
+
+        imageGridAdapter = new ImageGridAdapter(this,fileNames);
+        GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        gridView.setAdapter(imageGridAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
+                Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectFragment.class);
+
+                Bundle args = new Bundle();
+                args.putString(IMGFILENAME, fileNames[position]);
+                OpenGalleryActivityIntent.putExtras(args);
+                startActivity(OpenGalleryActivityIntent);
+            }
+
+        });
+
+        /*for (File file : files){
+                galleryPagerAdapter.addItem(file.getAbsolutePath());
+
+        }*/
+        //viewPager.setAdapter(imageGridAdapter);
+
+    }
+
+}
