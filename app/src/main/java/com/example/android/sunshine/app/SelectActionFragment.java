@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,7 +11,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -43,10 +46,11 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.newmain, container, false);
 
+        TextView textView = (TextView) rootView.findViewById(R.id.app_name);
+        Typeface face=Typeface.createFromAsset(getActivity().getAssets(),"fonts/shortname.ttf");
+        textView.setTypeface(face);
 
-//click listener for image buttons
-
-        ImageButton cameraButton = (ImageButton) rootView.findViewById(R.id.camera);
+        Button cameraButton = (Button) rootView.findViewById(R.id.camera);
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -66,7 +70,7 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         });
 
 
-        ImageButton galleryButton = (ImageButton) rootView.findViewById(R.id.gallery);
+        Button galleryButton = (Button) rootView.findViewById(R.id.gallery);
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -87,6 +91,11 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        TextView textView = (TextView) getActivity().findViewById(R.id.app_name);
+        Typeface face=Typeface.createFromAsset(getActivity().getAssets(),"fonts/shortname.ttf");
+        //textView.setTypeface(face);
+
     }
 
     @Override

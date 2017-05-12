@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.example.android.sunshine.app.NewMainActivity"
-            android:label="Viz">
+            android:label="FindDWord">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -3,8 +3,12 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -18,8 +22,6 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
 
     public ImageExplanationFragment(){}
     public ImageGridAdapter adapter;
-
-
 
     //FetchClipArt fetchClipArt;
 
@@ -36,7 +38,7 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
         Intent intent = this.getIntent();
         String searchParam = intent.getStringExtra(ButtonTextAdapter.SEARCH_PARAM);
         String [] searchParams = {""};
-        String searchParamToUpperCase = searchParam.substring(0,1).toUpperCase() + searchParam.substring(1);
+        final String searchParamToUpperCase = searchParam.substring(0,1).toUpperCase() + searchParam.substring(1);
         searchParams[0] = searchParamToUpperCase;
 
         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
@@ -48,10 +50,23 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
         }
 
 
-        TextView textView = (TextView) findViewById(R.id.grid_text);
+        final TextView textView = (TextView) findViewById(R.id.grid_text);
         textView.setText(searchParamToUpperCase);
 
-        TextView textView1 = (TextView) findViewById(R.id.share_text);
+        ImageButton textView1 = (ImageButton) findViewById(R.id.share_text);
+
+        textView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = "Is this a picture of the word \"" + searchParamToUpperCase + "\". Find more pictures of this word here.";
+                String shareSubject = "I need help identifying the object in the picture";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
 
 
         //Prepare for text to speech
@@ -70,11 +85,12 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
 
                 if (args != null) {
 
-                    final TextView textView = (TextView) findViewById(R.id.speak_text);
+                    final ImageButton textView = (ImageButton) findViewById(R.id.speak_text);
+                    final TextView textView1 = (TextView) findViewById(R.id.grid_text);
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String  speech = textView.getText().toString();
+                            String  speech = textView1.getText().toString();
                             myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
                         }
