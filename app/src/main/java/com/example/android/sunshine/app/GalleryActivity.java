@@ -3,9 +3,11 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -17,7 +19,7 @@ import java.io.File;
  * Created by mgo983 on 4/21/17.
  */
 
-public class GalleryActivity extends FragmentActivity {
+public class GalleryActivity extends ActionBarActivity{
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
 
@@ -32,6 +34,7 @@ public class GalleryActivity extends FragmentActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .getAbsolutePath();
@@ -58,7 +61,7 @@ public class GalleryActivity extends FragmentActivity {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
-                Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectFragment.class);
+                Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
 
                 Bundle args = new Bundle();
                 args.putString(IMGFILENAME, fileNames[position]);
@@ -74,6 +77,23 @@ public class GalleryActivity extends FragmentActivity {
         }*/
         //viewPager.setAdapter(imageGridAdapter);
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

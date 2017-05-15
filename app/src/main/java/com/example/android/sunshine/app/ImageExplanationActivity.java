@@ -3,10 +3,12 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -18,9 +20,9 @@ import java.util.Locale;
  * Created by mgo983 on 5/4/17.
  */
 
-public class ImageExplanationFragment extends ActionBarActivity implements TextToSpeech.OnInitListener{
+public class ImageExplanationActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
 
-    public ImageExplanationFragment(){}
+    public ImageExplanationActivity(){}
     public ImageGridAdapter adapter;
 
     //FetchClipArt fetchClipArt;
@@ -34,6 +36,7 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explainfragment);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = this.getIntent();
         String searchParam = intent.getStringExtra(ButtonTextAdapter.SEARCH_PARAM);
@@ -74,6 +77,18 @@ public class ImageExplanationFragment extends ActionBarActivity implements TextT
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

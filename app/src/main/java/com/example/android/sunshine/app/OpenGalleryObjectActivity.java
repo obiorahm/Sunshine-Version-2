@@ -2,12 +2,12 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -24,7 +24,7 @@ import java.util.Locale;
  * Created by mgo983 on 4/24/17.
  */
 
-public class OpenGalleryObjectFragment extends ActionBarActivity implements TextToSpeech.OnInitListener{
+public class OpenGalleryObjectActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
 
     public final static String ARG_OBJECT = "IMGFILENAME";
     private int MY_DATA_CHECK_CODE = 0;
@@ -37,6 +37,8 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fagment_detail);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         //Prepare for text to speech
@@ -46,6 +48,18 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     //checks whether the user has the TTS data installed. If it is not, the user will be prompted to install it.
@@ -61,9 +75,9 @@ public class OpenGalleryObjectFragment extends ActionBarActivity implements Text
 
 
                 if (args != null) {
-                    String FileName = args.getStringExtra(GalleryObjectFragment.IMGFILENAME);
+                    String FileName = args.getStringExtra(GalleryActivity.IMGFILENAME);
                     String[] FileNameArray = FileName.split("/");
-                    File imgFile = new File(args.getStringExtra(GalleryObjectFragment.IMGFILENAME));
+                    File imgFile = new File(args.getStringExtra(GalleryActivity.IMGFILENAME));
 
                     String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
                     String TxtFileContent = readFromFile(this, TxtFileName);

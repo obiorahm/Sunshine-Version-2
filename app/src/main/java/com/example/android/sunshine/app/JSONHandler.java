@@ -12,15 +12,24 @@ import org.json.JSONObject;
 
 public class JSONHandler {
 
-    public String getImageUrl(String JSONString, int position) throws JSONException {
+    public String[] getImageUrl(String JSONString, int position) throws JSONException {
 
         try{
-            final String ImageUrl;
+            final String[] ImageUrl;
             final JSONObject obj = new JSONObject(JSONString);
             final JSONArray payLoad = obj.getJSONArray("payload");
-            final JSONObject firstElement = payLoad.getJSONObject(position);
-            ImageUrl = firstElement.getJSONObject("svg").getString("png_thumb");
-            Log.v("JSON Url", ImageUrl);
+
+            int lengthOfJSONEntries = payLoad.length();
+            if (lengthOfJSONEntries == 0) return null;
+            int noOfObjects = lengthOfJSONEntries >= 10 ? 10: lengthOfJSONEntries;
+
+            ImageUrl = new String[noOfObjects];
+            for (int i = 0; i < noOfObjects; i++){
+                JSONObject ithElement = payLoad.getJSONObject(i);
+                ImageUrl[i] = ithElement.getJSONObject("svg").getString("png_thumb");
+                Log.v("JSON Url", ImageUrl[i]);
+            }
+
 
             return ImageUrl;
         }catch (JSONException e){

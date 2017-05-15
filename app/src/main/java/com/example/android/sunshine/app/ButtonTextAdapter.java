@@ -128,10 +128,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                             mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
                             if (position != 1) {
-                                String ImageUrl = "";
+                                String[] ImageUrl = { };
 
                                 try {
                                     if (newString[1] != null){
+                                        Log.v("JSON String returned ", newString[1]);
                                         JSONHandler jsonHandler = new JSONHandler();
                                         ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
                                     }
@@ -139,7 +140,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                                     Log.e("JSONException", e + "");
                                 }
                                 if (ImageUrl != null){
-                                    Glide.with(context).load(Uri.parse(ImageUrl)).into(mHolder.mImage);
+                                    Glide.with(context).load(Uri.parse(ImageUrl[0])).into(mHolder.mImage);
                                 }
 
                             }else{
@@ -157,7 +158,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                             mHolder.mImage.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Intent ImageExplanationActivity = new Intent(getContext(), ImageExplanationFragment.class);
+                                    Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
                                     ImageExplanationActivity.putExtra(SEARCH_PARAM, newString[0]);
                                     context.startActivity(ImageExplanationActivity);
 

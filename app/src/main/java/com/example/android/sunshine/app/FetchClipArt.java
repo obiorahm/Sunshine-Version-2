@@ -51,22 +51,31 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
             }
         }else{
-            ArrayList<String> ImageUrls = new ArrayList<>();
+            //ArrayList<String> ImageUrls = new ArrayList<>();
             JSONHandler jsonHandler = new JSONHandler();
-            for (int i = 0; i < 10; i++){
+            String [] ImageUrls = {};
+            try{
+                ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+
+            }catch(JSONException e){}
+
+
+
+            /*for (int i = 0; i < 10; i++){
                 try{
                     ImageUrls.add(jsonHandler.getImageUrl(Result.get(0).get(1), i));
 
                 }catch(JSONException e){}
+            }*/
+
+            //String[] ImgStringArr = new String[ImageUrls.size()];
+            //ImgStringArr= ImageUrls.toArray(ImgStringArr);
+
+            if (ImageUrls != null){
+                adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
+                GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+                gridView.setAdapter(adapter);
             }
-
-            String[] ImgStringArr = new String[ImageUrls.size()];
-            ImgStringArr= ImageUrls.toArray(ImgStringArr);
-
-            adapter = new ImageGridAdapter(context, ImgStringArr);
-            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
-            gridView.setAdapter(adapter);
-
         }
 
 

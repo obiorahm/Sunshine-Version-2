@@ -21,14 +21,16 @@
             </intent-filter>
         </activity>
         <activity
-        android:name="com.example.android.sunshine.app.GalleryActivity">
-        <intent-filter>
-            <action android:name="android.media.action.GALLERY" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-    </activity>
+            android:name="com.example.android.sunshine.app.GalleryActivity"
+            android:parentActivityName=".NewMainActivity">
+            <intent-filter>
+                <action android:name="android.media.action.GALLERY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name="com.example.android.sunshine.app.OpenGalleryObjectFragment">
+            android:name="com.example.android.sunshine.app.OpenGalleryObjectActivity"
+            android:parentActivityName=".GalleryActivity">
             <intent-filter>
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -36,7 +38,8 @@
         </activity>
 
         <activity
-            android:name="com.example.android.sunshine.app.ImageExplanationFragment">
+            android:name="com.example.android.sunshine.app.ImageExplanationActivity"
+            android:parentActivityName=".OpenGalleryObjectActivity">
             <intent-filter>
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />
