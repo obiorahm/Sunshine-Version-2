@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NavUtils;
@@ -22,6 +23,7 @@ import java.io.File;
 public class GalleryActivity extends ActionBarActivity{
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
+    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_NAME";
 
     //GalleryPagerAdapter galleryPagerAdapter;
 
@@ -66,16 +68,20 @@ public class GalleryActivity extends ActionBarActivity{
                 Bundle args = new Bundle();
                 args.putString(IMGFILENAME, fileNames[position]);
                 OpenGalleryActivityIntent.putExtras(args);
+
+                //use sharedpreference to save data so that back button works
+                SharedPreferences sharedPreference;
+                SharedPreferences.Editor editor;
+                sharedPreference = getApplicationContext().getSharedPreferences(IMGFILENAME, getApplicationContext().MODE_PRIVATE);
+                editor = sharedPreference.edit();
+
+                editor.putString(IMGFILEKEY,fileNames[position]);
+                editor.commit();
                 startActivity(OpenGalleryActivityIntent);
             }
 
         });
 
-        /*for (File file : files){
-                galleryPagerAdapter.addItem(file.getAbsolutePath());
-
-        }*/
-        //viewPager.setAdapter(imageGridAdapter);
 
     }
 

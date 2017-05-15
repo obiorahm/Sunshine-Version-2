@@ -16,7 +16,6 @@
             android:label="FindDWord">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,6 +26,9 @@
                 <action android:name="android.media.action.GALLERY" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.sunshine.app.NewMainActivity" />
         </activity>
         <activity
             android:name="com.example.android.sunshine.app.OpenGalleryObjectActivity"
@@ -35,6 +37,10 @@
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.sunshine.app.GalleryActivity" />
+
         </activity>
 
         <activity
@@ -44,6 +50,10 @@
                 <action android:name="android.media.action.OBJECT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.sunshine.app.OpenGalleryObjectActivity" />
+
         </activity>
     </application>
 

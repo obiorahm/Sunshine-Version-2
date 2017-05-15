@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
@@ -26,7 +27,11 @@ import java.util.Locale;
 
 public class OpenGalleryObjectActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
 
-    public final static String ARG_OBJECT = "IMGFILENAME";
+    //public final static String ARG_OBJECT = "IMGFILENAME";
+
+    public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
+    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_NAME";
+
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
     private ButtonTextAdapter adapter;
@@ -75,9 +80,15 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
 
                 if (args != null) {
-                    String FileName = args.getStringExtra(GalleryActivity.IMGFILENAME);
+
+                    SharedPreferences sharedPreferences;
+                    String FileName;
+                    sharedPreferences = getApplicationContext().getSharedPreferences(IMGFILENAME, Context.MODE_PRIVATE); //1
+                    FileName = sharedPreferences.getString(IMGFILEKEY, null);
+
+                    //String FileName = args.getStringExtra(GalleryActivity.IMGFILENAME);
                     String[] FileNameArray = FileName.split("/");
-                    File imgFile = new File(args.getStringExtra(GalleryActivity.IMGFILENAME));
+                    File imgFile = new File(FileName);
 
                     String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
                     String TxtFileContent = readFromFile(this, TxtFileName);
