@@ -2,8 +2,6 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -97,8 +95,8 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
         Bundle bundle = this.getArguments();
         if (bundle != null){
-            Uri ImgDirectory = bundle.getParcelable(CameraFragment.EXTRA_IMAGE);
-            String FileName = bundle.getString(CameraFragment.EXTRA_TARGET);
+            Uri ImgDirectory = bundle.getParcelable(SelectActionFragment.EXTRA_IMAGE);
+            String FileName = bundle.getString(SelectActionFragment.EXTRA_TARGET);
             Uri FullFilePath = Uri.withAppendedPath(ImgDirectory, FileName);
             return FullFilePath;
         }

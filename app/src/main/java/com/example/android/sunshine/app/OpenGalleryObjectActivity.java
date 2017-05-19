@@ -83,10 +83,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
                     SharedPreferences sharedPreferences;
                     String FileName;
-                    sharedPreferences = getApplicationContext().getSharedPreferences(IMGFILENAME, Context.MODE_PRIVATE); //1
+                    sharedPreferences = getApplicationContext().getSharedPreferences(IMGFILENAME, Context.MODE_PRIVATE);
                     FileName = sharedPreferences.getString(IMGFILEKEY, null);
 
-                    //String FileName = args.getStringExtra(GalleryActivity.IMGFILENAME);
                     String[] FileNameArray = FileName.split("/");
                     File imgFile = new File(FileName);
 
@@ -111,7 +110,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                 list.setAdapter(adapter);
 
                 ProgressBar progressBar = (ProgressBar) this.findViewById(R.id.search_complete);
-                progressBar.setVisibility(View.INVISIBLE);
+                //progressBar.setVisibility(View.INVISIBLE);
             } else {
                 Intent installTTSIntent = new Intent();
                 installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);

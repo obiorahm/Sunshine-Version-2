@@ -30,6 +30,7 @@ public class GalleryActivity extends ActionBarActivity{
     ImageGridAdapter imageGridAdapter;
 
     ViewPager viewPager;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
 
@@ -64,10 +65,6 @@ public class GalleryActivity extends ActionBarActivity{
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
                 Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
-
-                Bundle args = new Bundle();
-                args.putString(IMGFILENAME, fileNames[position]);
-                OpenGalleryActivityIntent.putExtras(args);
 
                 //use sharedpreference to save data so that back button works
                 SharedPreferences sharedPreference;

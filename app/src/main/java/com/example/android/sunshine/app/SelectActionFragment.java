@@ -38,6 +38,7 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
 
     String targetFilename = "sun" + currentDateTimeString.replace(" ","") + ".jpg";
 
+
     public SelectActionFragment() {
     }
 
@@ -55,11 +56,6 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-/*                CameraFragment nextFrag= new CameraFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.container,nextFrag)
-                        .addToBackStack(null)
-                        .commit();*/
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.withAppendedPath(mLocationForPhotos, targetFilename));
@@ -118,7 +114,6 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
                     .replace(R.id.container,nextFrag)
                     .addToBackStack(null)
                     .commit();
-
 
         }
     }
