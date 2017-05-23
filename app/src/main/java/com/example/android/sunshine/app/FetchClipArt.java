@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import org.json.JSONException;
 
@@ -48,7 +50,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 if (currResult.get(0) != null){
                     adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
                 }
-
             }
         }else{
             //ArrayList<String> ImageUrls = new ArrayList<>();
@@ -61,20 +62,11 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
 
 
-            /*for (int i = 0; i < 10; i++){
-                try{
-                    ImageUrls.add(jsonHandler.getImageUrl(Result.get(0).get(1), i));
-
-                }catch(JSONException e){}
-            }*/
-
-            //String[] ImgStringArr = new String[ImageUrls.size()];
-            //ImgStringArr= ImageUrls.toArray(ImgStringArr);
-
             if (ImageUrls != null){
                 adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
                 GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
                 gridView.setAdapter(adapter);
+
             }
         }
 

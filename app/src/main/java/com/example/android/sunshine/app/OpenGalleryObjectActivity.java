@@ -30,7 +30,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     //public final static String ARG_OBJECT = "IMGFILENAME";
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
-    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_NAME";
+    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
@@ -110,7 +110,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                 list.setAdapter(adapter);
 
                 ProgressBar progressBar = (ProgressBar) this.findViewById(R.id.search_complete);
-                //progressBar.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
             } else {
                 Intent installTTSIntent = new Intent();
                 installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);

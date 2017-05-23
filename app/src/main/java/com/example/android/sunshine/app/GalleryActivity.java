@@ -23,7 +23,7 @@ import java.io.File;
 public class GalleryActivity extends ActionBarActivity{
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
-    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_NAME";
+    public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";
 
     //GalleryPagerAdapter galleryPagerAdapter;
 

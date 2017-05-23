@@ -163,7 +163,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
                 list.setAdapter(adapter);
             }
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.search_complete);
-            progressBar.setVisibility(View.INVISIBLE);
+            //progressBar.setVisibility(View.INVISIBLE);
 
 
         }
@@ -250,5 +250,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         }
         super.onDestroy();
     }
+
 
 }
