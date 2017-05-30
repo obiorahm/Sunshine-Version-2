@@ -1,13 +1,16 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -46,10 +49,17 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
 
         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
 
+        //get preferred search engine
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String[] prefSearchParam = {sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value))};
+        //searchParams[1] = prefSearchParam;
+        Log.v("The second",prefSearchParam[0]);
+
+
         if (checkInternetConnection.isNetworkConnected()){
 
             FetchClipArt fetchClipArt = new FetchClipArt(adapter,this);
-            fetchClipArt.execute(searchParams);
+            fetchClipArt.execute(searchParams, prefSearchParam);
         }
 
 

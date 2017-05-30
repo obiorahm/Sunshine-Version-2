@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -96,8 +98,10 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
-        //inflater.inflate(R.menu.forecastfragment,menu);
+        //inflater.inflate(R.menu.main,menu);
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

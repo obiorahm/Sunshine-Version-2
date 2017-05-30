@@ -55,6 +55,19 @@
                 android:value="com.example.android.sunshine.app.OpenGalleryObjectActivity" />
 
         </activity>
+
+        <activity
+            android:name="com.example.android.sunshine.app.SettingsActivity"
+            android:parentActivityName=".NewMainActivity">
+            <intent-filter>
+                <action android:name="android.media.action.SETTINGS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.sunshine.app.NewMainActivity" />
+
+        </activity>
     </application>
 
 </manifest>

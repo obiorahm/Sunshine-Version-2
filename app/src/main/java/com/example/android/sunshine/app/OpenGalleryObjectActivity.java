@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -78,6 +79,10 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
                 Intent args = this.getIntent();
 
+                //get preferred search engine
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+                String[] prefSearchParam = {sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value))};
+
 
                 if (args != null) {
 
@@ -103,7 +108,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                         adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
                         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
                         if (checkInternetConnection.isNetworkConnected())
-                            fetchClipArt.execute(listOfWords);
+                            fetchClipArt.execute(listOfWords, prefSearchParam);
                     }
                 }
                 ListView list = (ListView) this.findViewById(R.id.list_view_word);

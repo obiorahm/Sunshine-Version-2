@@ -81,43 +81,100 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         if (params.length == 0)
             return null;
-        if (adapter instanceof  ButtonTextAdapter){
-            for (int i = 0; i < params[0].length; i++){
+        switch (params[1][0]){
+            case "1":
+                if (adapter instanceof  ButtonTextAdapter){
+                    for (int i = 0; i < params[0].length; i++){
 
 
-                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][i], "1"));
-            }
-        }else{
-                ClipArtJson.add(getJSONData("https://openclipart.org/search/json/","table",params[0][0], "10"));
+                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","table",params[0][i], "1"),params[0][i]));
+                    }
+                }else{
+                    ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","table",params[0][0], "10"),params[0][0]));
+
+                }
+                break;
+            case "2":
+                if (adapter instanceof  ButtonTextAdapter){
+                    for (int i = 0; i < params[0].length; i++){
+
+
+                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][i], "1"),params[0][i]));
+                    }
+                }else{
+                    ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][0], "10"), params[0][0]));
+
+                }
+                break;
 
         }
+
 
 
 
         return ClipArtJson;
     }
 
-    protected  ArrayList<String> getJSONData(String baseUrl, String apiKey, String queryParameter, String amount){
+    private Uri buildOpenClipArtUri(String baseUrl, String apiKey, String queryParameter, String amount){
+        final String CLIPART_BASE_URL = baseUrl;
+        final String API_KEY = apiKey;
+        final String QUERY = "query";
+        final String AMOUNT = "amount";
+
+        final String SORT = "sort";
+
+        Uri buildUri = null;
+
+        buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+                .appendQueryParameter(QUERY, queryParameter)
+                .appendQueryParameter(AMOUNT,amount)
+                .appendQueryParameter(SORT, "downloads")
+                .build();
+        return buildUri;
+
+
+    }
+
+
+    private Uri buildPixaBayUri(String baseUrl, String apiKey, String queryParameter, String amount){
+        final String CLIPART_BASE_URL = baseUrl;
+        final String API_KEY = "key";
+        final String QUERY = "q";
+
+        Uri buildUri = null;
+
+        buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+                .appendQueryParameter(API_KEY,apiKey)
+                .appendQueryParameter(QUERY, queryParameter)
+
+                .build();
+        return buildUri;
+    }
+
+
+    protected  ArrayList<String> getJSONData(Uri SearchUri, String queryParameter /*String baseUrl, String apiKey, String queryParameter, String amount*/){
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
         ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
 
         try{
-            final String CLIPART_BASE_URL = baseUrl;
+            /*final String CLIPART_BASE_URL = baseUrl;
             final String API_KEY = apiKey;
             final String QUERY = "query";
             final String AMOUNT = "amount";
 
-            final String SORT = "sort";
+            final String SORT = "sort";*/
 
             Uri buildUri = null;
 
-            buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+            /*buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY, queryParameter)
                     .appendQueryParameter(AMOUNT,amount)
                     .appendQueryParameter(SORT, "downloads")
-                    .build();
+                    .build();*/
+
+            buildUri = SearchUri; //buildOpenClipArtUri(baseUrl, apiKey, queryParameter, amount);
 
             URL url = new URL(buildUri.toString());
             Log.v(LOG_TAG,"The built Uri " + url);

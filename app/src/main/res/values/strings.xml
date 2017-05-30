@@ -9,5 +9,17 @@
     <string name="title_activity_detail">Image Search</string>
     <string name="gallery">Gallery</string>
     <string name="Capture">Capture</string>
+    <string name="pref_search_key" translatable="false">search_engine</string>
+    <string name="pref_search_default_value">2</string>
 
+
+    <string-array name="pref_search_engine">
+        <item>Open Clip Art</item>
+        <item>Pixabay</item>
+    </string-array>
+
+    <string-array name="pref_search_engine_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
