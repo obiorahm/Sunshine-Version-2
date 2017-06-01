@@ -2,9 +2,11 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ShareActionProvider;
@@ -144,18 +146,24 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             //Save the retrieved text
             writeToFile(searchResult,TxtFileName,getActivity());
 
+            //get preferred search engine
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String prefSearchParam = sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value));
             //list
-            ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS);
+            ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS, prefSearchParam);
 
 
             adapter.addImage(imageFile.toString());
 
             adapter.addItem(Result.getName() + "&&" + imageFile);
 
+
+
+
             CheckInternetConnection checkInternetConnection = new CheckInternetConnection(getActivity());
             if (checkInternetConnection.isNetworkConnected()) {
                 //fetchClipArt
-                FetchClipArt fetchClipArt = new FetchClipArt(adapter);
+                FetchClipArt fetchClipArt = new FetchClipArt(adapter, prefSearchParam);
                 fetchClipArt.execute(listOfWords);
 
 
@@ -163,7 +171,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
                 list.setAdapter(adapter);
             }
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.search_complete);
-            //progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
 
 
         }

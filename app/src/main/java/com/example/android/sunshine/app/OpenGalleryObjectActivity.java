@@ -73,15 +73,16 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                myTTS = new TextToSpeech(this, this);
-
-                adapter = new ButtonTextAdapter(this, myTTS);
-
-                Intent args = this.getIntent();
 
                 //get preferred search engine
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-                String[] prefSearchParam = {sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value))};
+                String prefSearchParam = sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value));
+
+                myTTS = new TextToSpeech(this, this);
+
+                adapter = new ButtonTextAdapter(this, myTTS, prefSearchParam);
+
+                Intent args = this.getIntent();
 
 
                 if (args != null) {
@@ -98,7 +99,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                     String TxtFileContent = readFromFile(this, TxtFileName);
                     String[] listOfWords = TxtFileContent.split(" ");
 
-                    FetchClipArt fetchClipArt = new FetchClipArt(adapter);
+                    FetchClipArt fetchClipArt = new FetchClipArt(adapter, prefSearchParam);
 
                     adapter.addImage(imgFile.toString());
                     Log.v("Textfile content is ", TxtFileContent);
@@ -108,7 +109,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                         adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
                         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
                         if (checkInternetConnection.isNetworkConnected())
-                            fetchClipArt.execute(listOfWords, prefSearchParam);
+                            fetchClipArt.execute(listOfWords);
                     }
                 }
                 ListView list = (ListView) this.findViewById(R.id.list_view_word);

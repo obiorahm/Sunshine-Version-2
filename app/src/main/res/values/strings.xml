@@ -14,10 +14,10 @@
 
 
     <string-array name="pref_search_engine">
-        <item>Open Clip Art</item>
         <item>Pixabay</item>
+        <item>Open Clip Art</item>
     </string-array>
-
+9
     <string-array name="pref_search_engine_values">
         <item>1</item>
         <item>2</item>

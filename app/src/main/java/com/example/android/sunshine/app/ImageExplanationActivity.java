@@ -51,15 +51,15 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
 
         //get preferred search engine
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String[] prefSearchParam = {sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value))};
+        String prefSearchParam = sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value));
         //searchParams[1] = prefSearchParam;
-        Log.v("The second",prefSearchParam[0]);
+        Log.v("The second",prefSearchParam);
 
 
         if (checkInternetConnection.isNetworkConnected()){
 
-            FetchClipArt fetchClipArt = new FetchClipArt(adapter,this);
-            fetchClipArt.execute(searchParams, prefSearchParam);
+            FetchClipArt fetchClipArt = new FetchClipArt(adapter,this, prefSearchParam);
+            fetchClipArt.execute(searchParams);
         }
 
 

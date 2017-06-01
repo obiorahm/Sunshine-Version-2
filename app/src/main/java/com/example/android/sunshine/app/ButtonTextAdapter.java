@@ -30,6 +30,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     private final Context context;
     private final TextToSpeech myTTS;
+    private String searchEngine;
 
     private ArrayList mData = new ArrayList();
 
@@ -46,10 +47,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     private LayoutInflater inflater;
     public ButtonTextAdapter(Context context,
-                         TextToSpeech myTTS) {
+                         TextToSpeech myTTS, String searchEngine) {
         super(context, R.layout.list_item_search);
         this.context = context;
         this.myTTS = myTTS;
+        this.searchEngine = searchEngine;
         inflater = LayoutInflater.from(context);
 
     }
@@ -132,9 +134,17 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                                 try {
                                     if (newString[1] != null){
-                                        Log.v("JSON String returned ", newString[1]);
-                                        JSONHandler jsonHandler = new JSONHandler();
-                                        ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                        Log.v("In Pixabay section", this.searchEngine);
+
+                                        if (this.searchEngine.equals("1")){
+
+                                            PixabayJSONHandler jsonHandler = new PixabayJSONHandler();
+
+                                            ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                        }else{
+                                            OpenClipArtJSONHandler jsonHandler =new OpenClipArtJSONHandler();
+                                            ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
+                                        }
                                     }
                                 } catch (JSONException e) {
                                     Log.e("JSONException", e + "");

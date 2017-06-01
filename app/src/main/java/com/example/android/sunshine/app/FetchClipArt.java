@@ -26,16 +26,19 @@ import java.util.ArrayList;
 public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
     private AphasiaAdapter adapter;
     private Context context;
+    private String chooseEngine;
 
 
-    public FetchClipArt(ButtonTextAdapter newAdapter){
+    public FetchClipArt(ButtonTextAdapter newAdapter, String newChooseEngine ){
         adapter = newAdapter;
+        chooseEngine = newChooseEngine;
     }
 
-    public FetchClipArt(ImageGridAdapter newAdapter, Context newContext)
+    public FetchClipArt(ImageGridAdapter newAdapter, Context newContext, String newChooseEngine)
     {
         adapter = newAdapter;
         context = newContext;
+        chooseEngine = newChooseEngine;
     }
 
     private final String LOG_TAG = FetchClipArt.class.getSimpleName();
@@ -53,10 +56,18 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             }
         }else{
             //ArrayList<String> ImageUrls = new ArrayList<>();
-            JSONHandler jsonHandler = new JSONHandler();
+
             String [] ImageUrls = {};
             try{
-                ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+                if (chooseEngine .equals("1")){
+                    PixabayJSONHandler jsonHandler = new PixabayJSONHandler();
+
+                    ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+                }else{
+                    OpenClipArtJSONHandler jsonHandler = new OpenClipArtJSONHandler();
+                    ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+
+                }
 
             }catch(JSONException e){}
 
@@ -81,16 +92,16 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         if (params.length == 0)
             return null;
-        switch (params[1][0]){
+        switch (chooseEngine){
             case "1":
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
 
 
-                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","table",params[0][i], "1"),params[0][i]));
+                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][i], "1"),params[0][i]));
                     }
                 }else{
-                    ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","table",params[0][0], "10"),params[0][0]));
+                    ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][0], "10"),params[0][0]));
 
                 }
                 break;
