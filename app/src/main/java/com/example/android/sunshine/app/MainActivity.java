@@ -31,7 +31,38 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+        Log.v("On Create ", "On Create");
     }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v("On Pause ", "On Pause");
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v("On Resume ", "On Resume");
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v("On Stop ", "On Stop");
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.v("On Start ", "On Start");
+    }
+
+@Override
+protected void onDestroy(){
+    super.onDestroy();
+    Log.v("On Destroy ","On Destroy");
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
