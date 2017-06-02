@@ -58,6 +58,8 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                targetFilename = "sun" + currentDateTimeString.replace(" ","") + ".jpg";
+
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.withAppendedPath(mLocationForPhotos, targetFilename));
