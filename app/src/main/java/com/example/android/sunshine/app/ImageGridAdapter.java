@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -35,16 +38,27 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     }
 
+    public void uncheckAllItems(View view){
+        for (int i = 0; i < ((GridView) view).getCount(); i++){
+            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
+            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
+            checkBox.setVisibility(view.VISIBLE);
+        }
+
+    }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (null == convertView){
             convertView = inflater.inflate(R.layout.item_grid,parent,false);
-
         }
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.film_fragment_image_view);
+
         Glide
                 .with(context)
                 .load(imageUrls[position])
-                .into((ImageView) convertView);
+                .centerCrop()
+                .into(imageView);
 
 
         return convertView;

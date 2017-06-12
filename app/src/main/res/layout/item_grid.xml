@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentDescription="an image"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:id="@+id/film_fragment_image_view"
-    android:background="@drawable/image_border">>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
-</ImageView>
+    <ImageView
+        android:contentDescription="an image"
+        android:layout_width="match_parent"
+        android:layout_height="135dp"
+        android:id="@+id/film_fragment_image_view"
+        android:background="@drawable/image_border">
+
+    </ImageView>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_checkbox"
+        android:visibility="invisible"
+        android:buttonTint="@color/colorPrimaryDark" />
+
+</FrameLayout>

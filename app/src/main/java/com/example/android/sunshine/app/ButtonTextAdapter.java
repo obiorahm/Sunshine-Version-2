@@ -150,13 +150,13 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                                     Log.e("JSONException", e + "");
                                 }
                                 if (ImageUrl != null){
-                                    Glide.with(context).load(Uri.parse(ImageUrl[0])).into(mHolder.mImage);
+                                    Glide.with(context).load(Uri.parse(ImageUrl[0])).centerCrop().into(mHolder.mImage);
                                 }
 
                             }else{
                                 File imgFile = new  File(newString[1].toString().replace("file://",""));
 
-                                Glide.with(context).load(imgFile).into(mHolder.mImage);
+                                Glide.with(context).load(imgFile).centerCrop().into(mHolder.mImage);
 
                             }
 

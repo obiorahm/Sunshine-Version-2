@@ -27,5 +27,7 @@
         android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
         android:gravity="center"
+        android:background="@color/colorPrimary"
+        android:listSelector="@drawable/abc_list_selector_background_transition_holo_dark"
         ></GridView>
 </FrameLayout>
