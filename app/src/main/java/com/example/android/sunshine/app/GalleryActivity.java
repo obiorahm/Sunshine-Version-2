@@ -1,14 +1,20 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
+import android.app.LauncherActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +22,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,6 +48,10 @@ public class GalleryActivity extends ActionBarActivity{
     ImageGridAdapter imageGridAdapter;
 
     ViewPager viewPager;
+
+    boolean deleteMenuShow = false;
+
+    boolean ONLONGCLICKMODE = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -72,64 +85,129 @@ public class GalleryActivity extends ActionBarActivity{
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
         gridView.setAdapter(imageGridAdapter);
 
-        //gridView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        ActionBar actionBar = getSupportActionBar();
+
+
+        actionBar.setDisplayShowHomeEnabled(true);
+
+        //displaying custom ActionBar
+        View mActionBarView = getLayoutInflater().inflate(R.layout.my_action_bar, null);
+        actionBar.setCustomView(mActionBarView);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+
+
+        ImageView imageButton1 = (ImageView) gridView.findViewById(R.id.film_fragment_image_view);
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
-                Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
+                if (!ONLONGCLICKMODE){
+                    Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
 
-                //use sharedpreference to save data so that back button works
-                SharedPreferences sharedPreference;
-                SharedPreferences.Editor editor;
-                sharedPreference = getApplicationContext().getSharedPreferences(IMGFILENAME, getApplicationContext().MODE_PRIVATE);
-                editor = sharedPreference.edit();
+                    //use sharedpreference to save data so that back button works
+                    SharedPreferences sharedPreference;
+                    SharedPreferences.Editor editor;
+                    sharedPreference = getApplicationContext().getSharedPreferences(IMGFILENAME, getApplicationContext().MODE_PRIVATE);
+                    editor = sharedPreference.edit();
 
-                editor.putString(IMGFILEKEY,fileNames[position]);
-                editor.commit();
-                startActivity(OpenGalleryActivityIntent);
+                    editor.putString(IMGFILEKEY,fileNames[position]);
+                    editor.commit();
+                    startActivity(OpenGalleryActivityIntent);
+
+                }else{
+                    imageAnimation(gridView,position);
+                    checkCurrentItem(view);
+                }
             }
 
         });
+
         final int SELECT_PHOTO = 1;
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             public  boolean onItemLongClick(AdapterView<?> adapterView, final View view, int position, long l){
 
-                ImageView imageView = (ImageView) view.findViewById(R.id.film_fragment_image_view);
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.image_checkbox);
-                checkBox.setChecked(true);
+                imageAnimation(gridView,position);
 
-                view.animate().scaleX(0.8f);
-                view.animate().scaleY(0.8f);
+                if (!ONLONGCLICKMODE){
+                    imageGridAdapter.unCheckAllItems(gridView);
+                    imageGridAdapter.visibleCheckboxes(gridView);
+                    invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
+                    CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
+                    imageButton.setVisibility(View.VISIBLE);
+                    ONLONGCLICKMODE = true;
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final View view1 = view;
-                        view1.animate().scaleX(1.0f);
-                        view1.animate().scaleY(1.0f);
+                }
 
-                    }
-                }, 200);
-
-                imageGridAdapter.uncheckAllItems(gridView);
-
-
-
-
-                //view.animate().translationY(view.getHeight()).alpha(1.0f);
-                //imageView.setBackgroundColor(getResources().getColor(R.color.colorMaroon));
+                checkCurrentItem(view);
                 return true;
             }
+
+
         });
 
 
+    imageButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+            if (imageButton.isChecked()){
+                imageGridAdapter.checkAllItems(gridView);
+            }else {
+                imageGridAdapter.unCheckAllItems(gridView);
+            }
+        }
+    });
+
     }
 
+    public void imageAnimation(GridView gridView, int position){
+        final FrameLayout child = (FrameLayout) gridView.getChildAt(position);
+        child.animate().scaleX(0.8f);
+        child.animate().scaleY(0.8f);
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final View view1 = child;
+                view1.animate().scaleX(1.0f);
+                view1.animate().scaleY(1.0f);
+
+            }
+        }, 200);
+    }
+
+    public void checkCurrentItem(View view){
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.image_checkbox);
+        checkBox.setVisibility(View.VISIBLE);
+        checkBox.setChecked(true);
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (ONLONGCLICKMODE){
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(true);
+            menu.getItem(2).setVisible(false);
+
+
+
+        }else {
+
+
+            menu.getItem(0).setVisible(false);
+            menu.getItem(1).setVisible(false);
+            menu.getItem(2).setVisible(true);
+
+
+        }
+        super.onPrepareOptionsMenu(menu);
+        return true;
+    }
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
 
@@ -143,8 +221,31 @@ public class GalleryActivity extends ActionBarActivity{
             case R.id.action_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed(){
+        GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+
+        if (ONLONGCLICKMODE){
+            ONLONGCLICKMODE = false;
+            invalidateOptionsMenu();
+            imageGridAdapter.invisibleCheckboxes(gridView);
+            imageButton.setVisibility(View.INVISIBLE);
+
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayShowHomeEnabled(true);
+
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+
 
 }

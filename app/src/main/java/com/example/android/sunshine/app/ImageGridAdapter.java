@@ -38,11 +38,39 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     }
 
-    public void uncheckAllItems(View view){
+    public void unCheckAllItems(View view){
+        for (int i = 0; i < ((GridView) view).getCount(); i++){
+            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
+            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
+            checkBox.setChecked(false);
+        }
+
+    }
+
+    public void visibleCheckboxes(View view){
         for (int i = 0; i < ((GridView) view).getCount(); i++){
             FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             checkBox.setVisibility(view.VISIBLE);
+        }
+
+    }
+
+    public void checkAllItems(View view){
+        for (int i = 0; i < ((GridView) view).getCount(); i++){
+            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
+            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
+            checkBox.setChecked(true);
+        }
+
+    }
+
+
+    public void invisibleCheckboxes(View view){
+        for (int i = 0; i < ((GridView) view).getCount(); i++){
+            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
+            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
+            checkBox.setVisibility(view.INVISIBLE);
         }
 
     }

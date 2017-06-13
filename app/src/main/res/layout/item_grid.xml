@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:id="@+id/item_grid">
 
     <ImageView
         android:contentDescription="an image"
         android:layout_width="match_parent"
         android:layout_height="135dp"
         android:id="@+id/film_fragment_image_view"
-        android:background="@drawable/image_border">
+        android:background="@drawable/image_border"
+        android:focusable="false">
 
     </ImageView>
     <CheckBox
@@ -16,6 +18,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/image_checkbox"
         android:visibility="invisible"
-        android:buttonTint="@color/colorPrimaryDark" />
+        android:buttonTint="@color/colorPrimaryDark"
+        android:focusable="false"
+/>
 
 </FrameLayout>

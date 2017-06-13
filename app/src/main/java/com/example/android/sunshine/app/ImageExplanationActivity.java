@@ -132,6 +132,7 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
     }
 
 
+
     @Override
     public void onInit(int initStatus) {
 
