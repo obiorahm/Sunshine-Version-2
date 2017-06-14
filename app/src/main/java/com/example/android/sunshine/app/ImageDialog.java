@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +32,15 @@ public class ImageDialog extends DialogFragment {
                 .load(imageUrl)
                 .centerCrop()
                 .into(imageView);
+
+        //dismiss dialog on click x button
+        ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.close_dialog);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
 
         // Inflate the layout to use as dialog or embedded fragment
         return rootView;

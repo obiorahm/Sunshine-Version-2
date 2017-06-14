@@ -10,6 +10,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/close_dialog"
         android:src="@drawable/ic_close_white_18dp" />
 
 </FrameLayout>

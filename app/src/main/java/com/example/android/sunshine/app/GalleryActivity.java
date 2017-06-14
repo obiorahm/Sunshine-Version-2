@@ -33,6 +33,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mgo983 on 4/21/17.
@@ -72,14 +78,25 @@ public class GalleryActivity extends ActionBarActivity{
         //viewPager = (ViewPager) findViewById(R.id.gallery_container);
 
         File[] files = targetDirectory.listFiles();
+        targetDirectory.lastModified();
         int fileLength = files.length;
         final String[] fileNames = new String[fileLength];
+        final long[][] fileDateModified = new long[2][fileLength];
+
+
         for (int i = 0; i < fileLength; i++){
             fileNames[i] = files[i].getAbsolutePath();
+
+
         }
 
 
 
+        List<String> fileNameList = Arrays.asList(fileNames);
+        Collections.sort(fileNameList);
+        for (int i = 0; i < fileNameList.size(); i++){
+            fileNames[i] = fileNameList.get(i);
+        }
 
         imageGridAdapter = new ImageGridAdapter(this,fileNames);
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
