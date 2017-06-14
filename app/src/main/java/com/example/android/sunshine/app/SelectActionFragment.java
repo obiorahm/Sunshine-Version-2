@@ -38,7 +38,7 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
 
     String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
 
-    String targetFilename = "sun" + currentDateTimeString.replace(" ","") + ".jpg";
+    String targetFilename = " ";
 
 
     public SelectActionFragment() {
@@ -58,7 +58,10 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
                 targetFilename = "sun" + currentDateTimeString.replace(" ","") + ".jpg";
+
 
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,

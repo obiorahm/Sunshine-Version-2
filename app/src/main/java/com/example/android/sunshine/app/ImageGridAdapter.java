@@ -75,6 +75,10 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     }
 
+    public String getImageUrl(int position){
+        return imageUrls[position];
+    }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (null == convertView){

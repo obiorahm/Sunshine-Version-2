@@ -93,7 +93,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     }
 
     private Uri getImage() {
-        Intent intent = getActivity().getIntent();
+        //Intent intent = getActivity().getIntent();
 
         Bundle bundle = this.getArguments();
         if (bundle != null){

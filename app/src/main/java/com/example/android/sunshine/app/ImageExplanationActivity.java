@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -13,6 +14,8 @@ import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -32,6 +35,9 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
+
+
+    public final static String EXTRA_DIALOG_IMAGE = "com.example.android.sunshine.extraImage";
 
 
 
@@ -60,6 +66,7 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
 
             FetchClipArt fetchClipArt = new FetchClipArt(adapter,this, prefSearchParam);
             fetchClipArt.execute(searchParams);
+            adapter = fetchClipArt.getAdapter();
         }
 
 
@@ -81,6 +88,23 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
             }
         });
 
+
+        final GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+
+
+                DialogFragment newFragment = new ImageDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString(EXTRA_DIALOG_IMAGE, ((ImageGridAdapter)gridView.getAdapter()).getImageUrl(position));
+
+                newFragment.setArguments(bundle);
+
+                newFragment.show(getSupportFragmentManager(),"what?");
+            }
+        });
 
         //Prepare for text to speech
         Intent checkTTSIntent = new Intent();

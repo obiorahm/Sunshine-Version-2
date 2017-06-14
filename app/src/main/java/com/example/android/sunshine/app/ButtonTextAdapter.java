@@ -3,7 +3,9 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +34,8 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private final TextToSpeech myTTS;
     private String searchEngine;
 
-    private ArrayList mData = new ArrayList();
+    //private ArrayList mData = new ArrayList();
+    public ArrayList mData = new ArrayList();
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_IMAGE = 1;
@@ -191,10 +194,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 case TYPE_IMAGE:
                     mHolder = new ViewHolder();
 
-                    File imgFile = new  File(mData.get(position).toString().replace("file://",""));
+                    final File imgFile = new  File(mData.get(position).toString().replace("file://",""));
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.list_captured_image);
                     Glide.with(context).load(imgFile).into(mHolder.mImage);
+
                     view.setTag(mHolder);
                     break;
             }

@@ -126,6 +126,10 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         return ClipArtJson;
     }
 
+    public ImageGridAdapter getAdapter(){
+        return (ImageGridAdapter) adapter;
+    }
+
     private Uri buildOpenClipArtUri(String baseUrl, String apiKey, String queryParameter, String amount){
         final String CLIPART_BASE_URL = baseUrl;
         final String API_KEY = apiKey;
@@ -170,20 +174,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
 
         try{
-            /*final String CLIPART_BASE_URL = baseUrl;
-            final String API_KEY = apiKey;
-            final String QUERY = "query";
-            final String AMOUNT = "amount";
-
-            final String SORT = "sort";*/
 
             Uri buildUri = null;
-
-            /*buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY, queryParameter)
-                    .appendQueryParameter(AMOUNT,amount)
-                    .appendQueryParameter(SORT, "downloads")
-                    .build();*/
 
             buildUri = SearchUri; //buildOpenClipArtUri(baseUrl, apiKey, queryParameter, amount);
 
