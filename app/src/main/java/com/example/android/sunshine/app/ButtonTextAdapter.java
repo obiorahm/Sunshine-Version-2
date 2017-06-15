@@ -128,66 +128,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                     mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
 
-                    Log.v("GetView Function ", newString[0]);
-
-
-                            mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
-                            if (position != 1) {
-                                String[] ImageUrl = { };
-
-                                try {
-                                    if (newString[1] != null){
-                                        Log.v("In Pixabay section", this.searchEngine);
-
-                                        if (this.searchEngine.equals("1")){
-
-                                            PixabayJSONHandler jsonHandler = new PixabayJSONHandler();
-
-                                            ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
-                                        }else{
-                                            OpenClipArtJSONHandler jsonHandler =new OpenClipArtJSONHandler();
-                                            ImageUrl = jsonHandler.getImageUrl(newString[1], 0);
-                                        }
-                                    }
-                                } catch (JSONException e) {
-                                    Log.e("JSONException", e + "");
-                                }
-                                if (ImageUrl != null){
-                                    Glide.with(context).load(Uri.parse(ImageUrl[0])).centerCrop().into(mHolder.mImage);
-                                }
-
-                            }else{
-                                File imgFile = new  File(newString[1].toString().replace("file://",""));
-
-                                Glide.with(context).load(imgFile).centerCrop().into(mHolder.mImage);
-
-                            }
-
-                            mHolder.mProgressBar = (ProgressBar) view.findViewById(R.id.image_load_complete);
-                            mHolder.mProgressBar.setVisibility(View.INVISIBLE);
-
-
-
-                            mHolder.mImage.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
-                                    ImageExplanationActivity.putExtra(SEARCH_PARAM, newString[0]);
-                                    context.startActivity(ImageExplanationActivity);
-
-
-                                }
-                            });
-
-
-                    mHolder.mText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String  speech = mHolder.mText.getText().toString();
-                            myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
-
-                        }
-                    });
+                    mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
+                    glideLoadImage(position, newString[1], mHolder);
+                    makeProgressBarInvisible(mHolder, view);
+                    setImageOnClickListener(mHolder, newString[0]);
+                    setTextOnClickListener(mHolder);
 
                     view.setTag(mHolder);
                     break;
@@ -217,6 +162,71 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         private ProgressBar mProgressBar;
     }
 
+    private  void makeProgressBarInvisible(ViewHolder mHolder, View view){
+        mHolder.mProgressBar = (ProgressBar) view.findViewById(R.id.image_load_complete);
+        mHolder.mProgressBar.setVisibility(View.INVISIBLE);
+    };
+    private void setImageOnClickListener(ViewHolder mHolder, final String focusWord){
+        mHolder.mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
+                ImageExplanationActivity.putExtra(SEARCH_PARAM, focusWord);
+                context.startActivity(ImageExplanationActivity);
+            }
+        });
+    };
+
+    private void setTextOnClickListener(ViewHolder mHolder){
+        final String  speech = mHolder.mText.getText().toString();
+        mHolder.mText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+
+            }
+        });
+    }
+
+
+    private String[] getImageUrl (String searchEngine, String JSONString, int position){
+
+        String[] imageUrl = {};
+        JSONHandler jsonHandler;
+        if (JSONString != null){
+            Log.v("In Pixabay section", this.searchEngine);
+            try{
+                switch (searchEngine){
+                    case "1":
+                        jsonHandler = new PixabayJSONHandler();
+                        imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                        break;
+                    default:
+                        jsonHandler =new OpenClipArtJSONHandler();
+                        imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                        break;
+                }
+            }catch (JSONException e){
+                Log.e("JSONException ", e + "");
+            }
+        }
+        return imageUrl;
+    }
+
+    private void glideLoadImage(int position, String JSONString, ViewHolder mHolder){
+        if (position != 1) {
+            String[] ImageUrl = { };
+
+            ImageUrl = this.getImageUrl(this.searchEngine,JSONString,0);
+            if (ImageUrl != null){
+                Glide.with(context).load(Uri.parse(ImageUrl[0])).centerCrop().into(mHolder.mImage);
+            }
+        }else{
+            File imgFile = new  File(JSONString.toString().replace("file://",""));
+
+            Glide.with(context).load(imgFile).centerCrop().into(mHolder.mImage);
+        }
+    }
 
 
 }

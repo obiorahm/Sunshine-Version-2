@@ -48,40 +48,45 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         if (Result == null)
             return;
         if (adapter instanceof ButtonTextAdapter){
-            for (int i = 0; i < Result.size(); i++){
-                ArrayList<String> currResult = Result.get(i);
-                if (currResult.get(0) != null){
-                    adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
-                }
-            }
+            addSearchResultToAdapter(Result);
+
         }else{
-            //ArrayList<String> ImageUrls = new ArrayList<>();
-
             String [] ImageUrls = {};
-            try{
-                if (chooseEngine .equals("1")){
-                    PixabayJSONHandler jsonHandler = new PixabayJSONHandler();
+            ImageUrls = parseJSONString(Result);
+            setGridViewAdapter(ImageUrls);
+        }
+    }
 
-                    ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
-                }else{
-                    OpenClipArtJSONHandler jsonHandler = new OpenClipArtJSONHandler();
-                    ImageUrls = jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+    private void setGridViewAdapter(String[] ImageUrls){
+        if (ImageUrls != null){
+            adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
+            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            gridView.setAdapter(adapter);
 
-                }
-
-            }catch(JSONException e){}
-
-
-
-            if (ImageUrls != null){
-                adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
-                GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
-                gridView.setAdapter(adapter);
-
+        }
+    }
+    private  void addSearchResultToAdapter(final ArrayList<ArrayList<String>>Result){
+        for (int i = 0; i < Result.size(); i++){
+            ArrayList<String> currResult = Result.get(i);
+            if (currResult.get(0) != null){
+                adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
             }
         }
+    };
 
+    private String[] parseJSONString(ArrayList<ArrayList<String>> Result){
+        try{
+            if (chooseEngine .equals("1")){
+                PixabayJSONHandler jsonHandler = new PixabayJSONHandler();
 
+                return jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+            }else{
+                OpenClipArtJSONHandler jsonHandler = new OpenClipArtJSONHandler();
+                return jsonHandler.getImageUrl(Result.get(0).get(1), 0);
+            }
+
+        }catch(JSONException e){}
+        return null;
     }
 
     @Override
@@ -108,6 +113,10 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             case "2":
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
+
+                        //find its root word
+
+                        //if it is a color don't fetch clip art
 
 
                         ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][i], "1"),params[0][i]));
@@ -226,4 +235,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
 
     }
+
+
 }

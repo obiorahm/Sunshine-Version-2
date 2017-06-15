@@ -118,7 +118,7 @@ public class GalleryActivity extends ActionBarActivity{
         CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
 
 
-        ImageView imageButton1 = (ImageView) gridView.findViewById(R.id.film_fragment_image_view);
+       // ImageView imageButton1 = (ImageView) gridView.findViewById(R.id.film_fragment_image_view);
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -209,17 +209,15 @@ public class GalleryActivity extends ActionBarActivity{
         if (ONLONGCLICKMODE){
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(true);
-            menu.getItem(2).setVisible(false);
-
-
+            menu.getItem(2).setVisible(true);
+            menu.getItem(3).setVisible(false);
 
         }else {
 
-
             menu.getItem(0).setVisible(false);
             menu.getItem(1).setVisible(false);
-            menu.getItem(2).setVisible(true);
-
+            menu.getItem(2).setVisible(false);
+            menu.getItem(3).setVisible(true);
 
         }
         super.onPrepareOptionsMenu(menu);
