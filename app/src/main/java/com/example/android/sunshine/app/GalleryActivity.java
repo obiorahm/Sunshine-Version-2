@@ -37,6 +37,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,33 +79,35 @@ public class GalleryActivity extends ActionBarActivity{
         //viewPager = (ViewPager) findViewById(R.id.gallery_container);
 
         File[] files = targetDirectory.listFiles();
-        targetDirectory.lastModified();
         int fileLength = files.length;
         final String[] fileNames = new String[fileLength];
-        final long[][] fileDateModified = new long[2][fileLength];
+        final Long[] fileDateModified = new Long[fileLength];
+
+        //enter value and index into hash map
+        HashMap<Long, Integer> NameAndDateModified = new HashMap<>();
 
 
         for (int i = 0; i < fileLength; i++){
             fileNames[i] = files[i].getAbsolutePath();
-
-
+            fileDateModified[i] = files[i].lastModified();
+            NameAndDateModified.put(fileDateModified[i], i);
         }
 
 
+       //order by date modified
+        List<Long> fileDateModifiedList = Arrays.asList(fileDateModified);
+        Collections.sort(fileDateModifiedList);
 
-        List<String> fileNameList = Arrays.asList(fileNames);
-        Collections.sort(fileNameList);
-        for (int i = 0; i < fileNameList.size(); i++){
-            fileNames[i] = fileNameList.get(i);
+        final String[] NewFileNames = new String[fileLength];
+        for (int i = 0; i < fileLength; i++){
+            NewFileNames[i] = fileNames[NameAndDateModified.get(fileDateModifiedList.get(fileLength - i - 1))];
         }
 
-        imageGridAdapter = new ImageGridAdapter(this,fileNames);
+        imageGridAdapter = new ImageGridAdapter(this, NewFileNames);
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
         gridView.setAdapter(imageGridAdapter);
 
         ActionBar actionBar = getSupportActionBar();
-
-
         actionBar.setDisplayShowHomeEnabled(true);
 
         //displaying custom ActionBar
@@ -129,7 +132,7 @@ public class GalleryActivity extends ActionBarActivity{
                     sharedPreference = getApplicationContext().getSharedPreferences(IMGFILENAME, getApplicationContext().MODE_PRIVATE);
                     editor = sharedPreference.edit();
 
-                    editor.putString(IMGFILEKEY,fileNames[position]);
+                    editor.putString(IMGFILEKEY,NewFileNames[position]);
                     editor.commit();
                     startActivity(OpenGalleryActivityIntent);
 
