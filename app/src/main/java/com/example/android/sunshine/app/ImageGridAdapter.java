@@ -23,6 +23,8 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     private String[] imageUrls;
 
+
+
     public ImageGridAdapter(Context context, String[] imageUrls){
         super(context, R.layout.item_grid,imageUrls);
 
@@ -75,6 +77,8 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     }
 
+
+
     public String getImageUrl(int position){
         return imageUrls[position];
     }
@@ -86,12 +90,12 @@ public class ImageGridAdapter extends AphasiaAdapter {
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.film_fragment_image_view);
 
+
         Glide
                 .with(context)
                 .load(imageUrls[position])
                 .centerCrop()
                 .into(imageView);
-
 
         return convertView;
     }

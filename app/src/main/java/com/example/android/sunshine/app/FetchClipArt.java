@@ -27,6 +27,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     private AphasiaAdapter adapter;
     private Context context;
     private String chooseEngine;
+    Color availableColors = new Color();
 
 
     public FetchClipArt(ButtonTextAdapter newAdapter, String newChooseEngine ){
@@ -93,6 +94,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     protected /*String[]*/ ArrayList<ArrayList<String>> doInBackground(String[]...params) {
 
         ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
+        ArrayList<String> color = new ArrayList<>();
 
 
         if (params.length == 0)
@@ -102,41 +104,50 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
 
-
-                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][i], "1"),params[0][i]));
+                        if (!addColorDataIfColor(ClipArtJson, params[0][i])){
+                            ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][i], "1"),params[0][i]));
+                        }
                     }
                 }else{
-                    ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][0], "10"),params[0][0]));
-
+                    if (!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
+                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][0], "10"),params[0][0]));
+                    }
                 }
                 break;
             case "2":
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
-
-                        //find its root word
-
-                        //if it is a color don't fetch clip art
-
-
-                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][i], "1"),params[0][i]));
+                        if (!addColorDataIfColor(ClipArtJson, params[0][i])){
+                            ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][i], "1"),params[0][i]));
+                        }
                     }
                 }else{
-                    ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][0], "10"), params[0][0]));
-
+                    if (!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
+                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][0], "10"), params[0][0]));
+                    }
                 }
                 break;
 
         }
-
-
-
 
         return ClipArtJson;
     }
 
     public ImageGridAdapter getAdapter(){
         return (ImageGridAdapter) adapter;
+    }
+
+    private boolean addColorDataIfColor(ArrayList<ArrayList<String>> ClipArtJSON, String searchValue) {
+        ArrayList<String> color = new ArrayList<>();
+
+        if (availableColors.searchColor(searchValue)){
+            color.add(searchValue);
+            color.add(searchValue);
+            ClipArtJSON.add(color);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private Uri buildOpenClipArtUri(String baseUrl, String apiKey, String queryParameter, String amount){
@@ -165,7 +176,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         final String API_KEY = "key";
         final String QUERY = "q";
 
-        Uri buildUri = null;
+        Uri buildUri;
 
         buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
                 .appendQueryParameter(API_KEY,apiKey)

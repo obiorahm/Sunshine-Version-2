@@ -101,7 +101,6 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
                 bundle.putString(EXTRA_DIALOG_IMAGE, ((ImageGridAdapter)gridView.getAdapter()).getImageUrl(position));
 
                 newFragment.setArguments(bundle);
-
                 newFragment.show(getSupportFragmentManager(),"what?");
             }
         });

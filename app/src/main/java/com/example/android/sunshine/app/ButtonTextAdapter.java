@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -33,6 +34,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private final Context context;
     private final TextToSpeech myTTS;
     private String searchEngine;
+    private Color availableColor = new Color();
 
     //private ArrayList mData = new ArrayList();
     public ArrayList mData = new ArrayList();
@@ -129,6 +131,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
+                    setImageGridColor(mHolder.mImage, newString[0]);
                     glideLoadImage(position, newString[1], mHolder);
                     makeProgressBarInvisible(mHolder, view);
                     setImageOnClickListener(mHolder, newString[0]);
@@ -227,6 +230,25 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             Glide.with(context).load(imgFile).centerCrop().into(mHolder.mImage);
         }
     }
+
+    private  void setImageGridColor(ImageView imageView, String color){
+        if (availableColor.searchColor(color)){
+            Log.v("the color is: ", "a color " + color);
+            //imageView.setBackgroundColor(getContext().getResources().getIdentifier());
+            try{
+                Class res = R.color.class;
+                Field field = res.getField( color );
+                int colorId = field.getInt(null);
+                imageView.setBackgroundColor(context.getResources().getColor(colorId));
+
+            }catch (NoSuchFieldException e){
+
+            }catch (IllegalAccessException e){
+
+            }
+
+        }
+    };
 
 
 }

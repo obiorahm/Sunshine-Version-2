@@ -22,7 +22,6 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/search_image"
-            android:src="@drawable/ic_photo_black_18dp"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
