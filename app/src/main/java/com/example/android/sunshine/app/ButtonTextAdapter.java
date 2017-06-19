@@ -132,7 +132,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
                     setImageGridColor(mHolder.mImage, newString[0]);
-                    glideLoadImage(position, newString[1], mHolder);
+                    glideLoadImage(position, newString[1], newString[0] ,mHolder);
                     makeProgressBarInvisible(mHolder, view);
                     setImageOnClickListener(mHolder, newString[0]);
                     setTextOnClickListener(mHolder);
@@ -216,7 +216,10 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         return imageUrl;
     }
 
-    private void glideLoadImage(int position, String JSONString, ViewHolder mHolder){
+    private void glideLoadImage(int position, String JSONString, String searchString, ViewHolder mHolder){
+        if (availableColor.searchColor(searchString.toLowerCase()))
+            return;
+
         if (position != 1) {
             String[] ImageUrl = { };
 
@@ -232,23 +235,25 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     }
 
     private  void setImageGridColor(ImageView imageView, String color){
-        if (availableColor.searchColor(color)){
-            Log.v("the color is: ", "a color " + color);
-            //imageView.setBackgroundColor(getContext().getResources().getIdentifier());
-            try{
-                Class res = R.color.class;
-                Field field = res.getField( color );
-                int colorId = field.getInt(null);
+
+        try{
+
+            Class res = R.color.class;
+            Field field = res.getField( color );
+            int colorId = field.getInt(null);
+            if (availableColor.searchColor(color)){
                 imageView.setBackgroundColor(context.getResources().getColor(colorId));
-
-            }catch (NoSuchFieldException e){
-
-            }catch (IllegalAccessException e){
 
             }
 
+
+        }catch(NoSuchFieldException e){
+
+        }catch(IllegalAccessException e){
+
         }
-    };
+
+        }
 
 
 }
