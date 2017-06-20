@@ -52,8 +52,15 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             addSearchResultToAdapter(Result);
 
         }else{
-            String [] ImageUrls = {};
-            ImageUrls = parseJSONString(Result);
+            String [] ImageUrls = new String [1];
+            ArrayList<String> currResult = Result.get(0);
+            String searchString = currResult.get(0);
+            if (!availableColors.searchColor(searchString.toLowerCase()))
+            {ImageUrls = parseJSONString(Result);}
+            else{
+                //ImageUrls = new String[1];
+                ImageUrls[0] = searchString ;
+            }
             setGridViewAdapter(ImageUrls);
         }
     }

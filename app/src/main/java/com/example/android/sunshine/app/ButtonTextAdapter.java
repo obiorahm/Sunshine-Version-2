@@ -1,15 +1,19 @@
 package com.example.android.sunshine.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +50,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private TreeSet imageSet = new TreeSet();
 
     final static String SEARCH_PARAM = "SEARCH_PARAM";
+    public final static String EXTRA_DIALOG_IMAGE = "com.example.android.sunshine.extraImage";
 
 
 
@@ -131,8 +136,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
-                    setImageGridColor(mHolder.mImage, newString[0]);
+                    //setImageGridColor(mHolder, newString[0]);
                     glideLoadImage(position, newString[1], newString[0] ,mHolder);
+
                     makeProgressBarInvisible(mHolder, view);
                     setImageOnClickListener(mHolder, newString[0]);
                     setTextOnClickListener(mHolder);
@@ -146,6 +152,19 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.list_captured_image);
                     Glide.with(context).load(imgFile).into(mHolder.mImage);
+
+                    mHolder.mImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DialogFragment newFragment = new ImageDialog();
+                            Bundle bundle = new Bundle();
+                            bundle.putString(EXTRA_DIALOG_IMAGE, imgFile.toString());
+
+                            newFragment.setArguments(bundle);
+                            newFragment.show(((ActionBarActivity) context).getSupportFragmentManager(),"what?");
+
+                        }
+                    });
 
                     view.setTag(mHolder);
                     break;
@@ -173,6 +192,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         mHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                myTTS.speak(focusWord, TextToSpeech.QUEUE_FLUSH, null);
                 Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
                 ImageExplanationActivity.putExtra(SEARCH_PARAM, focusWord);
                 context.startActivity(ImageExplanationActivity);
@@ -217,8 +237,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     }
 
     private void glideLoadImage(int position, String JSONString, String searchString, ViewHolder mHolder){
-        if (availableColor.searchColor(searchString.toLowerCase()))
+        if (availableColor.searchColor(searchString.toLowerCase())){
+            Log.v("search color content", JSONString + "and" + searchString);
+            Glide.with(context).load(R.drawable.colorchart).centerCrop().into(mHolder.mImage);
             return;
+        }
 
         if (position != 1) {
             String[] ImageUrl = { };
@@ -234,7 +257,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         }
     }
 
-    private  void setImageGridColor(ImageView imageView, String color){
+    private  void setImageGridColor(ViewHolder mHolder, String color){
 
         try{
 
@@ -242,7 +265,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             Field field = res.getField( color );
             int colorId = field.getInt(null);
             if (availableColor.searchColor(color)){
-                imageView.setBackgroundColor(context.getResources().getColor(colorId));
+                mHolder.mImage.setBackgroundColor(context.getResources().getColor(colorId));
 
             }
 

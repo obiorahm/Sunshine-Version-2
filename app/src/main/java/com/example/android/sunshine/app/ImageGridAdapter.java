@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by mgo983 on 5/4/17.
  */
@@ -22,6 +24,8 @@ public class ImageGridAdapter extends AphasiaAdapter {
     private LayoutInflater inflater;
 
     private String[] imageUrls;
+
+    private Color availableColor = new Color();
 
 
 
@@ -90,6 +94,9 @@ public class ImageGridAdapter extends AphasiaAdapter {
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.film_fragment_image_view);
 
+        String searchParam = imageUrls[position];
+
+        isColor(searchParam, imageView);
 
         Glide
                 .with(context)
@@ -98,6 +105,30 @@ public class ImageGridAdapter extends AphasiaAdapter {
                 .into(imageView);
 
         return convertView;
+    }
+
+
+
+    private  void isColor(String searchParam, ImageView mImage){
+        try {
+
+            if (availableColor.searchColor(searchParam)){
+                Class res = R.color.class;
+                Field field = res.getField( searchParam );
+                int colorId = field.getInt(null);
+                if (availableColor.searchColor(searchParam)){
+                    mImage.setBackgroundColor(context.getResources().getColor(colorId));
+
+                }
+            }
+
+        }catch (NoSuchFieldException e){
+
+        }catch (IllegalAccessException e){
+
+        }
+
+
     }
 
 }
