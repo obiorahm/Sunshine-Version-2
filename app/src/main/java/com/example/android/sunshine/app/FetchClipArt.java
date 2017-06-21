@@ -170,7 +170,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
                 .appendQueryParameter(QUERY, queryParameter)
                 .appendQueryParameter(AMOUNT,amount)
-                .appendQueryParameter(SORT, "downloads")
+                //.appendQueryParameter(SORT, "downloads")
                 .build();
         return buildUri;
 
