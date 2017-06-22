@@ -55,8 +55,10 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             String [] ImageUrls = new String [1];
             ArrayList<String> currResult = Result.get(0);
             String searchString = currResult.get(0);
-            if (!availableColors.searchColor(searchString.toLowerCase()))
-            {ImageUrls = parseJSONString(Result);}
+            if (!availableColors.searchColor(searchString.toLowerCase())) {
+                ImageUrls = parseJSONString(Result);}
+                //word stem for search term
+                //clarifai to see if
             else{
                 //ImageUrls = new String[1];
                 ImageUrls[0] = searchString ;
@@ -170,7 +172,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
                 .appendQueryParameter(QUERY, queryParameter)
                 .appendQueryParameter(AMOUNT,amount)
-                //.appendQueryParameter(SORT, "downloads")
+                .appendQueryParameter(SORT, "downloads")
                 .build();
         return buildUri;
 

@@ -29,6 +29,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.Locale;
 
+import opennlp.tools.stemmer.PorterStemmer;
+
 /**
  * Created by mgo983 on 4/21/17.
  */
@@ -54,6 +56,10 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+
+        PorterStemmer stemmer = new PorterStemmer();
+        String word = stemmer.stem("leaving");
+        Log.v("The word stemmer", word);
 
         return rootView;
     }
@@ -93,6 +99,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     }
 
     private Uri getImage() {
+        //Intent intent = getActivity().getIntent();
 
         Bundle bundle = this.getArguments();
         if (bundle != null){
@@ -171,7 +178,6 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             }
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
-
 
         }
 

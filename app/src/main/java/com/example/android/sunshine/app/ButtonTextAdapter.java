@@ -239,7 +239,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private void glideLoadImage(int position, String JSONString, String searchString, ViewHolder mHolder){
         if (availableColor.searchColor(searchString.toLowerCase())){
             Log.v("search color content", JSONString + "and" + searchString);
-            Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
+            Glide.with(context).load(R.drawable.colorchart).centerCrop().into(mHolder.mImage);
             return;
         }
 

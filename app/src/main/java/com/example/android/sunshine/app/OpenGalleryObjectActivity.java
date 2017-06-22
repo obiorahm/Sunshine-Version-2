@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
 
+import opennlp.tools.stemmer.PorterStemmer;
+
 /**
  * Created by mgo983 on 4/24/17.
  */
@@ -52,7 +54,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-
+        PorterStemmer stemmer = new PorterStemmer();
+        String word = stemmer.stem("concussion");
+        Log.v("The word stemmer", word);
     }
 
     @Override
