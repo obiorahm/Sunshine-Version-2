@@ -28,6 +28,7 @@ public class Color {
         ColorDepot.put("purple","purple");
         ColorDepot.put("black","black");
         ColorDepot.put("gray","gray");
+        ColorDepot.put("grey","grey");
         ColorDepot.put("silver","silver");
         ColorDepot.put("white","white");
         ColorDepot.put("brown","brown");

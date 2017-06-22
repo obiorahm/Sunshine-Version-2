@@ -239,7 +239,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private void glideLoadImage(int position, String JSONString, String searchString, ViewHolder mHolder){
         if (availableColor.searchColor(searchString.toLowerCase())){
             Log.v("search color content", JSONString + "and" + searchString);
-            Glide.with(context).load(R.drawable.colorchart).centerCrop().into(mHolder.mImage);
+            Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
             return;
         }
 
@@ -257,26 +257,6 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         }
     }
 
-    private  void setImageGridColor(ViewHolder mHolder, String color){
-
-        try{
-
-            Class res = R.color.class;
-            Field field = res.getField( color );
-            int colorId = field.getInt(null);
-            if (availableColor.searchColor(color)){
-                mHolder.mImage.setBackgroundColor(context.getResources().getColor(colorId));
-
-            }
-
-
-        }catch(NoSuchFieldException e){
-
-        }catch(IllegalAccessException e){
-
-        }
-
-        }
 
 
 }
