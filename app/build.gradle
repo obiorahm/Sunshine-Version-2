@@ -36,7 +36,7 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.22.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.bumptech.glide:glide:3.5.2'
-    compile 'com.clarifai.clarifai-api2:core:2.2.0'
+    compile 'com.clarifai.clarifai-api2:core:2.2.6'
     compile files('libs/opennlp-tools-1.6.0.jar')
     compile files('libs/opennlp-uima-1.6.0.jar')
 }

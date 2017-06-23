@@ -20,8 +20,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Locale;
 
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
+import okhttp3.OkHttpClient;
 import opennlp.tools.stemmer.PorterStemmer;
 
 /**
@@ -37,8 +46,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
-    private ButtonTextAdapter adapter;
-
     @Override
     public void onCreate(Bundle savedInstanceState){
 
@@ -57,6 +64,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         PorterStemmer stemmer = new PorterStemmer();
         String word = stemmer.stem("concussion");
         Log.v("The word stemmer", word);
+
+        CBIR tryClarify = new CBIR();
+        tryClarify.execute();
     }
 
     @Override
@@ -77,6 +87,8 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+
+               ButtonTextAdapter adapter;
 
                 //get preferred search engine
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
