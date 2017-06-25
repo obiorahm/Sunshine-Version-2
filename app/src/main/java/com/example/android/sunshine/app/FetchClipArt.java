@@ -57,8 +57,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             String searchString = currResult.get(0);
             if (!availableColors.searchColor(searchString.toLowerCase())) {
                 ImageUrls = parseJSONString(Result);}
-                //word stem for search term
-                //clarifai to see if
             else{
                 //ImageUrls = new String[1];
                 ImageUrls[0] = searchString ;

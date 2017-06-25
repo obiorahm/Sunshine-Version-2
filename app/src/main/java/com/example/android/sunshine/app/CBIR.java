@@ -4,8 +4,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,7 +20,7 @@ import okhttp3.OkHttpClient;
 /**
  * Created by mgo983 on 6/22/17.
  */
-
+// Content Based Image Retrieval class
 public class CBIR extends  AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>{
     final ClarifaiClient client = new ClarifaiBuilder("oOH6jbTgfsWll9_X55goV5uZTIgb8L8fdmoM4UQr", "4xmzUBx_N201JpiR6jVTrQPA7tgwi0GTqgmnbYI_")
                                     .client(new OkHttpClient())
@@ -139,11 +137,6 @@ public class CBIR extends  AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>{
             }
             conceptName += "\n";
         }
-
-
-
-
-
             Log.v("His raod stretches", conceptName);
             Log.v("The number of results: ", " " + Result.size());
     }

@@ -136,7 +136,6 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
-                    //setImageGridColor(mHolder, newString[0]);
                     glideLoadImage(position, newString[1], newString[0] ,mHolder);
 
                     makeProgressBarInvisible(mHolder, view);
