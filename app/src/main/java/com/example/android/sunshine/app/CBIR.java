@@ -1,8 +1,17 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.GridView;
+import android.widget.ProgressBar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +20,13 @@ import java.util.List;
 
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.api.request.ClarifaiRequest;
+import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.input.image.ClarifaiURLImage;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import okhttp3.OkHttpClient;
@@ -21,13 +35,21 @@ import okhttp3.OkHttpClient;
  * Created by mgo983 on 6/22/17.
  */
 // Content Based Image Retrieval class
-public class CBIR extends  AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>{
+public class CBIR extends  AsyncTask<String[], Void, String[]>{
     final ClarifaiClient client = new ClarifaiBuilder("oOH6jbTgfsWll9_X55goV5uZTIgb8L8fdmoM4UQr", "4xmzUBx_N201JpiR6jVTrQPA7tgwi0GTqgmnbYI_")
                                     .client(new OkHttpClient())
                                     .buildSync();
+    private String searchString;
+    //private String [] clarifaiImageUrls;
+    private ImageGridAdapter adapter;
+    private Context context;
 
-    public CBIR(){
 
+    public CBIR(String new_searchString, ImageGridAdapter newAdapter, Context newContext){
+
+        searchString = new_searchString;
+        //adapter = newAdapter;
+        context = newContext;
     }
 
     Collection<ClarifaiInput> images = new Collection<ClarifaiInput>() {
@@ -107,38 +129,99 @@ public class CBIR extends  AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>{
     };
 
     @Override
-    protected  List<ClarifaiOutput<Concept>> doInBackground(Void...Params){
+    protected  String[] doInBackground(String []...Params){
 
-            images.add(ClarifaiInput.forImage(ClarifaiImage.of("https://static.pexels.com/photos/31242/pexels-photo-31242.jpg")));
-            images.add(ClarifaiInput.forImage(ClarifaiImage.of("http://www.ikea.com/gb/en/images/products/norrn%C3%A4s-chair-oak-isunda-grey__0105948_pe253720_s5.jpg")));
-            images.add(ClarifaiInput.forImage(ClarifaiImage.of("https://fthmb.tqn.com/aG_csasiSllxQJt2CmM011UBbCE=/768x0/filters:no_upscale()/about/hp-computer-on-off-56a6f9e85f9b58b7d0e5cc8b.jpg")));
+            if (Params[0] == null)
+                return null;
 
-            List<ClarifaiOutput<Concept>> predictionResults = client.getDefaultModels().generalModel()
+            client.deleteAllInputs().executeSync();
+
+            for (int i = 0; i < Params[0].length; i++){
+                //images.add(ClarifaiInput.forImage(ClarifaiImage.of(Params[0][i])));
+                client.addInputs()
+                        .plus(ClarifaiInput.forImage(ClarifaiImage.of(Params[0][i])))
+                        .executeSync();
+            }
+
+        ClarifaiResponse containsConcept =  client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()))).getPage(1).executeSync();
+        ClarifaiResponse noConcepts = client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()).withValue(false))).getPage(1).executeSync();
+
+        /*List<ClarifaiOutput<Concept>> predictionResults = client.getDefaultModels().generalModel()
                     .predict()
                     .withInputs(images)
                     .withInputs()
                     .executeSync()
-                    .get();
+                    .get();*/
+        String [] orderedImageUrl = {};
+        if (containsConcept.isSuccessful() && noConcepts.isSuccessful()){
+            orderedImageUrl = getOrderedImageUrl((ArrayList) containsConcept.get(), (ArrayList) noConcepts.get());
+        }else{
+            return Params[0];
+        }
+            if (containsConcept.isSuccessful()){
+                Log.v("another Prediction: ", containsConcept.get() + " number");
+
+            }else{
+                Log.v("another Prediction: ", searchString + "not found");
+
+            }
 
 
-            return predictionResults;
+        //    return predictionResults;
+        return orderedImageUrl;
+    }
 
+    private String[] getOrderedImageUrl(ArrayList containsConcepts, ArrayList noConcepts){
+        int length = containsConcepts.size() + noConcepts.size();
+        String[] OrderedImageUrl =  new String[length];
+
+        Log.v("containsConcept: ", "size" + containsConcepts.size());
+        Log.v("containsConcept: ", "size" + noConcepts.size());
+
+            for (int i = 0; i < containsConcepts.size(); i++){
+                SearchHit searchHit = (SearchHit) containsConcepts.get(i);
+                OrderedImageUrl[i] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
+                Log.v("orderedImageUrl: ", OrderedImageUrl[i]);
+            }
+            int containsConceptsLength =  containsConcepts.size();
+            for (int j = containsConceptsLength; j < length && noConcepts.size() > 0; j++){
+                SearchHit searchHit = (SearchHit) noConcepts.get(j - containsConceptsLength);
+                OrderedImageUrl[j] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
+                Log.v("unorderedImageUrl: ", OrderedImageUrl[j]);
+            }
+
+        return OrderedImageUrl;
     }
 
 
     @Override
-        protected void onPostExecute(List<ClarifaiOutput<Concept>> Result){
+        protected void onPostExecute(String[] Result){
 
-        String conceptName = "";
+        setGridViewAdapter(Result);
+        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explainationProgress);
+        progressBar.setVisibility(View.INVISIBLE);
+        /*String conceptName = "";
         for (int j = 0; j < Result.size(); j++){
             ClarifaiOutput<Concept> AllConcepts = Result.get(j);
             for (int i = 0; i < AllConcepts.data().size(); i++){
                 conceptName += " " + AllConcepts.data().get(i).name();
             }
             conceptName += "\n";
+            AllConcepts.data().contains("leaf");
+        }*/
+     //       Log.v("His raod stretches", conceptName);
+    //        Log.v("The number of results: ", " " + Result.size());
+
+
+    }
+
+    private void setGridViewAdapter(String[] ImageUrls){
+        if (ImageUrls != null){
+            adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
+            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            gridView.setAdapter(adapter);
+
         }
-            Log.v("His raod stretches", conceptName);
-            Log.v("The number of results: ", " " + Result.size());
     }
 
 }

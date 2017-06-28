@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import opennlp.tools.stemmer.PorterStemmer;
+
 /**
  * Created by mgo983 on 4/30/17.
  */
@@ -56,13 +58,28 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             ArrayList<String> currResult = Result.get(0);
             String searchString = currResult.get(0);
             if (!availableColors.searchColor(searchString.toLowerCase())) {
-                ImageUrls = parseJSONString(Result);}
-            else{
-                //ImageUrls = new String[1];
-                ImageUrls[0] = searchString ;
+                ImageUrls = parseJSONString(Result);
+                orderImages(ImageUrls, searchString);
+
             }
-            setGridViewAdapter(ImageUrls);
+            else{
+                ImageUrls[0] = searchString ;
+                setGridViewAdapter(ImageUrls);
+
+            }
         }
+    }
+
+    private void orderImages(String[] ImageUrls, String searchString){
+
+        PorterStemmer stemmer = new PorterStemmer();
+        String word = stemmer.stem(searchString);
+
+        CBIR tryClarify = new CBIR(word, (ImageGridAdapter) adapter, context);
+        tryClarify.execute(ImageUrls);
+
+        //String[] orderedImageUrls = ;
+        //return orderedImageUrls;
     }
 
     private void setGridViewAdapter(String[] ImageUrls){
