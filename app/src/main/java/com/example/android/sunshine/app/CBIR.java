@@ -137,7 +137,6 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
             client.deleteAllInputs().executeSync();
 
             for (int i = 0; i < Params[0].length; i++){
-                //images.add(ClarifaiInput.forImage(ClarifaiImage.of(Params[0][i])));
                 client.addInputs()
                         .plus(ClarifaiInput.forImage(ClarifaiImage.of(Params[0][i])))
                         .executeSync();
@@ -146,12 +145,6 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
         ClarifaiResponse containsConcept =  client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()))).getPage(1).executeSync();
         ClarifaiResponse noConcepts = client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()).withValue(false))).getPage(1).executeSync();
 
-        /*List<ClarifaiOutput<Concept>> predictionResults = client.getDefaultModels().generalModel()
-                    .predict()
-                    .withInputs(images)
-                    .withInputs()
-                    .executeSync()
-                    .get();*/
         String [] orderedImageUrl = {};
         if (containsConcept.isSuccessful() && noConcepts.isSuccessful()){
             orderedImageUrl = getOrderedImageUrl((ArrayList) containsConcept.get(), (ArrayList) noConcepts.get());
@@ -165,9 +158,6 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
                 Log.v("another Prediction: ", searchString + "not found");
 
             }
-
-
-        //    return predictionResults;
         return orderedImageUrl;
     }
 
@@ -198,21 +188,8 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
         protected void onPostExecute(String[] Result){
 
         setGridViewAdapter(Result);
-        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explainationProgress);
+        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
         progressBar.setVisibility(View.INVISIBLE);
-        /*String conceptName = "";
-        for (int j = 0; j < Result.size(); j++){
-            ClarifaiOutput<Concept> AllConcepts = Result.get(j);
-            for (int i = 0; i < AllConcepts.data().size(); i++){
-                conceptName += " " + AllConcepts.data().get(i).name();
-            }
-            conceptName += "\n";
-            AllConcepts.data().contains("leaf");
-        }*/
-     //       Log.v("His raod stretches", conceptName);
-    //        Log.v("The number of results: ", " " + Result.size());
-
-
     }
 
     private void setGridViewAdapter(String[] ImageUrls){

@@ -169,7 +169,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
             CheckInternetConnection checkInternetConnection = new CheckInternetConnection(getActivity());
             if (checkInternetConnection.isNetworkConnected()) {
                 //fetchClipArt
-                FetchClipArt fetchClipArt = new FetchClipArt(adapter, prefSearchParam);
+                FetchClipArt fetchClipArt = new FetchClipArt(adapter, getActivity(),prefSearchParam);
                 fetchClipArt.execute(listOfWords);
 
 

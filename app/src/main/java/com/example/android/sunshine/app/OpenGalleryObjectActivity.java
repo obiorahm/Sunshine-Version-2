@@ -109,7 +109,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                     String TxtFileContent = readFromFile(this, TxtFileName);
                     String[] listOfWords = TxtFileContent.split(" ");
 
-                    FetchClipArt fetchClipArt = new FetchClipArt(adapter, prefSearchParam);
+                    FetchClipArt fetchClipArt = new FetchClipArt(adapter,this ,prefSearchParam);
 
                     adapter.addImage(imgFile.toString());
                     Log.v("Textfile content is ", TxtFileContent);
@@ -124,17 +124,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                 }
                 ListView list = (ListView) this.findViewById(R.id.list_view_word);
                 list.setAdapter(adapter);
-
-                /*PorterStemmer stemmer = new PorterStemmer();
-                String word = stemmer.stem("concussion");
-                Log.v("The word stemmer", word);
-
-                CBIR tryClarify = new CBIR();
-                tryClarify.execute();*/
-
-                ProgressBar progressBar = (ProgressBar) this.findViewById(R.id.search_complete);
-                progressBar.setVisibility(View.INVISIBLE);
-
 
             } else {
                 Intent installTTSIntent = new Intent();

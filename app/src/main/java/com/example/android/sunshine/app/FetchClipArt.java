@@ -32,9 +32,10 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     Color availableColors = new Color();
 
 
-    public FetchClipArt(ButtonTextAdapter newAdapter, String newChooseEngine ){
+    public FetchClipArt(ButtonTextAdapter newAdapter, Context newContext ,String newChooseEngine ){
         adapter = newAdapter;
         chooseEngine = newChooseEngine;
+        context = newContext;
     }
 
     public FetchClipArt(ImageGridAdapter newAdapter, Context newContext, String newChooseEngine)
@@ -52,6 +53,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             return;
         if (adapter instanceof ButtonTextAdapter){
             addSearchResultToAdapter(Result);
+            hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.search_complete));
 
         }else{
             String [] ImageUrls = new String [1];
@@ -65,6 +67,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             else{
                 ImageUrls[0] = searchString ;
                 setGridViewAdapter(ImageUrls);
+                hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress));
 
             }
         }
@@ -98,6 +101,11 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             }
         }
     };
+
+    private void hideProgressBar(ProgressBar currProgressBar){
+        ProgressBar progressBar = (ProgressBar) currProgressBar;
+        progressBar.setVisibility(View.INVISIBLE);
+    }
 
     private String[] parseJSONString(ArrayList<ArrayList<String>> Result){
         try{

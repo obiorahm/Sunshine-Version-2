@@ -4,12 +4,7 @@
     android:layout_height="match_parent"
     >
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/image_load_complete"
-        android:visibility="gone"
-        android:indeterminate="true"/>
+
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -46,6 +41,11 @@
         </TextView>
 
     </LinearLayout>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_load_complete"
+        android:visibility="visible" />
 
 
 </FrameLayout>
