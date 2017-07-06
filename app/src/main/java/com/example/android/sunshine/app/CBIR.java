@@ -35,7 +35,7 @@ import okhttp3.OkHttpClient;
  * Created by mgo983 on 6/22/17.
  */
 // Content Based Image Retrieval class
-public class CBIR extends  AsyncTask<String[], Void, String[]>{
+public class CBIR extends  AsyncTask<String[], Void, ArrayList<String[]>>{
     final ClarifaiClient client = new ClarifaiBuilder("oOH6jbTgfsWll9_X55goV5uZTIgb8L8fdmoM4UQr", "4xmzUBx_N201JpiR6jVTrQPA7tgwi0GTqgmnbYI_")
                                     .client(new OkHttpClient())
                                     .buildSync();
@@ -129,7 +129,7 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
     };
 
     @Override
-    protected  String[] doInBackground(String []...Params){
+    protected  ArrayList<String []> doInBackground(String []...Params){
 
             if (Params[0] == null)
                 return null;
@@ -145,11 +145,12 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
         ClarifaiResponse containsConcept =  client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()))).getPage(1).executeSync();
         ClarifaiResponse noConcepts = client.searchInputs(SearchClause.matchConcept(Concept.forName(searchString.toLowerCase()).withValue(false))).getPage(1).executeSync();
 
-        String [] orderedImageUrl = {};
+        ArrayList<String []> orderedImageUrl = new ArrayList<>();
         if (containsConcept.isSuccessful() && noConcepts.isSuccessful()){
             orderedImageUrl = getOrderedImageUrl((ArrayList) containsConcept.get(), (ArrayList) noConcepts.get());
         }else{
-            return Params[0];
+            orderedImageUrl.add(Params[0]);
+            return orderedImageUrl;
         }
             if (containsConcept.isSuccessful()){
                 Log.v("another Prediction: ", containsConcept.get() + " number");
@@ -161,41 +162,55 @@ public class CBIR extends  AsyncTask<String[], Void, String[]>{
         return orderedImageUrl;
     }
 
-    private String[] getOrderedImageUrl(ArrayList containsConcepts, ArrayList noConcepts){
+    private ArrayList<String[]> getOrderedImageUrl(ArrayList containsConcepts, ArrayList noConcepts){
         int length = containsConcepts.size() + noConcepts.size();
         String[] OrderedImageUrl =  new String[length];
+        String[] confidenceUrls = new String[containsConcepts.size()];
+        String[] noConfidenceUrls = new String[noConcepts.size()];
 
         Log.v("containsConcept: ", "size" + containsConcepts.size());
         Log.v("containsConcept: ", "size" + noConcepts.size());
 
             for (int i = 0; i < containsConcepts.size(); i++){
                 SearchHit searchHit = (SearchHit) containsConcepts.get(i);
-                OrderedImageUrl[i] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
+                confidenceUrls[i] = OrderedImageUrl[i] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
                 Log.v("orderedImageUrl: ", OrderedImageUrl[i]);
             }
             int containsConceptsLength =  containsConcepts.size();
             for (int j = containsConceptsLength; j < length && noConcepts.size() > 0; j++){
                 SearchHit searchHit = (SearchHit) noConcepts.get(j - containsConceptsLength);
-                OrderedImageUrl[j] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
+                noConfidenceUrls[j-containsConceptsLength] = OrderedImageUrl[j] = ((ClarifaiURLImage) searchHit.input().image()).url().toString();
                 Log.v("unorderedImageUrl: ", OrderedImageUrl[j]);
             }
+        ArrayList<String []> AllUrls = new ArrayList<>();
+        AllUrls.add(confidenceUrls);
+        AllUrls.add(noConfidenceUrls);
 
-        return OrderedImageUrl;
+        return AllUrls;
     }
 
 
     @Override
-        protected void onPostExecute(String[] Result){
+        protected void onPostExecute(ArrayList<String []> Result){
+        String[] confidenceUrls = Result.get(0);
+        if (confidenceUrls != null){
+            setGridViewAdapter(confidenceUrls, (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview));
+        }
+        if (Result.size() > 1){
+            String[] noConfidenceUrls = Result.get(1);
+            if (noConfidenceUrls != null){
+                setGridViewAdapter(noConfidenceUrls, (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview1));
+            }
 
-        setGridViewAdapter(Result);
+        }
         ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    private void setGridViewAdapter(String[] ImageUrls){
+    private void setGridViewAdapter(String[] ImageUrls, GridView currGridview){
         if (ImageUrls != null){
             adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
-            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            GridView gridView = currGridview;
             gridView.setAdapter(adapter);
 
         }
