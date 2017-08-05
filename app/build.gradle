@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.android.sunshine.app"
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,7 @@ android {
         pickFirst "META-INF/LICENSE"
         pickFirst "META-INF/DEPENDENCIES"
     }
+
 }
 repositories {
     mavenCentral()
@@ -34,9 +35,16 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.google.api-client:google-api-client:1.22.0'
+
+    compile 'com.google.firebase:firebase-core:11.0.4'
+
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'com.clarifai.clarifai-api2:core:2.2.6'
     compile files('libs/opennlp-tools-1.6.0.jar')
     compile files('libs/opennlp-uima-1.6.0.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'
+
+
