@@ -5,4 +5,25 @@ package com.example.android.sunshine.app;
  */
 
 public class DeviceTesters {
+    private String id;
+    private String firstName;
+    private String lastName;
+
+    public DeviceTesters(){
+
+    }
+
+    public DeviceTesters(String _id, String _firstName, String _lastName){
+        this.id = _id;
+        this.firstName = _firstName;
+        this.lastName = _lastName;
+    }
+
+    public String getId(){ return id; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() {return lastName; }
+
+    public void setId(String _id){ this.id = _id; }
+    public void setFirstName(String _firstName){ this.firstName = _firstName; }
+    public void setLastName(String _lastName){ this.lastName = _lastName; }
 }
