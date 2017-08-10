@@ -13,8 +13,7 @@ public class DeviceTesters {
 
     }
 
-    public DeviceTesters(String _id, String _firstName, String _lastName){
-        this.id = _id;
+    public DeviceTesters(String _firstName, String _lastName){
         this.firstName = _firstName;
         this.lastName = _lastName;
     }

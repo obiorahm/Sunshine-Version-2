@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/app_name"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:fontFamily="serif-monospace"
+        android:textSize="50dp"/>
+
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="top">
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/firstName"
+            android:paddingBottom="20dp"
+            android:layout_gravity="center"
+            android:hint="@string/firstName"
+            />
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/lastName"
+            android:layout_gravity="center"
+            android:imeActionLabel="Last Name"
+            android:hint="@string/lastName"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/signUp"
+                android:id="@+id/signup_submit"
+                android:background="#80000000"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/submit_login"
+                android:id="@+id/signin_submit"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>
