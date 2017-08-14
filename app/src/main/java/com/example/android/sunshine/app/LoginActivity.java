@@ -30,7 +30,6 @@ public class LoginActivity extends ActionBarActivity{
 
     private EditText mFirstNameEditText;
     private EditText mLastNameEditText;
-    //private FirebaseUser mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     public static final String USERS_CHILD = "users";
     public final static String USER_ID_NAME = "com.example.android.sunshine.USER_ID_NAME";
@@ -94,8 +93,9 @@ public class LoginActivity extends ActionBarActivity{
                             sharedPreference = getApplicationContext().getSharedPreferences(USER_ID_NAME, getApplicationContext().MODE_PRIVATE);
                             editor = sharedPreference.edit();
 
-                            editor.putString(USER_ID_KEY, mFirebaseReference.getKey());
+                            editor.putString(USER_ID_KEY, dataSnapshot.getKey());
                             editor.commit();
+                            Log.v("for your glory", dataSnapshot.toString());
 
                             Intent intent = new Intent(thisActivity, NewMainActivity.class);
                             startActivity(intent);

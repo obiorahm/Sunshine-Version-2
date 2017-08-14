@@ -1,6 +1,8 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,11 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by mgo983 on 5/4/17.
@@ -79,6 +86,18 @@ public class ImageGridAdapter extends AphasiaAdapter {
             checkBox.setVisibility(view.INVISIBLE);
         }
 
+    }
+    public ArrayList<Integer> getCheckedboxes(View view){
+        ArrayList<Integer> checkedPositions = new ArrayList<>();
+        GridView gridView = ((GridView) view);
+        for (int i = 0; i < gridView.getCount(); i++){
+            FrameLayout gridItem = (FrameLayout) gridView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
+            if (checkBox.isChecked())
+                checkedPositions.add((Integer) i);
+        }
+
+        return checkedPositions;
     }
 
 

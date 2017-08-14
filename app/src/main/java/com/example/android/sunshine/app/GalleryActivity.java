@@ -2,14 +2,17 @@ package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
 import android.app.LauncherActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -31,6 +34,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -50,30 +61,42 @@ public class GalleryActivity extends ActionBarActivity{
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
     public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";
 
+    public final static String USER_ID_NAME = "com.example.android.sunshine.USER_ID_NAME";
+    public final static String USER_ID_KEY = "com.example.android.sunshine.USER_ID_KEY";
+
+    public static final String PHOTOS_CHILD = "photos";
+    private static final int REQUEST_IMAGE = 2;
+    private static final String TAG = "GalleryActivity";
+
+    private static String mPhotoId;
+    private static Photos photos = new Photos();
+
+
+
     //GalleryPagerAdapter galleryPagerAdapter;
 
     ImageGridAdapter imageGridAdapter;
 
-    ViewPager viewPager;
-
-    boolean deleteMenuShow = false;
-
     boolean ONLONGCLICKMODE = false;
 
+    String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            .getAbsolutePath();
+    String targetPath = ExternalStorageDirectoryPath + "/Aphasia/";
+    File targetDirectory = new File(targetPath);
+
+    File[] files = targetDirectory.listFiles();
+    int fileLength = files.length;
+    String[] NewFileNames = new String[fileLength];
     @Override
     public void onCreate(Bundle savedInstanceState){
 
+
+        Toast.makeText(getApplicationContext(), targetPath, Toast.LENGTH_LONG).show();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                .getAbsolutePath();
-        String targetPath = ExternalStorageDirectoryPath + "/Aphasia/";
-
-        Toast.makeText(getApplicationContext(), targetPath, Toast.LENGTH_LONG).show();
-        File targetDirectory = new File(targetPath);
 
         //galleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
         //viewPager = (ViewPager) findViewById(R.id.gallery_container);
@@ -91,6 +114,7 @@ public class GalleryActivity extends ActionBarActivity{
             fileNames[i] = files[i].getAbsolutePath();
             fileDateModified[i] = files[i].lastModified();
             NameAndDateModified.put(fileDateModified[i], i);
+            Log.v("Date modified", "date modified" + fileDateModified[i]);
         }
 
 
@@ -98,10 +122,12 @@ public class GalleryActivity extends ActionBarActivity{
         List<Long> fileDateModifiedList = Arrays.asList(fileDateModified);
         Collections.sort(fileDateModifiedList);
 
-        final String[] NewFileNames = new String[fileLength];
+        NewFileNames = new String[fileLength];
+
         for (int i = 0; i < fileLength; i++){
             NewFileNames[i] = fileNames[NameAndDateModified.get(fileDateModifiedList.get(fileLength - i - 1))];
         }
+
 
         imageGridAdapter = new ImageGridAdapter(this, NewFileNames);
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
@@ -210,14 +236,17 @@ public class GalleryActivity extends ActionBarActivity{
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(true);
             menu.getItem(2).setVisible(true);
-            menu.getItem(3).setVisible(false);
+            menu.getItem(3).setVisible(true);
+            menu.getItem(4).setVisible(true);
 
         }else {
 
             menu.getItem(0).setVisible(false);
             menu.getItem(1).setVisible(false);
             menu.getItem(2).setVisible(false);
-            menu.getItem(3).setVisible(true);
+            menu.getItem(3).setVisible(false);
+            menu.getItem(4).setVisible(true);
+
 
         }
         super.onPrepareOptionsMenu(menu);
@@ -240,9 +269,85 @@ public class GalleryActivity extends ActionBarActivity{
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.menu_item_save:
+                sendMessage();
+                break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void putImageInStorage(StorageReference storageReference, Uri uri, final String key){
+        storageReference.putFile(uri).addOnCompleteListener(GalleryActivity.this,
+                new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()){
+
+                        }
+                    }
+                });
+    }
+
+    void sendMessage(){
+        //final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference(PHOTOS_CHILD).child("");
+        SharedPreferences sharedPreferences;
+        String userName;
+        sharedPreferences = getApplicationContext().getSharedPreferences(USER_ID_NAME, Context.MODE_PRIVATE);
+        userName = sharedPreferences.getString(USER_ID_KEY, null);
+        final GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        ArrayList<Integer> checkedPhotosPosition = imageGridAdapter.getCheckedboxes(gridView);
+
+
+
+        for (Integer position : checkedPhotosPosition){
+            final String oldFileName = NewFileNames[position];
+            final String[] newName = getFileId(oldFileName);
+            String fileCaption = MyFileReader.readFromFile(this, newName[1]);
+
+            photos = new Photos(
+                    userName, //users
+                    "", //date_taken
+                    "", //time_taken
+                    fileCaption, //name_caption
+                    oldFileName //photo_url
+
+            );
+            mPhotoId = newName[0];
+
+            final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference(PHOTOS_CHILD).child("");
+            final Uri fileUri = Uri.fromFile(new File(oldFileName));
+            //Photos photos = new Photos();
+            mFirebaseReference.child(mPhotoId).setValue(photos, new DatabaseReference.CompletionListener(){
+                @Override
+                public void onComplete(DatabaseError databaseError,
+                                       DatabaseReference databaseReference){
+                    StorageReference storageReference = FirebaseStorage.getInstance()
+                            .getReference(PHOTOS_CHILD)
+                            .child(newName[0])
+                            .child(oldFileName);
+                    storageReference.putFile(fileUri);
+                }
+            });
+
+        }
+    }
+
+    public String[] getFileId (String oldFileName){
+
+        String fileNameSubstring = oldFileName.substring(oldFileName.lastIndexOf("/") + 1);
+
+        String[] newFileName = new String[2];
+
+        newFileName[0] = fileNameSubstring.replace(",","")
+                .replace(":","")
+                .replace(".jpg","");
+        newFileName[1] = fileNameSubstring.replace(".jpg", ".txt");
+        Log.v("new file name", " " + newFileName);
+
+        return newFileName;
+
     }
 
     @Override
