@@ -125,8 +125,8 @@ public class LoginActivity extends ActionBarActivity{
                 });
             }
         });
-        String userLoggedIn = new String ("User logged in");
-        Toast.makeText(getApplicationContext(),userLoggedIn, Toast.LENGTH_LONG).show();
+        //String userLoggedIn = new String ("User logged in");
+        //Toast.makeText(getApplicationContext(),userLoggedIn, Toast.LENGTH_LONG).show();
     }
 
 

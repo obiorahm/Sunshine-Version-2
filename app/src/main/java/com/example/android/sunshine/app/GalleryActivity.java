@@ -1,39 +1,34 @@
 package com.example.android.sunshine.app;
 
-import android.annotation.TargetApi;
-import android.app.LauncherActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
+
 import android.widget.AdapterView;
-import android.widget.Button;
+
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
@@ -44,13 +39,24 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.lang.reflect.Array;
+import java.io.IOException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.IWord;
+import edu.mit.jwi.item.IWordID;
+import edu.mit.jwi.item.POS;
 
 /**
  * Created by mgo983 on 4/21/17.
@@ -63,6 +69,8 @@ public class GalleryActivity extends ActionBarActivity{
 
     public final static String USER_ID_NAME = "com.example.android.sunshine.USER_ID_NAME";
     public final static String USER_ID_KEY = "com.example.android.sunshine.USER_ID_KEY";
+
+    public final static String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
 
     public static final String PHOTOS_CHILD = "photos";
     private static final int REQUEST_IMAGE = 2;
@@ -270,12 +278,19 @@ public class GalleryActivity extends ActionBarActivity{
                 startActivity(intent);
                 break;
             case R.id.menu_item_save:
-                sendMessage();
+                if (safeAction("Do you want to save your selections?")){
+                    sendMessage();
+                }
+                break;
+            case R.id.menu_item_delete:
+                //deleteMessage();
+                //runExample();
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
     private void putImageInStorage(StorageReference storageReference, Uri uri, final String key){
@@ -288,6 +303,18 @@ public class GalleryActivity extends ActionBarActivity{
                         }
                     }
                 });
+    }
+
+    boolean safeAction(String message){
+        SafeAction newFragment = new SafeAction();
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
+
+        newFragment.setArguments(bundle);
+        newFragment.show(getFragmentManager(),"SAFE_ACTION_MSG");
+
+        return true;
+
     }
 
     void sendMessage(){
@@ -333,6 +360,40 @@ public class GalleryActivity extends ActionBarActivity{
 
         }
     }
+
+
+public void runExample(){
+
+     // construct the URL to the Wordnet dictionary directory
+    String wnhome = System.getenv("PATH");
+    Log.d(TAG, "environment variable" + wnhome);
+    //String path = "/Users/mgo983/Downloads/WordNet-3.0/dict";
+    String path = "/opt/X11/bin/usr/local/Cellar/wordnet/3.1" + File.separator + "dict";
+
+    URL url = null;
+    try{ url = new URL("file", null, path); }
+    catch(MalformedURLException e){ e.printStackTrace(); }
+     if(url == null) return;
+
+    IDictionary dict = new Dictionary(url);
+    try{
+        // construct the dictionary object and open it
+        dict.open();
+        // look up first sense of the word "dog"
+        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
+        IWordID wordID = idxWord.getWordIDs().get(0);
+        IWord word = dict.getWord(wordID);
+        Log.v("jwnet", "Id = " + wordID + "Lemma = " + word.getLemma() + "Gloss = " + word.getSynset().getGloss());
+
+    }catch (IOException e){
+        Log.e(TAG, e + "is the error");
+
+    }
+
+
+
+
+}
 
     public String[] getFileId (String oldFileName){
 
