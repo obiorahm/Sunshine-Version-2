@@ -3,15 +3,19 @@ package com.example.android.sunshine.app;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.concurrent.Callable;
 
 /**
  * Created by mgo983 on 8/18/17.
@@ -26,7 +30,27 @@ public class SafeAction extends DialogFragment {
         TextView textView = (TextView) rootView.findViewById(R.id.safety_question);
         Bundle bundle = this.getArguments();
         String safetyQuestion = bundle.getString(GalleryActivity.EXTRA_SAFE_ACTION_MSG);
+        final String safetyMenuID = bundle.getString(GalleryActivity.EXTRA_SAFE_ACTION_MENU_ITEM);
         textView.setText(safetyQuestion);
+
+
+        Button btnOk = (Button) rootView.findViewById(R.id.safety_ok);
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((OnokOrCancel) getActivity()).okOrCancel(true, safetyMenuID );
+                dismiss();
+            }
+        });
+
+        Button btnCancel = (Button) rootView.findViewById(R.id.safety_cancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((OnokOrCancel) getActivity()).okOrCancel(false, safetyMenuID);
+                dismiss();
+            }
+        });
 
         // Inflate the layout to use as dialog or embedded fragment
         return rootView;
@@ -46,5 +70,11 @@ public class SafeAction extends DialogFragment {
 
 
         return dialog;
+    }
+
+    //an interface that helps me to pass information about the button pressed
+    //"ok" is passed when ok is pressed and cancel is passed when cancel is pressed.
+    public interface OnokOrCancel{
+        public void okOrCancel(boolean okOrCancel, String menuID);
     }
 }

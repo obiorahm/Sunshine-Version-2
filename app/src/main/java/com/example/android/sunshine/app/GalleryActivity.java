@@ -39,30 +39,19 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.IOException;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
-import edu.mit.jwi.Dictionary;
-import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.IWord;
-import edu.mit.jwi.item.IWordID;
-import edu.mit.jwi.item.POS;
 
 /**
  * Created by mgo983 on 4/21/17.
  */
 
-public class GalleryActivity extends ActionBarActivity{
+public class GalleryActivity extends ActionBarActivity implements  SafeAction.OnokOrCancel{
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
     public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";
@@ -71,10 +60,12 @@ public class GalleryActivity extends ActionBarActivity{
     public final static String USER_ID_KEY = "com.example.android.sunshine.USER_ID_KEY";
 
     public final static String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
+    public final static String EXTRA_SAFE_ACTION_MENU_ITEM = "com.example.android.sunshine.safeActionMenuItem";
 
     public static final String PHOTOS_CHILD = "photos";
     private static final int REQUEST_IMAGE = 2;
     private static final String TAG = "GalleryActivity";
+    private static final int REQUEST_CODE = 1;
 
     private static String mPhotoId;
     private static Photos photos = new Photos();
@@ -278,13 +269,10 @@ public class GalleryActivity extends ActionBarActivity{
                 startActivity(intent);
                 break;
             case R.id.menu_item_save:
-                if (safeAction("Do you want to save your selections?")){
-                    sendMessage();
-                }
+                safeAction("Save your selection?", "save");
                 break;
             case R.id.menu_item_delete:
-                //deleteMessage();
-                //runExample();
+                safeAction("Delete your selection?", "delete");
                 break;
 
         }
@@ -305,15 +293,14 @@ public class GalleryActivity extends ActionBarActivity{
                 });
     }
 
-    boolean safeAction(String message){
+    private void safeAction(String message, String menuID){
         SafeAction newFragment = new SafeAction();
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
+        bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, menuID);
 
         newFragment.setArguments(bundle);
         newFragment.show(getFragmentManager(),"SAFE_ACTION_MSG");
-
-        return true;
 
     }
 
@@ -362,38 +349,6 @@ public class GalleryActivity extends ActionBarActivity{
     }
 
 
-public void runExample(){
-
-     // construct the URL to the Wordnet dictionary directory
-    String wnhome = System.getenv("PATH");
-    Log.d(TAG, "environment variable" + wnhome);
-    //String path = "/Users/mgo983/Downloads/WordNet-3.0/dict";
-    String path = "/opt/X11/bin/usr/local/Cellar/wordnet/3.1" + File.separator + "dict";
-
-    URL url = null;
-    try{ url = new URL("file", null, path); }
-    catch(MalformedURLException e){ e.printStackTrace(); }
-     if(url == null) return;
-
-    IDictionary dict = new Dictionary(url);
-    try{
-        // construct the dictionary object and open it
-        dict.open();
-        // look up first sense of the word "dog"
-        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
-        IWordID wordID = idxWord.getWordIDs().get(0);
-        IWord word = dict.getWord(wordID);
-        Log.v("jwnet", "Id = " + wordID + "Lemma = " + word.getLemma() + "Gloss = " + word.getSynset().getGloss());
-
-    }catch (IOException e){
-        Log.e(TAG, e + "is the error");
-
-    }
-
-
-
-
-}
 
     public String[] getFileId (String oldFileName){
 
@@ -408,6 +363,23 @@ public void runExample(){
         Log.v("new file name", " " + newFileName);
 
         return newFileName;
+
+    }
+
+    boolean OKCANCEL = false;
+    @Override
+    public void okOrCancel(boolean okOrCancel, String menuID){
+        Log.v(TAG, "menu item: " + OKCANCEL);
+        if (okOrCancel){
+           switch (menuID){
+               case "save":
+                   sendMessage();
+                   break;
+               case "delete":
+                   break;
+           }
+            onBackPressed();
+        }
 
     }
 
