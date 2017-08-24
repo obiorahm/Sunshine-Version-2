@@ -54,7 +54,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private static final int TYPE_RESULT = 2;
     private static final int TYPE_MAX_COUNT= TYPE_RESULT + 1;
 
-    private static final String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
+    public final static String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
+    public final static String EXTRA_SAFE_ACTION_MENU_ITEM = "com.example.android.sunshine.safeActionMenuItem";
+
 
     private TreeSet imageSet = new TreeSet();
     private TreeSet resultSet = new TreeSet();
@@ -186,7 +188,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
                     final String[] newString = mData.get(position).toString().split("&&");
 
-                    mHolder.mText.setText(newString[0].substring(0,1).toUpperCase() + newString[0].substring(1));
+                    //String capNewString = newString[0].substring(0,1).toUpperCase() + newString[0].substring(1);
+
+                    mHolder.mText.setText(newString[0]);
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
                     mHolder.mImageButton = (ImageButton) view.findViewById(R.id.list_delete_button);
@@ -201,7 +205,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     setImageOnClickListener(mHolder, newString[0]);
                     setTextOnClickListener(mHolder);
 
-                    setDeletBtnClickListener(mHolder);
+                    setDeletBtnClickListener(mHolder, position);
                     setEditBtnClickListener(mHolder, parent, position);
 
                     setEditAcceptClickListener(mHolder);
@@ -288,11 +292,20 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         });
     }
 
-    private void setDeletBtnClickListener(final ViewHolder mHolder){
+    private void setDeletBtnClickListener(final ViewHolder mHolder, final int position){
         mHolder.mImageButton.setOnClickListener(new View.OnClickListener() {
+            private String message = "Delete this item?";
+            private String editOrDelete = "delete";
             @Override
             public void onClick(View view) {
+                EDITED_POSITION = position;
+                SafeAction newFragment = SafeAction.newInstance();
+                Bundle bundle = new Bundle();
+                bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
+                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, "delete");
 
+                newFragment.setArguments(bundle);
+                newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
             }
         });
     }
@@ -326,6 +339,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 SafeAction newFragment = SafeAction.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
+                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, "edit");
 
                 newFragment.setArguments(bundle);
                 newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");

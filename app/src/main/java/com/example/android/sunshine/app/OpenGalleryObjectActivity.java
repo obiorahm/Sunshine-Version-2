@@ -1,9 +1,8 @@
 package com.example.android.sunshine.app;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+
 import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -29,18 +27,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.io.OutputStreamWriter;
 import java.util.Locale;
 
-import clarifai2.api.ClarifaiBuilder;
-import clarifai2.api.ClarifaiClient;
-import clarifai2.api.ClarifaiResponse;
-import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.image.ClarifaiImage;
-import clarifai2.dto.model.output.ClarifaiOutput;
-import clarifai2.dto.prediction.Concept;
-import okhttp3.OkHttpClient;
-import opennlp.tools.stemmer.PorterStemmer;
+
 
 /**
  * Created by mgo983 on 4/24/17.
@@ -55,12 +45,15 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
+    private String TAG = "OpenGalleryObject";
 
     public boolean ONLONGCLICKMODE = false;
     public boolean ONEDITMODE = false;
 
     ButtonTextAdapter adapter = null;
     ListView list = null;
+    private String[] listOfWords;
+    private String TxtFileName;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -116,26 +109,31 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                     String FileName;
                     sharedPreferences = getApplicationContext().getSharedPreferences(IMGFILENAME, Context.MODE_PRIVATE);
                     FileName = sharedPreferences.getString(IMGFILEKEY, null);
+                    try{
+                        String[] FileNameArray = FileName.split("/");
+                        File imgFile = new File(FileName);
 
-                    String[] FileNameArray = FileName.split("/");
-                    File imgFile = new File(FileName);
+                        TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
+                        String TxtFileContent = readFromFile(this, TxtFileName);
+                        listOfWords = TxtFileContent.split(" ");
 
-                    String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
-                    String TxtFileContent = readFromFile(this, TxtFileName);
-                    String[] listOfWords = TxtFileContent.split(" ");
+                        FetchClipArt fetchClipArt = new FetchClipArt(adapter,this ,prefSearchParam);
 
-                    FetchClipArt fetchClipArt = new FetchClipArt(adapter,this ,prefSearchParam);
-
-                    adapter.addImage(imgFile.toString());
-                    Log.v("Textfile content is ", TxtFileContent);
+                        adapter.addImage(imgFile.toString());
+                        Log.v("Textfile content is ", TxtFileContent);
 
 
-                    if (TxtFileContent != ""){
-                        adapter.addResult(TxtFileContent);
-                        CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
-                        if (checkInternetConnection.isNetworkConnected())
-                            fetchClipArt.execute(listOfWords);
+                        if (! TxtFileContent.equals("") ){
+                            adapter.addResult(TxtFileContent);
+                            CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
+                            if (checkInternetConnection.isNetworkConnected())
+                                fetchClipArt.execute(listOfWords);
+                        }
+
+                    }catch (NullPointerException e){
+                        Log.e(TAG, ": " + e);
                     }
+
                 }
                 list = (ListView) this.findViewById(R.id.list_view_word);
                 list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -179,7 +177,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
             if ( inputStream != null ) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
+                String receiveString;
                 StringBuilder stringBuilder = new StringBuilder();
 
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
@@ -236,9 +234,76 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     public void okOrCancel(boolean okOrCancel, String menuID){
         if (okOrCancel){
 
+            String newPhrase = "";
+            String eachWord = listOfWords[0];
+            int phraseLength = listOfWords.length;
+            int beginAt;
+
+            FrameLayout listItem =  (FrameLayout) list.getChildAt(adapter.EDITED_POSITION);
+
+            switch (menuID){
+                case "delete":
+                    if(adapter.EDITED_POSITION - 2 == 0){
+                      newPhrase = listOfWords[1];
+                        beginAt = 2;
+                    }else{
+                       newPhrase = listOfWords[0];
+                        beginAt = 1;
+                    }
+
+                    for(int i = beginAt; i < phraseLength; i++){
+                        if (i != adapter.EDITED_POSITION - 2){
+                            eachWord = listOfWords[i];
+                            newPhrase = newPhrase + " " +eachWord;
+                        }
+                    }
+                    break;
+                case "edit":
+                    EditText editedWordView = (EditText) listItem.findViewById(R.id.list_item_word_editview);
+                    String editedWord = editedWordView.getText().toString();
+
+                    //eliminate trailing spaces
+                    if (adapter.EDITED_POSITION - 2 == 0){
+                        newPhrase = editedWord;
+                    } else{
+                        newPhrase = eachWord;
+                    }
+
+                    for (int i = 1; i < listOfWords.length; i++){
+
+                        if (i == adapter.EDITED_POSITION - 2){
+                            eachWord = editedWordView.getText().toString();
+                        }else {
+                            eachWord = listOfWords[i];
+                        }
+                        newPhrase += " " + eachWord ;
+                    }
+                    break;
+            }
+
+
+            writeToFile(newPhrase, TxtFileName ,this);
+            reloadActivity();
+
         }else{
             onBackPressed();
         }
+    }
+
+    private void writeToFile(String data, String fileName, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private void reloadActivity(){
+        finish();
+        startActivity(getIntent());
     }
 
 }
