@@ -1,6 +1,9 @@
 package com.example.android.sunshine.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,10 +12,16 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,7 +46,7 @@ import opennlp.tools.stemmer.PorterStemmer;
  * Created by mgo983 on 4/24/17.
  */
 
-public class OpenGalleryObjectActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
+public class OpenGalleryObjectActivity extends ActionBarActivity implements TextToSpeech.OnInitListener, SafeAction.OnokOrCancel {
 
     //public final static String ARG_OBJECT = "IMGFILENAME";
 
@@ -46,6 +55,13 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
+
+    public boolean ONLONGCLICKMODE = false;
+    public boolean ONEDITMODE = false;
+
+    ButtonTextAdapter adapter = null;
+    ListView list = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
 
@@ -82,7 +98,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 
-               ButtonTextAdapter adapter;
 
                 //get preferred search engine
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -116,13 +131,24 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
 
                     if (TxtFileContent != ""){
-                        adapter.addItem(TxtFileContent + "&&" + imgFile.toString());
+                        adapter.addResult(TxtFileContent);
                         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
                         if (checkInternetConnection.isNetworkConnected())
                             fetchClipArt.execute(listOfWords);
                     }
                 }
-                ListView list = (ListView) this.findViewById(R.id.list_view_word);
+                list = (ListView) this.findViewById(R.id.list_view_word);
+                list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        if (!ONLONGCLICKMODE && !ONEDITMODE){
+                            ONLONGCLICKMODE = true;
+                            adapter.makeItemsEditDeleteVisible(list);
+                        }
+                        return true;
+                    }
+                });
+
                 list.setAdapter(adapter);
 
             } else {
@@ -183,5 +209,36 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed(){
+        if (ONLONGCLICKMODE){
+            adapter.makeItemsEditDeleteInvisible(list);
+            ONLONGCLICKMODE = false;
+        }else if (ONEDITMODE){
+            //adapter.hideEditElements((ButtonTextAdapter.ViewHolder) list.getChildAt(adapter.EDITTED_POSITION));
+            FrameLayout listItem =  (FrameLayout) list.getChildAt(adapter.EDITED_POSITION);
+            adapter.hideEditElements(
+                    (EditText) listItem.findViewById(R.id.list_item_word_editview),
+                    (ImageButton) listItem.findViewById(R.id.list_reject_edit_button),
+                    (ImageButton) listItem.findViewById(R.id.list_accept_edit_button),
+                    this,
+                    (TextView) listItem.findViewById(R.id.list_item_word_textview)
+            );
+            ONEDITMODE = false;
+
+        }else
+        {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void okOrCancel(boolean okOrCancel, String menuID){
+        if (okOrCancel){
+
+        }else{
+            onBackPressed();
+        }
+    }
 
 }

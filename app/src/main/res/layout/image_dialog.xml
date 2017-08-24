@@ -6,11 +6,13 @@
     <ImageView
         android:layout_width="500dp"
         android:layout_height="500dp"
-        android:id="@+id/new_dialog" />
+        android:id="@+id/new_dialog"
+        android:contentDescription="@string/dialog_captured_image"/>
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/close_dialog"
-        android:src="@drawable/ic_close_white_18dp" />
+        android:src="@drawable/ic_close_white_18dp"
+        android:contentDescription="@string/close_enlarged_image"/>
 
 </FrameLayout>

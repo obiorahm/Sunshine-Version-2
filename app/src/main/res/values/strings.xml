@@ -17,8 +17,19 @@
     <string name="lastName">Last Name</string>
     <string name="signUp">Sign up</string>
     <string name="ok">OK</string>
-    <string name="cancel">CANCEL</string>
-
+    <string name="cancel">@android:string/cancel</string>
+    <string name="delete_list_item">Delete this list item</string>
+    <string name="edit_list_item">Edit this list item</string>
+    <string name="accept_list_item_edit">Accept the list item edit</string>
+    <string name="reject_list_item_edit">Reject the list item edit</string>
+    <string name="search_image">The captured Image</string>
+    <string name="speak_main_word">Speaks the word</string>
+    <string name="shares_the_word">Share the word to get the meaning</string>
+    <string name="dialog_captured_image">The captured image enlarged</string>
+    <string name="close_enlarged_image">An exit button that closes the enlarged image</string>
+    <string name="grid_image">An image in the gallery grid</string>
+    <string name="list_item_image">The first content of the listView - an image</string>
+    <string name="select_all_action_bar">A checkbox that allows the user to select all images</string>
 
     <string-array name="pref_search_engine">
         <item>Pixabay</item>

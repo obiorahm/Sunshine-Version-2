@@ -294,7 +294,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     }
 
     private void safeAction(String message, String menuID){
-        SafeAction newFragment = new SafeAction();
+        SafeAction newFragment = SafeAction.newInstance();
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
         bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, menuID);

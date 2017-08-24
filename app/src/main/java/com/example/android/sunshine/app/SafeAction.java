@@ -2,6 +2,10 @@ package com.example.android.sunshine.app;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.*;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -22,12 +26,32 @@ import java.util.concurrent.Callable;
  */
 
 public class SafeAction extends DialogFragment {
+
+    public static SafeAction newInstance() {
+        SafeAction dialog = new SafeAction();
+        Bundle bundle = new Bundle();
+        dialog.setArguments(bundle);
+
+        dialog.setStyle(DialogFragment.STYLE_NO_FRAME, 0);
+
+        return dialog;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.safe_action_dialog, container, false);
+                //inflater.inflate(R.layout.safe_action_dialog, container, true);
 
         TextView textView = (TextView) rootView.findViewById(R.id.safety_question);
+
+        Drawable myIconAccept = getResources().getDrawable( R.drawable.ic_done_black_24dp);
+        ColorFilter filterMyIconAccept = new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.abc_search_url_text_normal));
+        myIconAccept.setColorFilter(filterMyIconAccept);
+
+        Drawable myIconReject = getResources().getDrawable( R.drawable.ic_clear_black_24dp);
+        ColorFilter filterMyIconReject = new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.abc_search_url_text_normal));
+        myIconReject.setColorFilter(filterMyIconReject);
+
         Bundle bundle = this.getArguments();
         String safetyQuestion = bundle.getString(GalleryActivity.EXTRA_SAFE_ACTION_MSG);
         final String safetyMenuID = bundle.getString(GalleryActivity.EXTRA_SAFE_ACTION_MENU_ITEM);

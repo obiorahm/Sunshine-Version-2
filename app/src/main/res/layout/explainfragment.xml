@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:gravity="center"
-        android:text="whatever"
         android:id="@+id/grid_text"
         android:textSize="14pt"
         android:background="@color/colorPrimaryDark" />
@@ -46,7 +45,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
 
-                ></GridView>
+                />
             <GridView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +64,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
 
-                ></GridView>
+                />
 
         </LinearLayout>
 
@@ -74,7 +73,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
             <!--android:background="@color/colorPrimaryDark"-->
 
             <LinearLayout
@@ -89,6 +89,7 @@
                     android:id="@+id/speak_text"
                     android:src="@drawable/ic_volume_up_white_18dp"
                     android:background="@drawable/circular_button"
+                    android:contentDescription="@string/speak_main_word"
                     />
 
             </LinearLayout>
@@ -104,6 +105,7 @@
                     android:id="@+id/share_text"
                     android:src="@drawable/ic_share_white_18dp"
                     android:background="@drawable/circular_button"
+                    android:contentDescription="@string/shares_the_word"
                     />
 
             </LinearLayout>

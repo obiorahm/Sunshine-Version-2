@@ -5,7 +5,7 @@
     android:id="@+id/item_grid">
 
     <ImageView
-        android:contentDescription="an image"
+        android:contentDescription="@string/grid_image"
         android:layout_width="match_parent"
         android:layout_height="135dp"
         android:id="@+id/film_fragment_image_view"
