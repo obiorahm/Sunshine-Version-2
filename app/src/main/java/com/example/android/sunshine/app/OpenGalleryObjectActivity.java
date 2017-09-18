@@ -136,17 +136,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
                 }
                 list = (ListView) this.findViewById(R.id.list_view_word);
-                list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        if (!ONLONGCLICKMODE && !ONEDITMODE){
-                            ONLONGCLICKMODE = true;
-                            adapter.makeItemsEditDeleteVisible(list);
-                        }
-                        return true;
-                    }
-                });
-
                 list.setAdapter(adapter);
 
             } else {
@@ -210,10 +199,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     @Override
     public void onBackPressed(){
         if (ONLONGCLICKMODE){
-            adapter.makeItemsEditDeleteInvisible(list);
+            adapter.makeItemsEditDeleteInvisible();
             ONLONGCLICKMODE = false;
         }else if (ONEDITMODE){
-            //adapter.hideEditElements((ButtonTextAdapter.ViewHolder) list.getChildAt(adapter.EDITTED_POSITION));
             FrameLayout listItem =  (FrameLayout) list.getChildAt(adapter.EDITED_POSITION);
             adapter.hideEditElements(
                     (EditText) listItem.findViewById(R.id.list_item_word_editview),
@@ -289,6 +277,10 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
             onBackPressed();
         }
     }
+    private void reloadActivity(){
+        finish();
+        startActivity(getIntent());
+    }
 
     private void writeToFile(String data, String fileName, Context context) {
         try {
@@ -299,11 +291,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
-    }
-
-    private void reloadActivity(){
-        finish();
-        startActivity(getIntent());
     }
 
 }

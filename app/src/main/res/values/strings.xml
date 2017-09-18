@@ -29,7 +29,7 @@
     <string name="close_enlarged_image">An exit button that closes the enlarged image</string>
     <string name="grid_image">An image in the gallery grid</string>
     <string name="list_item_image">The first content of the listView - an image</string>
-    <string name="select_all_action_bar">A checkbox that allows the user to select all images</string>
+    <string name="select_all_action_bar">SELECT ALL</string>
 
     <string-array name="pref_search_engine">
         <item>Pixabay</item>

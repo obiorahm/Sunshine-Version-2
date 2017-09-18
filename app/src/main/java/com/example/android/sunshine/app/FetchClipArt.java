@@ -77,9 +77,12 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         PorterStemmer stemmer = new PorterStemmer();
         String word = stemmer.stem(searchString);
+        setGridViewAdapter(ImageUrls);
+        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+        progressBar.setVisibility(View.INVISIBLE);
 
-        CBIR tryClarify = new CBIR(word, (ImageGridAdapter) adapter, context);
-        tryClarify.execute(ImageUrls);
+        //CBIR tryClarify = new CBIR(word, (ImageGridAdapter) adapter, context);
+        //tryClarify.execute(ImageUrls);
 
         //String[] orderedImageUrls = ;
         //return orderedImageUrls;

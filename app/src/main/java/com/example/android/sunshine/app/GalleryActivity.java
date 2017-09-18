@@ -63,13 +63,9 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     public final static String EXTRA_SAFE_ACTION_MENU_ITEM = "com.example.android.sunshine.safeActionMenuItem";
 
     public static final String PHOTOS_CHILD = "photos";
-    private static final int REQUEST_IMAGE = 2;
+    //private static final int REQUEST_IMAGE = 2;
     private static final String TAG = "GalleryActivity";
-    private static final int REQUEST_CODE = 1;
-
-    private static String mPhotoId;
-    private static Photos photos = new Photos();
-
+    //private static final int REQUEST_CODE = 1;
 
 
     //GalleryPagerAdapter galleryPagerAdapter;
@@ -107,6 +103,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
         //enter value and index into hash map
         HashMap<Long, Integer> NameAndDateModified = new HashMap<>();
+        HashMap<File, Integer> newFiles = new HashMap<>();
 
 
         for (int i = 0; i < fileLength; i++){
@@ -169,7 +166,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
         });
 
-        final int SELECT_PHOTO = 1;
+        //final int SELECT_PHOTO = 1;
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             public  boolean onItemLongClick(AdapterView<?> adapterView, final View view, int position, long l){
 
@@ -216,9 +213,8 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                final View view1 = child;
-                view1.animate().scaleX(1.0f);
-                view1.animate().scaleY(1.0f);
+                child.animate().scaleX(1.0f);
+                child.animate().scaleY(1.0f);
 
             }
         }, 200);
@@ -304,6 +300,25 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
     }
 
+    void deleteImgAndTxtFiles(){
+        final GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        ArrayList<Integer> checkedPhotosPosition = imageGridAdapter.getCheckedboxes(gridView);
+
+        for (Integer position : checkedPhotosPosition){
+            String fileNamePath = NewFileNames[position];
+            File jpgDeletionFile = new File(fileNamePath);
+            File txtDeletionFile = new File(getFileIdForDeletion(fileNamePath)[0]);
+            //String[] fileName = getFileIdForDeletion(fileNamePath);
+            if (jpgDeletionFile.delete() && txtDeletionFile.delete()){
+                Log.v("Deleted file","Deleted file");
+            }else{
+                //Log.v(fileName[0], fileName[1]);
+            }
+        }
+            //(deleteFile(fileName + ".jpg") && deleteFile(fileName + ".jpg"));
+
+    }
+
     void sendMessage(){
         //final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference(PHOTOS_CHILD).child("");
         SharedPreferences sharedPreferences;
@@ -312,6 +327,9 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         userName = sharedPreferences.getString(USER_ID_KEY, null);
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
         ArrayList<Integer> checkedPhotosPosition = imageGridAdapter.getCheckedboxes(gridView);
+        String mPhotoId;
+        Photos photos;
+
 
 
 
@@ -366,6 +384,19 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
     }
 
+    public String[] getFileIdForDeletion(String oldFileName){
+
+        String[] newFileName = new String[2];
+        String fileNameSubstring = oldFileName.substring(oldFileName.lastIndexOf("/") + 1);
+
+        newFileName[0] = fileNameSubstring.replace(",","")
+        .replace(":","")
+        .replace(".jpg",".txt");
+        newFileName[1] = fileNameSubstring;
+
+        return newFileName;
+    }
+
     boolean OKCANCEL = false;
     @Override
     public void okOrCancel(boolean okOrCancel, String menuID){
@@ -376,6 +407,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                    sendMessage();
                    break;
                case "delete":
+                   deleteImgAndTxtFiles();
                    break;
            }
             onBackPressed();
@@ -401,7 +433,6 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
             super.onBackPressed();
         }
     }
-
 
 
 }

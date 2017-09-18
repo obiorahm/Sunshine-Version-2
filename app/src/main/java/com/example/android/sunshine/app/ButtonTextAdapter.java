@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -54,20 +57,20 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private static final int TYPE_RESULT = 2;
     private static final int TYPE_MAX_COUNT= TYPE_RESULT + 1;
 
-    public final static String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
-    public final static String EXTRA_SAFE_ACTION_MENU_ITEM = "com.example.android.sunshine.safeActionMenuItem";
+    private final static String EXTRA_SAFE_ACTION_MSG = "com.example.android.sunshine.safeActionMessage";
+    private final static String EXTRA_SAFE_ACTION_MENU_ITEM = "com.example.android.sunshine.safeActionMenuItem";
 
 
     private TreeSet imageSet = new TreeSet();
     private TreeSet resultSet = new TreeSet();
-    private TreeSet itemSet = new TreeSet();
 
     final static String SEARCH_PARAM = "SEARCH_PARAM";
-    public final static String EXTRA_DIALOG_IMAGE = "com.example.android.sunshine.extraImage";
+    private final static String EXTRA_DIALOG_IMAGE = "com.example.android.sunshine.extraImage";
 
     public int EDITED_POSITION;
 
-
+    private List<ImageButton> editButtons = new LinkedList<>();
+    private List<ImageButton> deleteButtons = new LinkedList<>();
 
 
     private LayoutInflater inflater;
@@ -84,7 +87,6 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     @Override
     public void addItem(final String item){
         mData.add(item);
-        itemSet.add(mData.size() - 1);
         notifyDataSetChanged();
     }
 
@@ -100,30 +102,27 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         notifyDataSetChanged();
     }
 
-    public void makeItemsEditDeleteVisible(View view){
-        for(Object i : itemSet){
-            FrameLayout rootView = (FrameLayout) ((ListView) view).getChildAt((Integer) i);
-            if (rootView == null) return;
-            ImageButton imgBtnDelete = (ImageButton) rootView.findViewById(R.id.list_delete_button);
-            imgBtnDelete.setVisibility(View.VISIBLE);
+    private void makeItemsEditDeleteVisible(){
 
-            ImageButton imgBtnEdit = (ImageButton) rootView.findViewById(R.id.list_edit_button);
-            imgBtnEdit.setVisibility(View.VISIBLE);
-
+        for(ImageButton btn : editButtons){
+            btn.setVisibility(View.VISIBLE);
         }
+
+        for(ImageButton btn : deleteButtons){
+            btn.setVisibility(View.VISIBLE);
+        }
+
     }
 
-    public void makeItemsEditDeleteInvisible(View view){
-        for(Object i : itemSet){
-            FrameLayout rootView = (FrameLayout) ((ListView) view).getChildAt((Integer) i);
-            if (rootView == null) return;
-            ImageButton imgBtnDelete = (ImageButton) rootView.findViewById(R.id.list_delete_button);
-            imgBtnDelete.setVisibility(View.INVISIBLE);
-
-            ImageButton imgBtnEdit = (ImageButton) rootView.findViewById(R.id.list_edit_button);
-            imgBtnEdit.setVisibility(View.INVISIBLE);
-
+    public void makeItemsEditDeleteInvisible(){
+        for(ImageButton btn : editButtons){
+            btn.setVisibility(View.INVISIBLE);
         }
+
+        for(ImageButton btn : deleteButtons){
+            btn.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 
@@ -166,7 +165,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, final ViewGroup parent) {
 
         int type = getItemViewType(position);
         final ViewHolder mHolder;
@@ -188,9 +187,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
                     final String[] newString = mData.get(position).toString().split("&&");
 
-                    //String capNewString = newString[0].substring(0,1).toUpperCase() + newString[0].substring(1);
+                    String capNewString = newString[0].substring(0,1).toUpperCase() + newString[0].substring(1);
 
-                    mHolder.mText.setText(newString[0]);
+                    mHolder.mText.setText(capNewString);
 
                     mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
                     mHolder.mImageButton = (ImageButton) view.findViewById(R.id.list_delete_button);
@@ -199,17 +198,23 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mImgBtnRejectEdit = (ImageButton) view.findViewById(R.id.list_reject_edit_button);
                     mHolder.mEditText = (EditText) view.findViewById(R.id.list_item_word_editview);
 
-                    glideLoadImage(position, newString[1], newString[0] ,mHolder);
+                    glideLoadImage(newString[1], newString[0] ,mHolder);
 
                     makeProgressBarInvisible(mHolder, view);
                     setImageOnClickListener(mHolder, newString[0]);
                     setTextOnClickListener(mHolder);
 
                     setDeletBtnClickListener(mHolder, position);
-                    setEditBtnClickListener(mHolder, parent, position);
+                    setEditBtnClickListener(mHolder, position);
 
                     setEditAcceptClickListener(mHolder);
                     setEditRejectClickListener(mHolder);
+
+                    editButtons.add(mHolder.mImageButton);
+                    deleteButtons.add(mHolder.mImageButtonEdit);
+                    if (((OpenGalleryObjectActivity) context).ONLONGCLICKMODE){
+                        makeItemsEditDeleteVisible();
+                    }
 
                     view.setTag(mHolder);
                     break;
@@ -239,11 +244,26 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 case TYPE_RESULT:
                     mHolder = new ViewHolder();
                     mHolder.mText = (TextView) view.findViewById(R.id.list_search_result_text);
-                    mHolder.mText.setText(mData.get(position).toString());
+                    final String resultString = mData.get(position).toString();
+
+                    String capResultString = resultString.substring(0,1).toUpperCase() + resultString.substring(1);
+                    mHolder.mText.setText(capResultString);
                     setTextOnClickListener(mHolder);
+                    view.setTag(mHolder);
                     break;
 
             }
+
+        ((ListView) parent).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!((OpenGalleryObjectActivity) context).ONLONGCLICKMODE && !((OpenGalleryObjectActivity) context).ONEDITMODE){
+                    ((OpenGalleryObjectActivity) context).ONLONGCLICKMODE = true;
+                    makeItemsEditDeleteVisible();
+                }
+                return true;
+            }
+        });
 
 
         return view;
@@ -268,7 +288,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private  void makeProgressBarInvisible(ViewHolder mHolder, View view){
         mHolder.mProgressBar = (ProgressBar) view.findViewById(R.id.image_load_complete);
         mHolder.mProgressBar.setVisibility(View.INVISIBLE);
-    };
+    }
     private void setImageOnClickListener(ViewHolder mHolder, final String focusWord){
         mHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,7 +299,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 context.startActivity(ImageExplanationActivity);
             }
         });
-    };
+    }
 
     private void setTextOnClickListener(ViewHolder mHolder){
         final String  speech = mHolder.mText.getText().toString();
@@ -302,7 +322,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 SafeAction newFragment = SafeAction.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
-                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, "delete");
+                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, editOrDelete);
 
                 newFragment.setArguments(bundle);
                 newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
@@ -310,14 +330,14 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         });
     }
 
-    private void setEditBtnClickListener(final ViewHolder mHolder, final ViewGroup parent, final int position){
+    private void setEditBtnClickListener(final ViewHolder mHolder, final int position){
         mHolder.mImageButtonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mHolder.mText.setVisibility(View.INVISIBLE);
                 mHolder.mEditText.setText(mHolder.mText.getText());
                 mHolder.mEditText.hasFocus();
-                makeItemsEditDeleteInvisible(parent);
+                makeItemsEditDeleteInvisible();
                 ((OpenGalleryObjectActivity) context).ONLONGCLICKMODE = false;
                 ((OpenGalleryObjectActivity) context).ONEDITMODE = true;
 
@@ -333,13 +353,14 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     private void setEditAcceptClickListener(final ViewHolder mHolder){
         final String message = "Accept edit?";
+        final String editOrDelete = "edit";
         mHolder.mImgBtnAcceptEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SafeAction newFragment = SafeAction.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putString(EXTRA_SAFE_ACTION_MSG, message);
-                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, "edit");
+                bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, editOrDelete);
 
                 newFragment.setArguments(bundle);
                 newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
@@ -370,10 +391,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             ImageButton mImgBtnRejectEdit,
             ImageButton mImgBtnAcceptEdit,
             OpenGalleryObjectActivity mContext,
-            TextView mText
-    )
-
-    {
+            TextView mText) {
         mEditText.setVisibility(View.INVISIBLE);
         mImgBtnRejectEdit.setVisibility(View.INVISIBLE);
         mImgBtnAcceptEdit.setVisibility(View.INVISIBLE);
@@ -409,13 +427,13 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         return imageUrl;
     }
 
-    private void glideLoadImage(int position, String JSONString, String searchString, ViewHolder mHolder){
+    private void glideLoadImage(String JSONString, String searchString, ViewHolder mHolder){
         if (availableColor.searchColor(searchString.toLowerCase())){
             Log.v("search color content", JSONString + "and" + searchString);
             Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
             return;
         }
-            String[] ImageUrl = { };
+            String[] ImageUrl;
 
             ImageUrl = this.getImageUrl(this.searchEngine,JSONString,0);
             if (ImageUrl != null){
@@ -423,18 +441,5 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             }
 
     }
-
-
-    private void writeToFile(String data, String fileName, Context context) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
 
 }
