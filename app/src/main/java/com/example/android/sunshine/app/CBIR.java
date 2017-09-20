@@ -199,7 +199,7 @@ public class CBIR extends  AsyncTask<String[], Void, ArrayList<String[]>>{
         if (Result.size() > 1){
             String[] noConfidenceUrls = Result.get(1);
             if (noConfidenceUrls != null){
-                setGridViewAdapter(noConfidenceUrls, (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview1));
+                //setGridViewAdapter(noConfidenceUrls, (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview1));
             }
 
         }

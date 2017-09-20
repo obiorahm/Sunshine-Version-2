@@ -79,7 +79,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         String word = stemmer.stem(searchString);
         setGridViewAdapter(ImageUrls);
         ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
-        progressBar.setVisibility(View.INVISIBLE);
+        hideProgressBar(progressBar);
 
         //CBIR tryClarify = new CBIR(word, (ImageGridAdapter) adapter, context);
         //tryClarify.execute(ImageUrls);

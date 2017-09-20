@@ -30,6 +30,10 @@
     <string name="grid_image">An image in the gallery grid</string>
     <string name="list_item_image">The first content of the listView - an image</string>
     <string name="select_all_action_bar">SELECT ALL</string>
+    <string name="gallery_save">save</string>
+    <string name="gallery_delete">delete</string>
+    <string name="gallery_share">share</string>
+    <string name="gallery_edit">edit</string>
 
     <string-array name="pref_search_engine">
         <item>Pixabay</item>

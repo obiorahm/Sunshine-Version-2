@@ -82,6 +82,9 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     File[] files = targetDirectory.listFiles();
     int fileLength = files.length;
     String[] NewFileNames = new String[fileLength];
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState){
 
@@ -129,18 +132,16 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
         gridView.setAdapter(imageGridAdapter);
 
-        ActionBar actionBar = getSupportActionBar();
+
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
 
         //displaying custom ActionBar
         View mActionBarView = getLayoutInflater().inflate(R.layout.my_action_bar, null);
         actionBar.setCustomView(mActionBarView);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        //actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
         CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
-
-
-       // ImageView imageButton1 = (ImageView) gridView.findViewById(R.id.film_fragment_image_view);
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -160,6 +161,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
                 }else{
                     imageAnimation(gridView,position);
+                    actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
                     checkCurrentItem(view);
                 }
             }
@@ -172,11 +174,27 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
                 imageAnimation(gridView,position);
 
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+                CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+                        if (imageButton.isChecked()){
+                            imageGridAdapter.checkAllItems(gridView);
+                        }else {
+                            imageGridAdapter.unCheckAllItems(gridView);
+                        }
+                    }
+                });
+
                 if (!ONLONGCLICKMODE){
                     imageGridAdapter.unCheckAllItems(gridView);
                     imageGridAdapter.visibleCheckboxes(gridView);
                     invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
-                    CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
+                    imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
                     imageButton.setVisibility(View.VISIBLE);
                     ONLONGCLICKMODE = true;
 
@@ -189,18 +207,10 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
         });
 
+    }
 
-    imageButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
-            if (imageButton.isChecked()){
-                imageGridAdapter.checkAllItems(gridView);
-            }else {
-                imageGridAdapter.unCheckAllItems(gridView);
-            }
-        }
-    });
+
+    private void customActionBar(){
 
     }
 
@@ -276,18 +286,6 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     }
 
 
-
-    private void putImageInStorage(StorageReference storageReference, Uri uri, final String key){
-        storageReference.putFile(uri).addOnCompleteListener(GalleryActivity.this,
-                new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isSuccessful()){
-
-                        }
-                    }
-                });
-    }
 
     private void safeAction(String message, String menuID){
         SafeAction newFragment = SafeAction.newInstance();
@@ -418,15 +416,16 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     @Override
     public void onBackPressed(){
         GridView gridView = (GridView) findViewById(R.id.image_gridview);
-        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+        //CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
 
         if (ONLONGCLICKMODE){
             ONLONGCLICKMODE = false;
             invalidateOptionsMenu();
             imageGridAdapter.invisibleCheckboxes(gridView);
-            imageButton.setVisibility(View.INVISIBLE);
+            //imageButton.setVisibility(View.INVISIBLE);
 
             ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE|ActionBar.DISPLAY_HOME_AS_UP);
             actionBar.setDisplayShowHomeEnabled(true);
 
         }else{
