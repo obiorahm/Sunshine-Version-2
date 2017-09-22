@@ -212,7 +212,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                     editButtons.add(mHolder.mImageButton);
                     deleteButtons.add(mHolder.mImageButtonEdit);
-                    if (((OpenGalleryObjectActivity) context).ONLONGCLICKMODE){
+
+                    setTextToListenForLongClick(mHolder.mText);
+                    if (((CommonDetailOpen) context).ONLONGCLICKMODE){
                         makeItemsEditDeleteVisible();
                     }
 
@@ -229,6 +231,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     mHolder.mImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            if (((CommonDetailOpen) context).ONLONGCLICKMODE) return;
                             DialogFragment newFragment = new ImageDialog();
                             Bundle bundle = new Bundle();
                             bundle.putString(EXTRA_DIALOG_IMAGE, imgFile.toString());
@@ -254,11 +257,13 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
             }
 
+
+
         ((ListView) parent).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!((OpenGalleryObjectActivity) context).ONLONGCLICKMODE && !((OpenGalleryObjectActivity) context).ONEDITMODE){
-                    ((OpenGalleryObjectActivity) context).ONLONGCLICKMODE = true;
+                if (!((CommonDetailOpen) context).ONLONGCLICKMODE && !((CommonDetailOpen) context).ONEDITMODE){
+                    ((CommonDetailOpen) context).ONLONGCLICKMODE = true;
                     makeItemsEditDeleteVisible();
                 }
                 return true;
@@ -293,6 +298,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         mHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (((CommonDetailOpen) context).ONLONGCLICKMODE ) return;
                 myTTS.speak(focusWord, TextToSpeech.QUEUE_FLUSH, null);
                 Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
                 ImageExplanationActivity.putExtra(SEARCH_PARAM, focusWord);
@@ -338,8 +344,8 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 mHolder.mEditText.setText(mHolder.mText.getText());
                 mHolder.mEditText.hasFocus();
                 makeItemsEditDeleteInvisible();
-                ((OpenGalleryObjectActivity) context).ONLONGCLICKMODE = false;
-                ((OpenGalleryObjectActivity) context).ONEDITMODE = true;
+                ((CommonDetailOpen) context).ONLONGCLICKMODE = false;
+                ((CommonDetailOpen) context).ONEDITMODE = true;
 
                 mHolder.mEditText.setVisibility(View.VISIBLE);
                 mHolder.mImgBtnAcceptEdit.setVisibility(View.VISIBLE);
@@ -378,7 +384,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                         mHolder.mEditText,
                         mHolder.mImgBtnRejectEdit,
                         mHolder.mImgBtnAcceptEdit,
-                        (OpenGalleryObjectActivity) context,
+                        ((CommonDetailOpen) context),
                         mHolder.mText
                 );
 
@@ -390,7 +396,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             EditText mEditText,
             ImageButton mImgBtnRejectEdit,
             ImageButton mImgBtnAcceptEdit,
-            OpenGalleryObjectActivity mContext,
+            CommonDetailOpen mContext,
             TextView mText) {
         mEditText.setVisibility(View.INVISIBLE);
         mImgBtnRejectEdit.setVisibility(View.INVISIBLE);
@@ -398,6 +404,21 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         mContext.ONEDITMODE = false;
 
         mText.setVisibility(View.VISIBLE);
+    }
+
+
+    private void setTextToListenForLongClick(TextView mText){
+        mText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (!((CommonDetailOpen) context).ONLONGCLICKMODE && !((CommonDetailOpen) context).ONEDITMODE){
+                    ((CommonDetailOpen) context).ONLONGCLICKMODE = true;
+                    makeItemsEditDeleteVisible();
+                }
+                return true;
+            }
+        });
+
     }
 
 

@@ -112,8 +112,13 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
 
+            Intent detailFragment = new Intent(getActivity(), DetailFragment.class);
+            detailFragment.putExtra(EXTRA_IMAGE,mLocationForPhotos);
+            detailFragment.putExtra(EXTRA_TARGET, targetFilename);
+            startActivity(detailFragment);
 
-            DetailFragment nextFrag= new DetailFragment();
+
+            /*DetailFragment nextFrag= new DetailFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelable(EXTRA_IMAGE,mLocationForPhotos);
             bundle.putString(EXTRA_TARGET, targetFilename);
@@ -122,7 +127,7 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
             getFragmentManager().beginTransaction()
                     .replace(R.id.container,nextFrag)
                     .addToBackStack(null)
-                    .commit();
+                    .commit();*/
 
         }
     }

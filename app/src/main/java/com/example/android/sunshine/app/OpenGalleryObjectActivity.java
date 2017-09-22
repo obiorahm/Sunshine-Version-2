@@ -36,7 +36,7 @@ import java.util.Locale;
  * Created by mgo983 on 4/24/17.
  */
 
-public class OpenGalleryObjectActivity extends ActionBarActivity implements TextToSpeech.OnInitListener, SafeAction.OnokOrCancel {
+public class OpenGalleryObjectActivity extends CommonDetailOpen {
 
     //public final static String ARG_OBJECT = "IMGFILENAME";
 
@@ -47,17 +47,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     private TextToSpeech myTTS;
     private String TAG = "OpenGalleryObject";
 
-    public boolean ONLONGCLICKMODE = false;
-    public boolean ONEDITMODE = false;
-
-    ButtonTextAdapter adapter = null;
-    ListView list = null;
-    private String[] listOfWords;
-    private String TxtFileName;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fagment_detail);
@@ -108,7 +100,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
                     SharedPreferences sharedPreferences;
                     String FileName;
                     sharedPreferences = getApplicationContext().getSharedPreferences(IMGFILENAME, Context.MODE_PRIVATE);
-                    FileName = sharedPreferences.getString(IMGFILEKEY, null);
+                    _FileName = FileName = sharedPreferences.getString(IMGFILEKEY, null);
                     try{
                         String[] FileNameArray = FileName.split("/");
                         File imgFile = new File(FileName);
@@ -121,6 +113,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
 
                         adapter.addImage(imgFile.toString());
                         Log.v("Textfile content is ", TxtFileContent);
+                        Log.v("Opengallery img fname ", _FileName);
 
 
                         if (! TxtFileContent.equals("") ){
@@ -196,7 +189,7 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         super.onDestroy();
     }
 
-    @Override
+/*    @Override
     public void onBackPressed(){
         if (ONLONGCLICKMODE){
             adapter.makeItemsEditDeleteInvisible();
@@ -216,9 +209,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         {
             super.onBackPressed();
         }
-    }
+    }*/
 
-    @Override
+ /*   @Override
     public void okOrCancel(boolean okOrCancel, String menuID){
         if (okOrCancel){
 
@@ -280,9 +273,9 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
     private void reloadActivity(){
         finish();
         startActivity(getIntent());
-    }
+    }*/
 
-    private void writeToFile(String data, String fileName, Context context) {
+    /*private void writeToFile(String data, String fileName, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
@@ -291,6 +284,6 @@ public class OpenGalleryObjectActivity extends ActionBarActivity implements Text
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
-    }
+    }*/
 
 }

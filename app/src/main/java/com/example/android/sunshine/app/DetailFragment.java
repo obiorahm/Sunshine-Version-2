@@ -35,7 +35,7 @@ import opennlp.tools.stemmer.PorterStemmer;
  * Created by mgo983 on 4/21/17.
  */
 
-public class DetailFragment extends Fragment implements TextToSpeech.OnInitListener{
+public class DetailFragment extends CommonDetailOpen{
     private ShareActionProvider mShareActionProvider;
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
@@ -48,28 +48,23 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fagment_detail, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fagment_detail);
 
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
 
-        PorterStemmer stemmer = new PorterStemmer();
-        String word = stemmer.stem("leaving");
-        Log.v("The word stemmer", word);
-
-        return rootView;
     }
+
 
     //checks whether the user has the TTS data installed. If it is not, the user will be prompted to install it.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                myTTS = new TextToSpeech(getActivity(), this);
+                myTTS = new TextToSpeech(this, this);
             } else {
                 Intent installTTSIntent = new Intent();
                 installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
@@ -87,7 +82,7 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         captureAndSearchImage();
     }
 
-    private void writeToFile(String data, String fileName, Context context) {
+/*    private void writeToFile(String data, String fileName, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
@@ -96,19 +91,25 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
-    }
+    }*/
 
     private Uri getImage() {
-        //Intent intent = getActivity().getIntent();
+        Intent intent = this.getIntent();
+        Uri ImgDirectory = intent.getParcelableExtra(SelectActionFragment.EXTRA_IMAGE);
+        String FileName = intent.getStringExtra(SelectActionFragment.EXTRA_TARGET);
+        Uri FullFilePath = Uri.withAppendedPath(ImgDirectory,FileName);
+        return FullFilePath;
 
-        Bundle bundle = this.getArguments();
+
+        /*Bundle bundle = this.getArguments();
         if (bundle != null){
+
             Uri ImgDirectory = bundle.getParcelable(SelectActionFragment.EXTRA_IMAGE);
             String FileName = bundle.getString(SelectActionFragment.EXTRA_TARGET);
             Uri FullFilePath = Uri.withAppendedPath(ImgDirectory, FileName);
             return FullFilePath;
         }
-        return null;
+        return null;*/
 
     }
 
@@ -118,10 +119,11 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
         Uri fullFilePath = imageFile = getImage();
         //Log.v("PRINTING", fullFilePath.toString());
         File imgFile = new File(fullFilePath.toString().replace("file://", ""));
+        _FileName = imgFile.toString();
 
         if (imgFile.exists()) {
             //run CloudSight Search
-            DetailFragment.FetchImageDescription fetchImageDescription = new DetailFragment.FetchImageDescription();
+            DetailFragment.FetchImageDescription fetchImageDescription = new DetailFragment.FetchImageDescription(this);
             fetchImageDescription.execute(imgFile);
         }
     }
@@ -133,50 +135,55 @@ public class DetailFragment extends Fragment implements TextToSpeech.OnInitListe
 
         private final String LOG_TAG = DetailFragment.FetchImageDescription.class.getSimpleName();
 
+        private Context context;
+
+        public FetchImageDescription(Context mContext){
+            context = mContext;
+        }
+
         @Override
         protected void onPostExecute(final CSGetResult Result /* String[] Result*/) {
-
-            String[] placeholder = {"mma", "nneoma"};
-
-            System.out.print("the result of image processing" + Result);
 
 
             String searchResult = Result.getName();
 
-            String[] listOfWords = searchResult.split(" ");
+            listOfWords = searchResult.split(" ");
+
+            //_FileName = imageFile.toString();
+
+            Log.v("DetailFragment fname ", _FileName);
 
             String[] FileNameArray = imageFile.toString().split("/");
 
-            String TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
+            TxtFileName = FileNameArray[FileNameArray.length - 1].replace(".jpg", ".txt");
 
             //Save the retrieved text
-            writeToFile(searchResult,TxtFileName,getActivity());
+            writeToFile(searchResult,TxtFileName,context);
 
             //get preferred search engine
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             String prefSearchParam = sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value));
             //list
-            ButtonTextAdapter adapter = new ButtonTextAdapter(getActivity(), myTTS, prefSearchParam);
+            adapter = new ButtonTextAdapter(context, myTTS, prefSearchParam);
 
 
             adapter.addImage(imageFile.toString());
-
-            adapter.addItem(Result.getName() + "&&" + imageFile);
-
+            adapter.addResult(searchResult);
 
 
-
-            CheckInternetConnection checkInternetConnection = new CheckInternetConnection(getActivity());
+            CheckInternetConnection checkInternetConnection = new CheckInternetConnection(context);
             if (checkInternetConnection.isNetworkConnected()) {
                 //fetchClipArt
-                FetchClipArt fetchClipArt = new FetchClipArt(adapter, getActivity(),prefSearchParam);
+                FetchClipArt fetchClipArt = new FetchClipArt(adapter, context,prefSearchParam);
                 fetchClipArt.execute(listOfWords);
 
 
-                ListView list = (ListView) getActivity().findViewById(R.id.list_view_word);
+                list = (ListView) findViewById(R.id.list_view_word);
                 list.setAdapter(adapter);
             }
-            ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.search_complete);
+
+
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.search_complete);
             progressBar.setVisibility(View.INVISIBLE);
 
         }
