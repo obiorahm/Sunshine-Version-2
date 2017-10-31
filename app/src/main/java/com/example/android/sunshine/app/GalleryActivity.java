@@ -191,7 +191,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 });
 
                 if (!ONLONGCLICKMODE){
-                    imageGridAdapter.unCheckAllItems(gridView);
+//                    imageGridAdapter.unCheckAllItems(gridView);
                     imageGridAdapter.visibleCheckboxes(gridView);
                     invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
                     imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible

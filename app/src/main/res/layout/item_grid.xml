@@ -17,9 +17,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/image_checkbox"
-        android:visibility="invisible"
         android:buttonTint="@color/colorPrimaryDark"
+        android:visibility="invisible"
         android:focusable="false"
 />
 
+
 </FrameLayout>
+

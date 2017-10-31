@@ -6,15 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.File;
@@ -112,13 +109,13 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
 
-            Intent detailFragment = new Intent(getActivity(), DetailFragment.class);
+            Intent detailFragment = new Intent(getActivity(), DetailActivity.class);
             detailFragment.putExtra(EXTRA_IMAGE,mLocationForPhotos);
             detailFragment.putExtra(EXTRA_TARGET, targetFilename);
             startActivity(detailFragment);
 
 
-            /*DetailFragment nextFrag= new DetailFragment();
+            /*DetailActivity nextFrag= new DetailActivity();
             Bundle bundle = new Bundle();
             bundle.putParcelable(EXTRA_IMAGE,mLocationForPhotos);
             bundle.putString(EXTRA_TARGET, targetFilename);

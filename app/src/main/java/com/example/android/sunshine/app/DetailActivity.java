@@ -8,12 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -21,21 +18,19 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.util.Locale;
-
-import opennlp.tools.stemmer.PorterStemmer;
 
 /**
  * Created by mgo983 on 4/21/17.
  */
 
-public class DetailFragment extends CommonDetailOpen{
+public class DetailActivity extends CommonDetailOpen{
     private ShareActionProvider mShareActionProvider;
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
@@ -44,7 +39,7 @@ public class DetailFragment extends CommonDetailOpen{
     //public ArrayAdapter<String> adapter;
     //public ButtonTextAdapter btnAdapter;
 
-    public DetailFragment() {
+    public DetailActivity() {
     }
 
     @Override
@@ -123,9 +118,14 @@ public class DetailFragment extends CommonDetailOpen{
 
         if (imgFile.exists()) {
             //run CloudSight Search
-            DetailFragment.FetchImageDescription fetchImageDescription = new DetailFragment.FetchImageDescription(this);
+            DetailActivity.FetchImageDescription fetchImageDescription = new DetailActivity.FetchImageDescription(this);
             fetchImageDescription.execute(imgFile);
         }
+    }
+
+
+    private void getSymbol(){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
     }
 
 
@@ -133,7 +133,7 @@ public class DetailFragment extends CommonDetailOpen{
 
     public class FetchImageDescription extends AsyncTask<File, Void, /*String[]*/ CSGetResult> {
 
-        private final String LOG_TAG = DetailFragment.FetchImageDescription.class.getSimpleName();
+        private final String LOG_TAG = DetailActivity.FetchImageDescription.class.getSimpleName();
 
         private Context context;
 
@@ -151,7 +151,7 @@ public class DetailFragment extends CommonDetailOpen{
 
             //_FileName = imageFile.toString();
 
-            Log.v("DetailFragment fname ", _FileName);
+            Log.v("DetailActivity fname ", _FileName);
 
             String[] FileNameArray = imageFile.toString().split("/");
 
