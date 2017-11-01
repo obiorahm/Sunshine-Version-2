@@ -1,14 +1,21 @@
 package com.example.android.sunshine.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -34,6 +41,9 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     private Color availableColor = new Color();
 
+    private boolean[] checked;
+
+    private CheckBox selectAllCheckBox;
 
 
     public ImageGridAdapter(Context context, String[] imageUrls){
@@ -43,7 +53,25 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
         this.imageUrls = imageUrls;
 
+        this.checked = new boolean[imageUrls.length];
+
         inflater = LayoutInflater.from(context);
+
+
+    }
+
+    public ImageGridAdapter(Context context, String[] imageUrls, CheckBox checkBox){
+        super(context, R.layout.item_grid,imageUrls);
+
+        this.context = context;
+
+        this.imageUrls = imageUrls;
+
+        this.checked = new boolean[imageUrls.length];
+
+        inflater = LayoutInflater.from(context);
+
+        this.selectAllCheckBox = checkBox;
 
     }
 
@@ -52,7 +80,8 @@ public class ImageGridAdapter extends AphasiaAdapter {
     }
 
     public void unCheckAllItems(View view){
-        for (int i = 0; i < ((GridView) view).getCount(); i++){
+        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
+            Log.v("Gridview in inchecked ", view.getClass().toString());
             FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             checkBox.setChecked(false);
@@ -61,7 +90,7 @@ public class ImageGridAdapter extends AphasiaAdapter {
     }
 
     public void visibleCheckboxes(View view){
-        for (int i = 0; i < ((GridView) view).getCount(); i++){
+        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
             FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             checkBox.setVisibility(view.VISIBLE);
@@ -70,7 +99,7 @@ public class ImageGridAdapter extends AphasiaAdapter {
     }
 
     public void checkAllItems(View view){
-        for (int i = 0; i < ((GridView) view).getCount(); i++){
+        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
             FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             checkBox.setChecked(true);
@@ -80,17 +109,18 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
 
     public void invisibleCheckboxes(View view){
-        for (int i = 0; i < ((GridView) view).getCount(); i++){
+        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
             FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             checkBox.setVisibility(view.INVISIBLE);
         }
 
     }
+
     public ArrayList<Integer> getCheckedboxes(View view){
         ArrayList<Integer> checkedPositions = new ArrayList<>();
         GridView gridView = ((GridView) view);
-        for (int i = 0; i < gridView.getCount(); i++){
+        for (int i = 0; i < gridView.getCount() - 1; i++){
             FrameLayout gridItem = (FrameLayout) gridView.getChildAt(i);
             CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
             if (checkBox.isChecked())
@@ -111,11 +141,41 @@ public class ImageGridAdapter extends AphasiaAdapter {
         if (null == convertView){
             convertView = inflater.inflate(R.layout.item_grid,parent,false);
         }
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.film_fragment_image_view);
+
+        FrameLayout child = (FrameLayout) convertView.findViewById(R.id.item_grid);
+
+        ImageView imageView = (ImageView) child.findViewById(R.id.film_fragment_image_view);
+
+        CheckBox checkBox = (CheckBox) child.findViewById(R.id.image_checkbox);
+
+        CheckBox imageButton = (CheckBox) ((GalleryActivity) context).findViewById(R.id.btn_slide);
 
         String searchParam = imageUrls[position];
 
         isColor(searchParam, imageView);
+
+        setOnLongClickListener(child, checkBox, position, parent);
+        setOnClickListener(child, imageView, position);
+        if (GalleryActivity.ONLONGCLICKMODE)  {
+            checkBox.setVisibility(View.VISIBLE);
+            if (checked[position]) checkBox.setChecked(true);
+
+        }else{
+            checkBox.setVisibility(View.INVISIBLE);
+//
+        }
+
+        if (GalleryActivity.SELECTALLIMAGES){
+            if (imageButton != null && imageButton.isChecked()){
+                checkBox.setChecked(true);
+                checked[position] = true;
+            }else {
+                checkBox.setChecked(false);
+                checked[position] = false;
+            }
+        }
+
+
 
         Glide
                 .with(context)
@@ -126,7 +186,102 @@ public class ImageGridAdapter extends AphasiaAdapter {
         return convertView;
     }
 
+    private void checkAll(ImageButton imageButton){
 
+    }
+
+
+    private void setOnLongClickListener(final FrameLayout frameLayout, final CheckBox checkBox, final int position, final ViewGroup parent){
+        frameLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                imageAnimation(frameLayout,position);
+                final ActionBar actionBar = ((GalleryActivity) context).getSupportActionBar();
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+                final CheckBox imageButton = (CheckBox) ((GalleryActivity) context).findViewById(R.id.btn_slide);
+
+                if(!GalleryActivity.ONLONGCLICKMODE){
+                    ((GalleryActivity) context).invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
+                    //imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
+
+                    //set current grid item checkbox to true
+
+
+                    imageButton.setVisibility(View.VISIBLE);
+                    GalleryActivity.ONLONGCLICKMODE = true;
+                    checked[position] = true;
+                    notifyDataSetChanged();
+                }
+
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                            GalleryActivity.SELECTALLIMAGES = true;
+                            notifyDataSetChanged();
+                    }
+                });
+
+
+                return true;
+            }
+
+        });
+    }
+
+    private void uncheckCheckBoxes(){
+
+    }
+
+    private void setOnClickListener(final FrameLayout frameLayout, final ImageView imageView, final int position){
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!GalleryActivity.ONLONGCLICKMODE){
+                    Intent OpenGalleryActivityIntent = new Intent(context, OpenGalleryObjectActivity.class);
+
+                    SharedPreferences sharedPreference;
+                    SharedPreferences.Editor editor;
+                    sharedPreference = context.getSharedPreferences(GalleryActivity.IMGFILENAME, context.MODE_PRIVATE);
+                    editor = sharedPreference.edit();
+
+                    editor.putString(GalleryActivity.IMGFILEKEY, imageUrls[position]);
+                    editor.commit();
+                    context.startActivity(OpenGalleryActivityIntent);
+                }else{
+                    imageAnimation(frameLayout, position);
+                    final ActionBar actionBar = ((GalleryActivity) context).getSupportActionBar();
+                    actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+                    checkCurrentItem(frameLayout.findViewById(R.id.image_checkbox));
+                }
+            }
+        });
+    }
+
+
+    public void imageAnimation(final FrameLayout child, int position){
+        //final FrameLayout child = (FrameLayout) gridView.getChildAt(position);
+        if (child != null){
+            child.animate().scaleX(0.8f);
+            child.animate().scaleY(0.8f);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    child.animate().scaleX(1.0f);
+                    child.animate().scaleY(1.0f);
+
+                }
+            }, 200);
+        }
+    }
+
+    public void checkCurrentItem(View view){
+        CheckBox checkBox = (CheckBox) view;
+        checkBox.setVisibility(View.VISIBLE);
+        checkBox.setChecked(true);
+    }
 
     private  void isColor(String searchParam, ImageView mImage){
         try {

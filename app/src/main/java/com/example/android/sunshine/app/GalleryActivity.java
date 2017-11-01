@@ -67,12 +67,15 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     private static final String TAG = "GalleryActivity";
     //private static final int REQUEST_CODE = 1;
 
+    public static boolean ONLONGCLICKMODE = false;
+    public static boolean SELECTALLIMAGES = false;
+
 
     //GalleryPagerAdapter galleryPagerAdapter;
 
     ImageGridAdapter imageGridAdapter;
 
-    boolean ONLONGCLICKMODE = false;
+
 
     String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             .getAbsolutePath();
@@ -127,8 +130,9 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
             NewFileNames[i] = fileNames[NameAndDateModified.get(fileDateModifiedList.get(fileLength - i - 1))];
         }
 
+        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
 
-        imageGridAdapter = new ImageGridAdapter(this, NewFileNames);
+        imageGridAdapter = new ImageGridAdapter(this, NewFileNames, imageButton);
         final GridView gridView = (GridView) findViewById(R.id.image_gridview);
         gridView.setAdapter(imageGridAdapter);
 
@@ -141,10 +145,10 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         actionBar.setCustomView(mActionBarView);
         //actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+        //CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
 
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+ /*       gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
                 if (!ONLONGCLICKMODE){
                     Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
@@ -166,13 +170,16 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 }
             }
 
-        });
+        });*/
 
         //final int SELECT_PHOTO = 1;
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            public  boolean onItemLongClick(AdapterView<?> adapterView, final View view, int position, long l){
+        /*gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            public  boolean onItemLongClick(final AdapterView<?> adapterView, final View view, int position, long l){
 
-                imageAnimation(gridView,position);
+//                final GridView gridView1 = (GridView) gridView;
+
+
+                imageAnimation((GridView) adapterView,position);
 
                 actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
@@ -183,16 +190,17 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                     public void onClick(View view) {
                         CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
                         if (imageButton.isChecked()){
-                            imageGridAdapter.checkAllItems(gridView);
+                            imageGridAdapter.checkAllItems(adapterView);
                         }else {
-                            imageGridAdapter.unCheckAllItems(gridView);
+                            imageGridAdapter.unCheckAllItems(adapterView);
                         }
                     }
                 });
 
                 if (!ONLONGCLICKMODE){
-//                    imageGridAdapter.unCheckAllItems(gridView);
-                    imageGridAdapter.visibleCheckboxes(gridView);
+                    Log.v("gridview ", adapterView.getClass().toString());
+                    imageGridAdapter.unCheckAllItems(adapterView);
+                    imageGridAdapter.visibleCheckboxes(adapterView);
                     invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
                     imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
                     imageButton.setVisibility(View.VISIBLE);
@@ -205,7 +213,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
             }
 
 
-        });
+        });*/
 
     }
 
@@ -216,18 +224,21 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
 
     public void imageAnimation(GridView gridView, int position){
         final FrameLayout child = (FrameLayout) gridView.getChildAt(position);
-        child.animate().scaleX(0.8f);
-        child.animate().scaleY(0.8f);
+        if (child != null){
+            child.animate().scaleX(0.8f);
+            child.animate().scaleY(0.8f);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                child.animate().scaleX(1.0f);
-                child.animate().scaleY(1.0f);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    child.animate().scaleX(1.0f);
+                    child.animate().scaleY(1.0f);
 
-            }
-        }, 200);
+                }
+            }, 200);
+        }
+
     }
 
     public void checkCurrentItem(View view){
@@ -416,12 +427,14 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     @Override
     public void onBackPressed(){
         GridView gridView = (GridView) findViewById(R.id.image_gridview);
-        //CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
+        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
 
         if (ONLONGCLICKMODE){
             ONLONGCLICKMODE = false;
+            SELECTALLIMAGES = false;
             invalidateOptionsMenu();
-            imageGridAdapter.invisibleCheckboxes(gridView);
+            imageGridAdapter.notifyDataSetChanged();
+            //imageGridAdapter.invisibleCheckboxes(gridView);
             //imageButton.setVisibility(View.INVISIBLE);
 
             ActionBar actionBar = getSupportActionBar();
