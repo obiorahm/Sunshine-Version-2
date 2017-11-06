@@ -35,5 +35,8 @@
         android:title="@string/gallery_add_category"
         android:visible="false"
         android:icon="@drawable/ic_add_black_18dp"/>
+    <item
+        android:id="@+id/menu_item_add_word"
+        android:title="@string/gallery_add_word" />
 </menu>
 

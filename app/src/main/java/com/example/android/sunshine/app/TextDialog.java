@@ -8,10 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 /**
  * Created by mgo983 on 11/6/17.
@@ -24,12 +29,32 @@ public class TextDialog extends DialogFragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.text_dialog, container, false);
 
-        Button okButton = (Button)  getActivity().findViewById(R.id.text_dialog_ok);
+        Button okButton = (Button)  rootView.findViewById(R.id.text_dialog_ok);
+
+        Button cancelButton = (Button) rootView.findViewById(R.id.text_dialog_cancel);
+
+        final EditText textViewCategory = (EditText) rootView.findViewById(R.id.text_dialog_category);
+
+        final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference("word_categories").child("");
+
 
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                final String category = textViewCategory.getText().toString();
+
+                WordCategories wordCategories = new WordCategories(category);
+
+                mFirebaseReference.child(category).setValue(wordCategories);
+
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
             }
         });
 

@@ -6,4 +6,18 @@ package com.example.android.sunshine.app;
 
 public class WordCategories {
 
+    private String id;
+    private String wordCategory;
+
+    public WordCategories(String category){ wordCategory = category;}
+
+    public String getWordCategory(){ return wordCategory;}
+    public String setId(){ return id;}
+
+    public void setWordCategory(String category){
+        wordCategory = category;
+    }
+
 }
+
+

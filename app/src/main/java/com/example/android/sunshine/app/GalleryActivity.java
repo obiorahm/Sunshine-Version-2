@@ -294,6 +294,8 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 //create a dialog
                 //retrieve item from dialog and save
                 break;
+            case R.id.menu_item_add_word:
+                break;
 
         }
         return super.onOptionsItemSelected(item);
