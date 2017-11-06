@@ -38,7 +38,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         context = newContext;
     }
 
-    public FetchClipArt(ImageGridAdapter newAdapter, Context newContext, String newChooseEngine)
+    public FetchClipArt(GridAdapter newAdapter, Context newContext, String newChooseEngine)
     {
         adapter = newAdapter;
         context = newContext;
@@ -90,7 +90,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
     private void setGridViewAdapter(String[] ImageUrls){
         if (ImageUrls != null){
-            adapter = new ImageGridAdapter(context, ImageUrls /*ImgStringArr*/);
+            adapter = new GridAdapter(context, ImageUrls /*ImgStringArr*/);
             GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
             gridView.setAdapter(adapter);
 
@@ -168,8 +168,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         return ClipArtJson;
     }
 
-    public ImageGridAdapter getAdapter(){
-        return (ImageGridAdapter) adapter;
+    public GridAdapter getAdapter(){
+        return (GridAdapter) adapter;
     }
 
     private boolean addColorDataIfColor(ArrayList<ArrayList<String>> ClipArtJSON, String searchValue) {

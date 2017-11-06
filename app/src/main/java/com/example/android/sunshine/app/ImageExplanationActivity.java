@@ -29,7 +29,7 @@ import java.util.Locale;
 public class ImageExplanationActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
 
     public ImageExplanationActivity(){}
-    public ImageGridAdapter adapter;
+    public GridAdapter adapter;
 
     //FetchClipArt fetchClipArt;
 
@@ -99,7 +99,7 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
                 DialogFragment newFragment = new ImageDialog();
                 Bundle bundle = new Bundle();
                 TextView textInItem = (TextView) view.findViewById(R.id.list_item_word_textview);
-                bundle.putString(EXTRA_DIALOG_IMAGE, textInItem.getText().toString()  /*((ImageGridAdapter)gridView.getAdapter()).getImageUrl(position)*/);
+                bundle.putString(EXTRA_DIALOG_IMAGE, /*textInItem.getText().toString()*/  ((GridAdapter)gridView.getAdapter()).getImageUrl(position));
 
                 newFragment.setArguments(bundle);
                 newFragment.show(getSupportFragmentManager(),"what?");

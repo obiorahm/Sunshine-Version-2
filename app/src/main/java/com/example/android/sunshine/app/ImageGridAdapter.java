@@ -31,7 +31,7 @@ import java.util.ListIterator;
  * Created by mgo983 on 5/4/17.
  */
 
-public class ImageGridAdapter extends AphasiaAdapter {
+public class ImageGridAdapter extends GridAdapter {
 
     private Context context;
 
