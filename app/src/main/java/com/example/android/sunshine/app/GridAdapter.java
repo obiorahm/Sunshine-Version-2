@@ -20,11 +20,11 @@ import java.util.ArrayList;
 
 public class GridAdapter extends AphasiaAdapter {
 
-    private Context context;
+    public Context context;
 
-    private LayoutInflater inflater;
+    public LayoutInflater inflater;
 
-    private String[] imageUrls;
+    public String[] imageUrls;
 
     private Color availableColor = new Color();
 

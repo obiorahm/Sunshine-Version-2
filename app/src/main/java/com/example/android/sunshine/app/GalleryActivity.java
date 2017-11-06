@@ -26,6 +26,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -289,6 +290,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 safeAction("Delete your selection?", "delete");
                 break;
             case R.id.menu_item_add_category:
+                addCategory();
                 //create a dialog
                 //retrieve item from dialog and save
                 break;
@@ -297,6 +299,13 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void addCategory(){
+        android.app.DialogFragment newFragment = new TextDialog();
+        Bundle bundle = new Bundle();
+        newFragment.setArguments(bundle);
+        newFragment.show(getFragmentManager(), "TextDialog");
+    }
 
 
     private void safeAction(String message, String menuID){

@@ -33,17 +33,17 @@ import java.util.ListIterator;
 
 public class ImageGridAdapter extends GridAdapter {
 
-    private Context context;
+    //private Context context;
 
-    private LayoutInflater inflater;
+    //private LayoutInflater inflater;
 
-    private String[] imageUrls;
+    //private String[] imageUrls;
 
-    private Color availableColor = new Color();
+    //private Color availableColor = new Color();
 
     private boolean[] checked;
 
-    private CheckBox selectAllCheckBox;
+    //private CheckBox selectAllCheckBox;
 
 
     public ImageGridAdapter(Context context, String[] imageUrls){
@@ -53,7 +53,7 @@ public class ImageGridAdapter extends GridAdapter {
 
         this.imageUrls = imageUrls;
 
-        this.checked = new boolean[imageUrls.length];
+        //this.checked = new boolean[imageUrls.length];
 
         inflater = LayoutInflater.from(context);
 
@@ -71,7 +71,7 @@ public class ImageGridAdapter extends GridAdapter {
 
         inflater = LayoutInflater.from(context);
 
-        this.selectAllCheckBox = checkBox;
+        //this.selectAllCheckBox = checkBox;
 
     }
 
@@ -115,7 +115,7 @@ public class ImageGridAdapter extends GridAdapter {
 
         String searchParam = imageUrls[position];
 
-        isColor(searchParam, imageView);
+        //isColor(searchParam, imageView);
 
         setOnLongClickListener(child, checkBox, position, parent);
         setOnClickListener(child, imageView, position);
@@ -243,7 +243,7 @@ public class ImageGridAdapter extends GridAdapter {
         }
     }
 
-    private  void isColor(String searchParam, ImageView mImage){
+    /*private  void isColor(String searchParam, ImageView mImage){
         try {
 
             if (availableColor.searchColor(searchParam)){
@@ -263,6 +263,6 @@ public class ImageGridAdapter extends GridAdapter {
         }
 
 
-    }
+    }*/
 
 }
