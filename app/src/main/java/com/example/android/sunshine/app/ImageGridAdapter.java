@@ -79,43 +79,6 @@ public class ImageGridAdapter extends AphasiaAdapter {
 
     }
 
-    public void unCheckAllItems(View view){
-        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
-            Log.v("Gridview in inchecked ", view.getClass().toString());
-            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
-            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
-            checkBox.setChecked(false);
-        }
-
-    }
-
-    public void visibleCheckboxes(View view){
-        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
-            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
-            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
-            checkBox.setVisibility(view.VISIBLE);
-        }
-
-    }
-
-    public void checkAllItems(View view){
-        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
-            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
-            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
-            checkBox.setChecked(true);
-        }
-
-    }
-
-
-    public void invisibleCheckboxes(View view){
-        for (int i = 0; i < ((GridView) view).getCount() - 1; i++){
-            FrameLayout gridItem  = (FrameLayout) ((GridView) view).getChildAt(i);
-            CheckBox checkBox = (CheckBox) gridItem.findViewById(R.id.image_checkbox);
-            checkBox.setVisibility(view.INVISIBLE);
-        }
-
-    }
 
     public ArrayList<Integer> getCheckedboxes(View view){
         ArrayList<Integer> checkedPositions = new ArrayList<>();
@@ -186,10 +149,6 @@ public class ImageGridAdapter extends AphasiaAdapter {
         return convertView;
     }
 
-    private void checkAll(ImageButton imageButton){
-
-    }
-
 
     private void setOnLongClickListener(final FrameLayout frameLayout, final CheckBox checkBox, final int position, final ViewGroup parent){
         frameLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -229,9 +188,6 @@ public class ImageGridAdapter extends AphasiaAdapter {
         });
     }
 
-    private void uncheckCheckBoxes(){
-
-    }
 
     private void setOnClickListener(final FrameLayout frameLayout, final ImageView imageView, final int position){
         frameLayout.setOnClickListener(new View.OnClickListener() {
@@ -280,7 +236,11 @@ public class ImageGridAdapter extends AphasiaAdapter {
     public void checkCurrentItem(View view){
         CheckBox checkBox = (CheckBox) view;
         checkBox.setVisibility(View.VISIBLE);
-        checkBox.setChecked(true);
+        if (checkBox.isChecked()){
+            checkBox.setChecked(false);
+        }else{
+            checkBox.setChecked(true);
+        }
     }
 
     private  void isColor(String searchParam, ImageView mImage){

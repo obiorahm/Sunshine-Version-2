@@ -218,9 +218,6 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     }
 
 
-    private void customActionBar(){
-
-    }
 
     public void imageAnimation(GridView gridView, int position){
         final FrameLayout child = (FrameLayout) gridView.getChildAt(position);
@@ -290,6 +287,10 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 break;
             case R.id.menu_item_delete:
                 safeAction("Delete your selection?", "delete");
+                break;
+            case R.id.menu_item_add_category:
+                //create a dialog
+                //retrieve item from dialog and save
                 break;
 
         }

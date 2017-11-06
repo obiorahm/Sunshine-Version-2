@@ -98,7 +98,8 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
 
                 DialogFragment newFragment = new ImageDialog();
                 Bundle bundle = new Bundle();
-                bundle.putString(EXTRA_DIALOG_IMAGE, ((ImageGridAdapter)gridView.getAdapter()).getImageUrl(position));
+                TextView textInItem = (TextView) view.findViewById(R.id.list_item_word_textview);
+                bundle.putString(EXTRA_DIALOG_IMAGE, textInItem.getText().toString()  /*((ImageGridAdapter)gridView.getAdapter()).getImageUrl(position)*/);
 
                 newFragment.setArguments(bundle);
                 newFragment.show(getSupportFragmentManager(),"what?");

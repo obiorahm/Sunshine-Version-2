@@ -34,6 +34,7 @@
     <string name="gallery_delete">delete</string>
     <string name="gallery_share">share</string>
     <string name="gallery_edit">edit</string>
+    <string name="gallery_add_category">Add category</string>
 
     <string-array name="pref_search_engine">
         <item>Pixabay</item>
