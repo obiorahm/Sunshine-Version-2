@@ -2,7 +2,11 @@ package com.example.android.sunshine.app;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +18,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.data.AddWord;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by mgo983 on 11/6/17.
@@ -24,32 +43,23 @@ import com.google.firebase.storage.FirebaseStorage;
 
 public class TextDialog extends DialogFragment{
 
+    public static final String DATABASECALLERTYPE = "com.example.android.sunshine.app.DATABASECALLERTYPE";
+    public static final String ADDCATEGORY = "addCategory";
+    public static final String ADDWORD = "addWord";
+    public static final String WORDCATEGORY = "com.example.android.sunshine.app.WORDCATEGORY";
+    public static final String UPDATEWORD = "com.example.android.sunshine.app.UPDATEWORD";
+    public static final String CREATE_WORD_DATABASE = "com.example.android.sunshine.app.CREATE_WORD_DATABASE";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.text_dialog, container, false);
 
-        Button okButton = (Button)  rootView.findViewById(R.id.text_dialog_ok);
-
         Button cancelButton = (Button) rootView.findViewById(R.id.text_dialog_cancel);
 
-        final EditText textViewCategory = (EditText) rootView.findViewById(R.id.text_dialog_category);
+        Bundle bundle = this.getArguments();
 
-        final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference("word_categories").child("");
-
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                final String category = textViewCategory.getText().toString();
-
-                WordCategories wordCategories = new WordCategories(category);
-
-                mFirebaseReference.child(category).setValue(wordCategories);
-
-            }
-        });
+        switchCaller(rootView,bundle);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,5 +86,215 @@ public class TextDialog extends DialogFragment{
 
 
         return dialog;
+    }
+
+
+    public void switchCaller(View rootView, final Bundle bundle){
+
+        Button okButton = (Button)  rootView.findViewById(R.id.text_dialog_ok);
+
+        final String caller = bundle.getString(DATABASECALLERTYPE);
+
+        final EditText textViewCategory = (EditText) rootView.findViewById(R.id.text_dialog_category);
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String category = textViewCategory.getText().toString();
+                switch (caller){
+                    case ADDCATEGORY:
+                        final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD).child("");
+                        WordCategories wordCategories = new WordCategories(category);
+                        mFirebaseReference.child(category).setValue(wordCategories);
+                        break;
+                    case ADDWORD:
+                        /*final String wordCategory = bundle.getString(WORDCATEGORY);
+                        final String  imageFileName = category;
+                        final AphasiaWords aphasiaWords = new AphasiaWords(imageFileName);
+                        final DatabaseReference newFirebaseReference = FirebaseDatabase.getInstance()
+                                .getReference(AddWord.WORD_CATEGORY_CHILD + "/" + wordCategory)
+                                .child("");
+                               newFirebaseReference.child(imageFileName).setValue(aphasiaWords);*/
+
+                        break;
+                    case UPDATEWORD:
+                        //Updates words in the database.
+                        final AssetManager assetManager = getActivity().getAssets();
+                        try{
+                            String [] listOfAssets = assetManager.list("aphasiaWords");
+                            List<String> mLines = new ArrayList<String>();
+                            for (int i = 0; i < listOfAssets.length; i++)
+                            {
+                                Log.d("List of assets: ", listOfAssets[i]);
+                                InputStream is = assetManager.open("aphasiaWords/" + listOfAssets[i]);
+                                String wordCategory = listOfAssets[i].replace(".txt","");
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                                String line;
+
+                                //mDatabase = FirebaseDatabase.getInstance().getReference();
+                                //String key = mDatabase.child("posts").push().getKey();
+
+                                while ((line = reader.readLine()) != null){
+                                    mLines.add(line);
+                                    String word = getWordString(line);
+
+                                    final AphasiaWords aphasiaWords = new AphasiaWords(word, line);
+                                    final DatabaseReference newFirebaseReference = FirebaseDatabase.getInstance()
+                                            .getReference(AddWord.WORD_CATEGORY_CHILD + "/" + wordCategory);
+
+                                    final String key = newFirebaseReference.child(wordCategory).push().getKey();
+
+                                    newFirebaseReference.child(key).setValue(aphasiaWords);
+                                    Log.d("Words in text ", word);
+                                }
+                            }
+
+                        }catch(IOException e){
+
+                    }
+
+
+
+                        break;
+
+                    case CREATE_WORD_DATABASE:
+                        //get the filename
+                        /*final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE);
+                        databaseReference.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                dataSnapshot.getRef().removeValue();
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });*/
+
+                        final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
+                        final DatabaseReference wordDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child("");
+                        final String WORD_IMAGE_REFERENCE  = "symbols";
+                        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                final String categories =  dataSnapshot.getKey().toString();
+                                mDatabaseReference.child(categories).addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        HashMap aphasiaWords = new HashMap();
+                                        if(dataSnapshot.getValue() instanceof HashMap){
+                                            aphasiaWords = (HashMap) dataSnapshot.getValue();
+                                        }
+                                        String fileName = (String) aphasiaWords.get("fileName");
+                                        String word = (String) aphasiaWords.get("word");
+                                        if (word != null){
+                                            DatabaseReference newDatabaseReference =  wordDatabaseReference.child(word.replace(".",""));
+                                            String key =newDatabaseReference.push().getKey();
+                                            newDatabaseReference.child(key).setValue(categories + "/" + dataSnapshot.getKey() + "/" + fileName);
+                                        }
+
+
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                        break;
+
+                }
+
+            }
+        });
+
+    }
+
+    String getWordString(String imageFileName){
+        String wordString = imageFileName.toLowerCase();
+
+        //remove .png after -
+        if(wordString.contains("-")) wordString = wordString.substring(0, wordString.lastIndexOf("-"));
+        if (wordString.contains("-al"))wordString = wordString.replace("-al","");
+        if (wordString.contains("_al"))wordString = wordString.replace("_al","");
+        if (wordString.contains("-")) wordString = wordString.replace("-", " ");
+        if(wordString.contains("_")) wordString = wordString.replace("_"," ");
+
+        //remove .png if there is no "-"
+        if(wordString.contains(".png")) wordString = wordString.replace(".png", "");
+
+        //remove numbers
+        if(wordString.contains("0")) wordString = wordString.replace("0","");
+        if(wordString.contains("1")) wordString = wordString.replace("1","");
+        if(wordString.contains("2")) wordString = wordString.replace("2","");
+        if(wordString.contains("3")) wordString = wordString.replace("3","");
+        if(wordString.contains("4")) wordString = wordString.replace("4","");
+        if(wordString.contains("5")) wordString = wordString.replace("5","");
+        if(wordString.contains("6")) wordString = wordString.replace("6","");
+        if(wordString.contains("7")) wordString = wordString.replace("7","");
+        if(wordString.contains("8")) wordString = wordString.replace("8","");
+        if(wordString.contains("9")) wordString = wordString.replace("9","");
+
+        if(wordString.contains("maria")) wordString = wordString.replace("maria","");
+
+        if(wordString.contains("violet")) wordString = wordString.replace("violet","");
+
+        if(wordString.contains("will") & !wordString.equals("will")) wordString = wordString.replace("will", "");
+
+
+        return wordString.trim();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -24,6 +25,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.data.AddWord;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 
@@ -428,27 +439,49 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
         String[] imageUrl = {};
         JSONHandler jsonHandler;
+        final int FIRST_POSITION = 0;
+
         if (JSONString != null){
-            Log.v("In Pixabay section", this.searchEngine);
-            try{
-                switch (searchEngine){
-                    case "1":
-                        jsonHandler = new PixabayJSONHandler();
-                        imageUrl = jsonHandler.getImageUrl(JSONString, position);
-                        break;
-                    default:
-                        jsonHandler =new OpenClipArtJSONHandler();
-                        imageUrl = jsonHandler.getImageUrl(JSONString, position);
-                        break;
+            Log.v("In PixaBay section", this.searchEngine);
+            boolean localSearch = checkForFireBaseUrl(JSONString);
+            if (!localSearch){
+                try{
+                    switch (searchEngine){
+                        case FetchClipArt.ENGINE_PIXABAY:
+                            jsonHandler = new PixabayJSONHandler();
+                            imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                            break;
+                        default:
+                            jsonHandler =new OpenClipArtJSONHandler();
+                            imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                            break;
+                    }
+                    if (imageUrl == null){
+                        imageUrl = new String[1];
+                        imageUrl[FIRST_POSITION] = JSONString;
+                    }
+
+                }catch (JSONException e){
+                    Log.e("JSONException ", e + "");
                 }
-            }catch (JSONException e){
-                Log.e("JSONException ", e + "");
+
+            }else
+            {
+                imageUrl = new String[1];
+                imageUrl[FIRST_POSITION] = JSONString;
             }
+
         }
+
         return imageUrl;
     }
 
+    private boolean checkForFireBaseUrl(String JSONString){
+        return JSONString == null;
+    }
+
     private void glideLoadImage(String JSONString, String searchString, ViewHolder mHolder){
+        final int FIRST_POSITION = 0;
         if (availableColor.searchColor(searchString.toLowerCase())){
             Log.v("search color content", JSONString + "and" + searchString);
             Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
@@ -456,9 +489,9 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         }
             String[] ImageUrl;
 
-            ImageUrl = this.getImageUrl(this.searchEngine,JSONString,0);
+            ImageUrl = this.getImageUrl(this.searchEngine,JSONString,FIRST_POSITION);
             if (ImageUrl != null){
-                Glide.with(context).load(Uri.parse(ImageUrl[0])).centerCrop().into(mHolder.mImage);
+                Glide.with(context).load(Uri.parse(ImageUrl[FIRST_POSITION])).centerCrop().into(mHolder.mImage);
             }
 
     }

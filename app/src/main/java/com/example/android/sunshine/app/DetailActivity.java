@@ -8,16 +8,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.BufferedReader;
@@ -35,6 +41,7 @@ public class DetailActivity extends CommonDetailOpen{
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
     private Uri imageFile = null;
+
 
     //public ArrayAdapter<String> adapter;
     //public ButtonTextAdapter btnAdapter;
@@ -76,6 +83,8 @@ public class DetailActivity extends CommonDetailOpen{
         }
         captureAndSearchImage();
     }
+
+
 
 /*    private void writeToFile(String data, String fileName, Context context) {
         try {
@@ -174,7 +183,7 @@ public class DetailActivity extends CommonDetailOpen{
             CheckInternetConnection checkInternetConnection = new CheckInternetConnection(context);
             if (checkInternetConnection.isNetworkConnected()) {
                 //fetchClipArt
-                FetchClipArt fetchClipArt = new FetchClipArt(adapter, context,prefSearchParam);
+                FetchClipArt fetchClipArt = new FetchClipArt(adapter, context,prefSearchParam, listOfWords);
                 fetchClipArt.execute(listOfWords);
 
 
@@ -259,6 +268,7 @@ public class DetailActivity extends CommonDetailOpen{
         }
 
     }
+
 
 
     @Override

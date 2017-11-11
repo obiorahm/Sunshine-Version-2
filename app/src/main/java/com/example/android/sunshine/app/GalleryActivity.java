@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.android.sunshine.app.data.AddWord;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
@@ -141,81 +142,6 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
 
-        //displaying custom ActionBar
-        View mActionBarView = getLayoutInflater().inflate(R.layout.my_action_bar, null);
-        actionBar.setCustomView(mActionBarView);
-        //actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-        //CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
-
-
- /*       gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
-                if (!ONLONGCLICKMODE){
-                    Intent OpenGalleryActivityIntent = new Intent(getApplicationContext(), OpenGalleryObjectActivity.class);
-
-                    //use sharedpreference to save data so that back button works
-                    SharedPreferences sharedPreference;
-                    SharedPreferences.Editor editor;
-                    sharedPreference = getApplicationContext().getSharedPreferences(IMGFILENAME, getApplicationContext().MODE_PRIVATE);
-                    editor = sharedPreference.edit();
-
-                    editor.putString(IMGFILEKEY,NewFileNames[position]);
-                    editor.commit();
-                    startActivity(OpenGalleryActivityIntent);
-
-                }else{
-                    imageAnimation(gridView,position);
-                    actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-                    checkCurrentItem(view);
-                }
-            }
-
-        });*/
-
-        //final int SELECT_PHOTO = 1;
-        /*gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            public  boolean onItemLongClick(final AdapterView<?> adapterView, final View view, int position, long l){
-
-//                final GridView gridView1 = (GridView) gridView;
-
-
-                imageAnimation((GridView) adapterView,position);
-
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-                CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
-
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CheckBox imageButton = (CheckBox) findViewById(R.id.btn_slide);
-                        if (imageButton.isChecked()){
-                            imageGridAdapter.checkAllItems(adapterView);
-                        }else {
-                            imageGridAdapter.unCheckAllItems(adapterView);
-                        }
-                    }
-                });
-
-                if (!ONLONGCLICKMODE){
-                    Log.v("gridview ", adapterView.getClass().toString());
-                    imageGridAdapter.unCheckAllItems(adapterView);
-                    imageGridAdapter.visibleCheckboxes(adapterView);
-                    invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
-                    imageButton = (CheckBox) findViewById(R.id.btn_slide); //select all button should be visible
-                    imageButton.setVisibility(View.VISIBLE);
-                    ONLONGCLICKMODE = true;
-
-                }
-
-                checkCurrentItem(view);
-                return true;
-            }
-
-
-        });*/
-
     }
 
 
@@ -295,16 +221,19 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
                 //retrieve item from dialog and save
                 break;
             case R.id.menu_item_add_word:
+                Intent intentAddWord = new Intent(this, AddWord.class);
+                startActivity(intentAddWord);
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-
+    ;
     private void addCategory(){
         android.app.DialogFragment newFragment = new TextDialog();
         Bundle bundle = new Bundle();
+        bundle.putString(TextDialog.DATABASECALLERTYPE,"addCategory");
         newFragment.setArguments(bundle);
         newFragment.show(getFragmentManager(), "TextDialog");
     }

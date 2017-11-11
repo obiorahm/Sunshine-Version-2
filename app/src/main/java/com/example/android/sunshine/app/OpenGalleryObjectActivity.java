@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -20,6 +21,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +52,8 @@ public class OpenGalleryObjectActivity extends CommonDetailOpen {
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
     private String TAG = "OpenGalleryObject";
+
+    public static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
 
     @Override
@@ -109,7 +117,7 @@ public class OpenGalleryObjectActivity extends CommonDetailOpen {
                         String TxtFileContent = readFromFile(this, TxtFileName);
                         listOfWords = TxtFileContent.split(" ");
 
-                        FetchClipArt fetchClipArt = new FetchClipArt(adapter,this ,prefSearchParam);
+                        FetchClipArt fetchClipArt = new FetchClipArt(adapter,this ,prefSearchParam, listOfWords);
 
                         adapter.addImage(imgFile.toString());
                         Log.v("Textfile content is ", TxtFileContent);
@@ -177,6 +185,22 @@ public class OpenGalleryObjectActivity extends CommonDetailOpen {
         }
 
         return ret;
+    }
+
+    public void signInAnonymously() {
+        firebaseAuth.signInAnonymously().addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+
+            }
+
+
+        }).addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override

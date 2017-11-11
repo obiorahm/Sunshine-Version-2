@@ -3,11 +3,30 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+
+import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.data.AddWord;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 
@@ -18,7 +37,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import opennlp.tools.cmdline.CLI;
 import opennlp.tools.stemmer.PorterStemmer;
 
 /**
@@ -29,13 +50,21 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     private AphasiaAdapter adapter;
     private Context context;
     private String chooseEngine;
+    private String[] listOfWords;
     Color availableColors = new Color();
 
+    public static final String ENGINE_PIXABAY = "1";
+    public static final String ENGINE_OPENCLIPART = "2";
 
-    public FetchClipArt(ButtonTextAdapter newAdapter, Context newContext ,String newChooseEngine ){
+    ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
+
+
+
+    public FetchClipArt(ButtonTextAdapter newAdapter, Context newContext ,String newChooseEngine, String[] _listOfWords ){
         adapter = newAdapter;
         chooseEngine = newChooseEngine;
         context = newContext;
+        listOfWords = _listOfWords;
     }
 
     public FetchClipArt(GridAdapter newAdapter, Context newContext, String newChooseEngine)
@@ -48,11 +77,19 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     private final String LOG_TAG = FetchClipArt.class.getSimpleName();
 
     @Override
-    protected void onPostExecute(final ArrayList<ArrayList<String>> Result) {
-        if (Result == null)
+    protected void onPostExecute(ArrayList<ArrayList<String>> Result) {
+        Log.d("I got here: ", "Post Execute");
+        if (Result == null){
+            Log.d("no results", "absolutely no results");
             return;
+
+        }
         if (adapter instanceof ButtonTextAdapter){
-            addSearchResultToAdapter(Result);
+            //addSearchResultToAdapter(Result);
+            for(int i = 0; i < listOfWords.length; i++){
+                localSearch(listOfWords[i],ClipArtJson, Result, i);
+            }
+
             hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.search_complete));
 
         }else{
@@ -97,10 +134,13 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
     }
     private  void addSearchResultToAdapter(final ArrayList<ArrayList<String>>Result){
+        final int QUERY_PARAMETER = 0;
+        final int URL_JSON = 1;
         for (int i = 0; i < Result.size(); i++){
             ArrayList<String> currResult = Result.get(i);
-            if (currResult.get(0) != null){
-                adapter.addItem(currResult.get(0) + "&&" + currResult.get(1));
+            Log.d("addSearchResult ", Result.get(i).toString());
+            if (currResult.get(QUERY_PARAMETER) != null){
+                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
             }
         }
     };
@@ -135,11 +175,13 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         if (params.length == 0)
             return null;
         switch (chooseEngine){
-            case "1":
+            case ENGINE_PIXABAY:
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
 
                         if (!addColorDataIfColor(ClipArtJson, params[0][i])){
+                            //localSearch(params[0][i], ClipArtJson);
+                            if (isCancelled()) break;
                             ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][i], "1"),params[0][i]));
                         }
                     }
@@ -149,7 +191,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                     }
                 }
                 break;
-            case "2":
+            case ENGINE_OPENCLIPART:
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
                         if (!addColorDataIfColor(ClipArtJson, params[0][i])){
@@ -279,6 +321,135 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 }
             }
         }
+
+    }
+
+
+
+    private void localSearch(final String searchString, final ArrayList<ArrayList<String>> ClipArtJson, final ArrayList<ArrayList<String>> Result, final int position){
+
+        FirebaseUser firebaseUser = OpenGalleryObjectActivity.firebaseAuth.getCurrentUser();
+        if (firebaseUser != null){
+
+        }else{
+            ((OpenGalleryObjectActivity) context).signInAnonymously();
+        }
+
+        final Query mDatabaseQuery = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child(searchString.toLowerCase()).limitToFirst(1);
+        final String WORD_IMAGE_REFERENCE  = "symbols";
+        Log.d("the Query", mDatabaseQuery.toString());
+
+        mDatabaseQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot child: dataSnapshot.getChildren()){
+                        String wordEntries = (String) child.getValue();
+                            String[] getFileName = wordEntries.split("/");
+                            Log.d("The entries: ", wordEntries.toString());
+                            StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
+
+                            firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + getFileName[0] + "/" + getFileName[2]).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
+                                            // ClipArtJsonStr.add(searchString);
+                                            //ClipArtJsonStr.add(uri.toString());
+                                            //ClipArtJson.add(ClipArtJsonStr);
+                                            //Log.d("Uri.toString ", uri.toString());
+                                            adapter.addItem(searchString + "&&" + uri.toString());
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("Download error ", e.toString());
+                                }
+                            });
+                    }
+
+                }else{
+                    final int QUERY_PARAMETER = 0;
+                    final int URL_JSON = 1;
+                    ArrayList<String> currResult = Result.get(position);
+                    adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    /*        mDatabaseQuery.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (dataSnapshot.exists()){
+                        String wordEntries = (String) dataSnapshot.getValue();
+                        String[] getFileName = wordEntries.split("/");
+                        Log.d("The entries: ", wordEntries);
+                        StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
+
+                        firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + getFileName[0] + "/" + getFileName[2]).getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
+                                        // ClipArtJsonStr.add(searchString);
+                                        //ClipArtJsonStr.add(uri.toString());
+                                        //ClipArtJson.add(ClipArtJsonStr);
+                                        //Log.d("Uri.toString ", uri.toString());
+                                        adapter.addItem(searchString + "&&" + uri.toString());
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                final int QUERY_PARAMETER = 0;
+                                final int URL_JSON = 1;
+                                ArrayList<String> currResult = Result.get(position);
+                                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                                Log.d("Download error ", e.toString());
+                            }
+                        });
+
+                    }else{
+
+                    }
+
+
+
+                    //Log.d("the entries",wordEntries.toString());
+
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("database error ", databaseError.toString());
+
+                }
+            });*/
+
+
+
 
     }
 
