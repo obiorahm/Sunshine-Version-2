@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.AddWord;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -86,9 +87,12 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
         if (adapter instanceof ButtonTextAdapter){
             //addSearchResultToAdapter(Result);
-            for(int i = 0; i < listOfWords.length; i++){
-                localSearch(listOfWords[i],ClipArtJson, Result, i);
-            }
+            localSearch(listOfWords, Result, 0, listOfWords.length);
+/*            for(int i = 0; i < listOfWords.length; i++){
+                Log.d("word order ", listOfWords[i]);
+                //localSearch(listOfWords[i], Result, i);
+
+            }*/
 
             hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.search_complete));
 
@@ -326,25 +330,28 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
 
 
-    private void localSearch(final String searchString, final ArrayList<ArrayList<String>> ClipArtJson, final ArrayList<ArrayList<String>> Result, final int position){
+    private void localSearch(final String[] listOfWords, final ArrayList<ArrayList<String>> Result, final int position, final int lengthOfResult ){
 
-        FirebaseUser firebaseUser = OpenGalleryObjectActivity.firebaseAuth.getCurrentUser();
-        if (firebaseUser != null){
-
+        if (position == lengthOfResult){
+            return;
         }else{
-            ((OpenGalleryObjectActivity) context).signInAnonymously();
-        }
+            FirebaseUser firebaseUser = OpenGalleryObjectActivity.firebaseAuth.getCurrentUser();
+            if (firebaseUser != null){
 
-        final Query mDatabaseQuery = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child(searchString.toLowerCase()).limitToFirst(1);
-        final String WORD_IMAGE_REFERENCE  = "symbols";
-        Log.d("the Query", mDatabaseQuery.toString());
+            }else{
+                ((OpenGalleryObjectActivity) context).signInAnonymously();
+            }
+            final String searchString = listOfWords[position];
+            final Query mDatabaseQuery = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child(searchString.toLowerCase()).limitToFirst(1);
+            final String WORD_IMAGE_REFERENCE  = "symbols";
+            Log.d("the Query", mDatabaseQuery.toString());
 
-        mDatabaseQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    for (DataSnapshot child: dataSnapshot.getChildren()){
-                        String wordEntries = (String) child.getValue();
+            mDatabaseQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        for (DataSnapshot child: dataSnapshot.getChildren()){
+                            String wordEntries = (String) child.getValue();
                             String[] getFileName = wordEntries.split("/");
                             Log.d("The entries: ", wordEntries.toString());
                             StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
@@ -353,104 +360,40 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
-                                            // ClipArtJsonStr.add(searchString);
-                                            //ClipArtJsonStr.add(uri.toString());
-                                            //ClipArtJson.add(ClipArtJsonStr);
-                                            //Log.d("Uri.toString ", uri.toString());
                                             adapter.addItem(searchString + "&&" + uri.toString());
+                                            int newPosition = position + 1;
+                                            localSearch(listOfWords, Result, position + 1, lengthOfResult);
 
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    final int QUERY_PARAMETER = 0;
+                                    final int URL_JSON = 1;
+                                    ArrayList<String> currResult = Result.get(position);
+                                    adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                                    localSearch(listOfWords, Result, position + 1, lengthOfResult);
                                     Log.d("Download error ", e.toString());
                                 }
                             });
-                    }
-
-                }else{
-                    final int QUERY_PARAMETER = 0;
-                    final int URL_JSON = 1;
-                    ArrayList<String> currResult = Result.get(position);
-                    adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    /*        mDatabaseQuery.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if (dataSnapshot.exists()){
-                        String wordEntries = (String) dataSnapshot.getValue();
-                        String[] getFileName = wordEntries.split("/");
-                        Log.d("The entries: ", wordEntries);
-                        StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
-
-                        firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + getFileName[0] + "/" + getFileName[2]).getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        ArrayList<String> ClipArtJsonStr = new ArrayList<String>();
-                                        // ClipArtJsonStr.add(searchString);
-                                        //ClipArtJsonStr.add(uri.toString());
-                                        //ClipArtJson.add(ClipArtJsonStr);
-                                        //Log.d("Uri.toString ", uri.toString());
-                                        adapter.addItem(searchString + "&&" + uri.toString());
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                final int QUERY_PARAMETER = 0;
-                                final int URL_JSON = 1;
-                                ArrayList<String> currResult = Result.get(position);
-                                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
-                                Log.d("Download error ", e.toString());
-                            }
-                        });
+                        }
 
                     }else{
+                        final int QUERY_PARAMETER = 0;
+                        final int URL_JSON = 1;
+                        ArrayList<String> currResult = Result.get(position);
+                        adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                        localSearch(listOfWords, Result, position + 1, lengthOfResult);
 
                     }
-
-
-
-                    //Log.d("the entries",wordEntries.toString());
-
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.d("database error ", databaseError.toString());
 
                 }
-            });*/
-
-
-
-
+            });
+        }
     }
 
 
