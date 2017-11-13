@@ -1,18 +1,17 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.app.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.AccessorsAndSetters.Color;
+import com.example.android.sunshine.app.R;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 /**
  * Created by mgo983 on 11/6/17.
@@ -27,6 +26,10 @@ public class GridAdapter extends AphasiaAdapter {
     public String[] imageUrls;
 
     private Color availableColor = new Color();
+
+    public GridAdapter(Context context, int resource){
+        super(context,resource);
+    }
 
 
 

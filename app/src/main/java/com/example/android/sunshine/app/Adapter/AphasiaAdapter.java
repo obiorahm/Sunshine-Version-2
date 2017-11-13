@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.app.Adapter;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
@@ -20,6 +20,10 @@ public class AphasiaAdapter extends ArrayAdapter {
     }
 
     public void addItem(final String item){
+
+    }
+
+    public void addItem(final String category, final Words words ){
 
     }
 }

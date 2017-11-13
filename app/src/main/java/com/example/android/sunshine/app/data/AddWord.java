@@ -1,25 +1,17 @@
 package com.example.android.sunshine.app.data;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-import com.bumptech.glide.load.engine.Resource;
-import com.example.android.sunshine.app.ImageGridAdapter;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.TextDialog;
 import com.google.firebase.database.ChildEventListener;
@@ -29,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by mgo983 on 11/6/17.

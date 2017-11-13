@@ -9,9 +9,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.android.sunshine.app.Adapter.ImageGridAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,13 +19,11 @@ import java.util.List;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
-import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.ClarifaiURLImage;
-import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import okhttp3.OkHttpClient;
 

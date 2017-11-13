@@ -103,6 +103,16 @@
                     android:value="com.example.android.sunshine.app.GalleryActivity" />
             </intent-filter>
         </activity>
+        <activity android:name=".WordCategoriesActivity"
+            android:parentActivityName=".OpenGalleryObjectActivity">
+            <intent-filter>
+                <action android:name="android.media.action.WORDCATEGORIES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.sunshine.app.WordCategoriesActivity"/>
+        </activity>
     </application>
 
 </manifest>

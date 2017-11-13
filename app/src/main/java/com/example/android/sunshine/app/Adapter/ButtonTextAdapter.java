@@ -1,12 +1,10 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.app.Adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -14,10 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,23 +20,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.sunshine.app.data.AddWord;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.android.sunshine.app.AccessorsAndSetters.Color;
+import com.example.android.sunshine.app.CommonDetailOpen;
+import com.example.android.sunshine.app.FetchClipArt;
+import com.example.android.sunshine.app.ImageDialog;
+import com.example.android.sunshine.app.JSONHandler;
+import com.example.android.sunshine.app.OpenClipArtJSONHandler;
+import com.example.android.sunshine.app.PixabayJSONHandler;
+import com.example.android.sunshine.app.R;
+import com.example.android.sunshine.app.SafeAction;
 
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +66,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
     private TreeSet imageSet = new TreeSet();
     private TreeSet resultSet = new TreeSet();
 
-    final static String SEARCH_PARAM = "SEARCH_PARAM";
+    public final static String SEARCH_PARAM = "SEARCH_PARAM";
     private final static String EXTRA_DIALOG_IMAGE = "com.example.android.sunshine.extraImage";
 
     public int EDITED_POSITION;
@@ -311,9 +302,14 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             public void onClick(View view) {
                 if (((CommonDetailOpen) context).ONLONGCLICKMODE ) return;
                 myTTS.speak(focusWord, TextToSpeech.QUEUE_FLUSH, null);
-                Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
+
+                Intent wordCategoryActivity = new Intent(getContext(), com.example.android.sunshine.app.WordCategoriesActivity.class);
+                wordCategoryActivity.putExtra(SEARCH_PARAM, focusWord);
+                context.startActivity(wordCategoryActivity);
+
+                /*Intent ImageExplanationActivity = new Intent(getContext(), com.example.android.sunshine.app.ImageExplanationActivity.class);
                 ImageExplanationActivity.putExtra(SEARCH_PARAM, focusWord);
-                context.startActivity(ImageExplanationActivity);
+                context.startActivity(ImageExplanationActivity);*/
             }
         });
     }

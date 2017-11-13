@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 
 import android.support.v7.app.ActionBar;
@@ -20,25 +18,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.widget.AdapterView;
-
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.android.sunshine.app.AccessorsAndSetters.Photos;
+import com.example.android.sunshine.app.Adapter.ImageGridAdapter;
 import com.example.android.sunshine.app.data.AddWord;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 

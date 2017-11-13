@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.app.AccessorsAndSetters;
 
 /**
  * Created by mgo983 on 11/6/17.

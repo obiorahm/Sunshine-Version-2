@@ -4,25 +4,24 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.AccessorsAndSetters.Color;
+import com.example.android.sunshine.app.Adapter.AphasiaAdapter;
+import com.example.android.sunshine.app.Adapter.ButtonTextAdapter;
+import com.example.android.sunshine.app.Adapter.GridAdapter;
+import com.example.android.sunshine.app.Adapter.WordCategoryAdapter;
+import com.example.android.sunshine.app.Adapter.Words;
 import com.example.android.sunshine.app.data.AddWord;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -40,7 +39,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import opennlp.tools.cmdline.CLI;
 import opennlp.tools.stemmer.PorterStemmer;
 
 /**
@@ -61,7 +59,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
 
 
-    public FetchClipArt(ButtonTextAdapter newAdapter, Context newContext ,String newChooseEngine, String[] _listOfWords ){
+    public FetchClipArt(ButtonTextAdapter newAdapter, Context newContext , String newChooseEngine, String[] _listOfWords ){
         adapter = newAdapter;
         chooseEngine = newChooseEngine;
         context = newContext;
@@ -75,6 +73,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         chooseEngine = newChooseEngine;
     }
 
+
     private final String LOG_TAG = FetchClipArt.class.getSimpleName();
 
     @Override
@@ -86,17 +85,15 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         }
         if (adapter instanceof ButtonTextAdapter){
-            //addSearchResultToAdapter(Result);
             localSearch(listOfWords, Result, 0, listOfWords.length);
-/*            for(int i = 0; i < listOfWords.length; i++){
-                Log.d("word order ", listOfWords[i]);
-                //localSearch(listOfWords[i], Result, i);
-
-            }*/
-
             hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.search_complete));
 
-        }else{
+        }else if(adapter instanceof WordCategoryAdapter){
+            ArrayList<String> currResult = Result.get(0);
+            String searchString = currResult.get(0);
+            localCategorySearch(searchString, Result,0);
+
+        }else {
             String [] ImageUrls = new String [1];
             ArrayList<String> currResult = Result.get(0);
             String searchString = currResult.get(0);
@@ -184,12 +181,16 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                     for (int i = 0; i < params[0].length; i++){
 
                         if (!addColorDataIfColor(ClipArtJson, params[0][i])){
-                            //localSearch(params[0][i], ClipArtJson);
-                            if (isCancelled()) break;
                             ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][i], "1"),params[0][i]));
                         }
                     }
-                }else{
+                }else if(adapter instanceof WordCategoryAdapter){
+                    Log.d("Instance of ", "WordCategoryAdapter");
+                    if(!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
+                        ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][0], "2"), params[0][0]));
+                    }
+                }
+                else{
                     if (!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
                         ClipArtJson.add(getJSONData(buildPixaBayUri("https://pixabay.com/api/","5321405-e3d51a927066916f670cf60c0",params[0][0], "10"),params[0][0]));
                     }
@@ -214,9 +215,11 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         return ClipArtJson;
     }
 
-    public GridAdapter getAdapter(){
-        return (GridAdapter) adapter;
-    }
+    public GridAdapter getAdapter(){ return (GridAdapter) adapter;}
+
+    //public AphasiaAdapter getAdapter(){ return (AphasiaAdapter) adapter;}
+
+    //public WordCategoryAdapter getAdapter(){ return (WordCategoryAdapter) adapter;}
 
     private boolean addColorDataIfColor(ArrayList<ArrayList<String>> ClipArtJSON, String searchValue) {
         ArrayList<String> color = new ArrayList<>();
@@ -394,6 +397,75 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 }
             });
         }
+    }
+
+    private void localCategorySearch(final String searchString, final ArrayList<ArrayList<String>> Result, final int position ){
+
+            FirebaseUser firebaseUser = WordCategoriesActivity.firebaseAuth.getCurrentUser();
+            if (firebaseUser != null){
+
+            }else{
+                ((WordCategoriesActivity) context).signInAnonymously();
+            }
+            final Query mDatabaseQuery = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child(searchString.toLowerCase());
+            final String WORD_IMAGE_REFERENCE  = "symbols";
+            Log.d("the Query", mDatabaseQuery.toString());
+
+            mDatabaseQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        final HashMap<String, Words> wordsHashMap = new HashMap<String, Words>();
+                        for (DataSnapshot child: dataSnapshot.getChildren()){
+                            String wordEntries = (String) child.getValue();
+                            String[] getFileName = wordEntries.split("/");
+                            Log.d("The category entries: ", wordEntries.toString());
+                            StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
+                            final String category = getFileName[0];
+                            String fileName = getFileName[2];
+
+                            firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + category + "/" + fileName).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            // get category, word and url;
+                                            if (wordsHashMap.get(category) == null){
+                                                Words words = new Words(searchString, uri.toString(), category, "LOCAL");
+                                                wordsHashMap.put(category, words);
+                                                adapter.addItem(category, words);
+                                            }
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //addInternetItem(searchString, Result, position);
+                                    Log.d("Download error ", e.toString());
+                                }
+                            });
+                        }
+                        //after going through the data
+                        addInternetItem(searchString,Result,position);
+
+                    }else{
+                        //addInternetItem(searchString, Result, position);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+    }
+
+    public void addInternetItem(String searchString, ArrayList<ArrayList<String>> Result, int position){
+        final int QUERY_PARAMETER = 0;
+        final int URL_JSON = 1;
+        ArrayList<String> currResult = Result.get(position);
+        Words words = new Words(searchString, currResult.get(URL_JSON), "INTERNET", "INTERNET");
+        adapter.addItem("INTERNET", words);
     }
 
 

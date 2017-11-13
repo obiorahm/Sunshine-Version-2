@@ -3,9 +3,7 @@ package com.example.android.sunshine.app;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.res.AssetManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +11,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.AccessorsAndSetters.WordCategories;
 import com.example.android.sunshine.app.data.AddWord;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -158,34 +149,6 @@ public class TextDialog extends DialogFragment{
                         break;
 
                     case CREATE_WORD_DATABASE:
-                        //get the filename
-                        /*final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE);
-                        databaseReference.addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                dataSnapshot.getRef().removeValue();
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });*/
 
                         final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
                         final DatabaseReference wordDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child("");

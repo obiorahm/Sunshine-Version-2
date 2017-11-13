@@ -7,10 +7,7 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v4.app.ShareCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +15,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.example.android.sunshine.app.Adapter.ButtonTextAdapter;
+import com.example.android.sunshine.app.Adapter.GridAdapter;
 
 import java.util.Locale;
 

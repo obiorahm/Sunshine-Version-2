@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.sunshine.app.Adapter.ButtonTextAdapter;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
