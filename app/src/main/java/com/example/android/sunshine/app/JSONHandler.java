@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class JSONHandler {
 
-    public String[] getImageUrl(String JSONString, int position) throws JSONException{
+    public String[] getImageUrl(String JSONString) throws JSONException{
         String [] returnString = {""};
         return returnString;
     }

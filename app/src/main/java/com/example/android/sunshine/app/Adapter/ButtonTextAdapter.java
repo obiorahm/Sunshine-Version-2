@@ -445,11 +445,11 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     switch (searchEngine){
                         case FetchClipArt.ENGINE_PIXABAY:
                             jsonHandler = new PixabayJSONHandler();
-                            imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                            imageUrl = jsonHandler.getImageUrl(JSONString);
                             break;
                         default:
                             jsonHandler =new OpenClipArtJSONHandler();
-                            imageUrl = jsonHandler.getImageUrl(JSONString, position);
+                            imageUrl = jsonHandler.getImageUrl(JSONString);
                             break;
                     }
                     if (imageUrl == null){

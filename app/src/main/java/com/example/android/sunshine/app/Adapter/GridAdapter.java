@@ -53,6 +53,10 @@ public class GridAdapter extends AphasiaAdapter {
 
     }
 
+    public void setImageUrls(String[] imageUrls){
+        this.imageUrls = imageUrls;
+    }
+
     public String getImageUrl(int position){
         return imageUrls[position];
     }

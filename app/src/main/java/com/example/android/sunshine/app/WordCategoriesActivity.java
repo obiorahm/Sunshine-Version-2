@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.Adapter.ButtonTextAdapter;
 import com.example.android.sunshine.app.Adapter.GridAdapter;
@@ -48,7 +49,6 @@ public class WordCategoriesActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_sense_disambiguation);
 
-        adapter = new WordCategoryAdapter(this, R.layout.item_category);
 
         Intent intent = this.getIntent();
         String[] searchParam = {""};
@@ -57,6 +57,12 @@ public class WordCategoriesActivity extends ActionBarActivity {
         //get preferred search engine
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String prefSearchParam = sharedPref.getString(getString(R.string.pref_search_key),getString(R.string.pref_search_default_value));
+
+        TextView textView = (TextView) findViewById(R.id.search_word);
+        textView.setText(searchParam[0]);
+
+        adapter = new WordCategoryAdapter(this, R.layout.item_category, prefSearchParam);
+
 
         CheckInternetConnection checkInternetConnection = new CheckInternetConnection(this);
 

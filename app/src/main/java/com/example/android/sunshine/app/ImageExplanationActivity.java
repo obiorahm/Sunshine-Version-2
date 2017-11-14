@@ -31,8 +31,6 @@ public class ImageExplanationActivity extends ActionBarActivity implements TextT
     public ImageExplanationActivity(){}
     public GridAdapter adapter;
 
-    //FetchClipArt fetchClipArt;
-
     private int MY_DATA_CHECK_CODE = 0;
     private TextToSpeech myTTS;
 

@@ -113,7 +113,7 @@ public class OpenGalleryObjectActivity extends CommonDetailOpen {
 
                         adapter.addImage(imgFile.toString());
                         Log.v("Textfile content is ", TxtFileContent);
-                        Log.v("Opengallery img fname ", _FileName);
+                        Log.v("OpenGallery img fname ", _FileName);
 
 
                         if (! TxtFileContent.equals("") ){

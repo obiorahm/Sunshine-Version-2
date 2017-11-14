@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class PixabayJSONHandler extends JSONHandler{
     @Override
-    public String[] getImageUrl(String JSONString, int position) throws JSONException {
+    public String[] getImageUrl(String JSONString) throws JSONException {
         try{
             final String[] ImageUrl;
             final JSONObject obj = new JSONObject(JSONString);
