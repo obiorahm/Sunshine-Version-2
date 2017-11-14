@@ -150,7 +150,71 @@ public class TextDialog extends DialogFragment{
 
                     case CREATE_WORD_DATABASE:
 
+                        //remove children with smarty symbol children
                         final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
+                        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                dataSnapshot.getRef().addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        String key = dataSnapshot.getKey();
+                                        if (dataSnapshot.getValue() instanceof HashMap) {
+                                            HashMap map = (HashMap) dataSnapshot.getValue();
+
+                                            if ((map.get("word") != null) && (map.get("word").toString().equals("smarty symbols logo  heads"))) {
+                                                dataSnapshot.getRef().removeValue();
+                                                Log.e("Entries", map.get("fileName").toString());
+
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        //created all of the words children
+                        /*final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
                         final DatabaseReference wordDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE).child("");
                         final String WORD_IMAGE_REFERENCE  = "symbols";
                         mDatabaseReference.addChildEventListener(new ChildEventListener() {
@@ -216,7 +280,7 @@ public class TextDialog extends DialogFragment{
                             public void onCancelled(DatabaseError databaseError) {
 
                             }
-                        });
+                        });*/
                         break;
 
                 }

@@ -17,8 +17,10 @@ import com.example.android.sunshine.app.Adapter.GridAdapter;
 import com.example.android.sunshine.app.Adapter.WordCategoryAdapter;
 import com.example.android.sunshine.app.Adapter.Words;
 import com.example.android.sunshine.app.data.AddWord;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +29,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 
 import org.json.JSONException;
 
@@ -90,12 +93,13 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         }else if(adapter instanceof WordCategoryAdapter){
             final int FIRST_POSITION = 0;
-            if (Result != null){
                 ArrayList<String> currResult = Result.get(FIRST_POSITION);
-                String searchString = currResult.get(FIRST_POSITION);
-                addInternetItem(searchString,Result,FIRST_POSITION);
-                localCategorySearch(searchString);
-            }
+                if (currResult != null){
+                    String searchString = currResult.get(FIRST_POSITION);
+                    localCategorySearch(searchString);
+                    addInternetItem(searchString,Result,FIRST_POSITION);
+
+                }
 
 
         }else {
@@ -139,20 +143,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         }
     }
-    /*private  void addSearchResultToAdapter(final ArrayList<ArrayList<String>>Result){
-        final int QUERY_PARAMETER = 0;
-        final int URL_JSON = 1;
-        for (int i = 0; i < Result.size(); i++){
-            ArrayList<String> currResult = Result.get(i);
-            Log.d("addSearchResult ", Result.get(i).toString());
-            if (currResult.get(QUERY_PARAMETER) != null){
-                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
-            }
-        }
-    };*/
 
     private void hideProgressBar(ProgressBar currProgressBar){
-        //ProgressBar progressBar = currProgressBar;
         currProgressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -174,11 +166,9 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     }
 
     @Override
-    protected /*String[]*/ ArrayList<ArrayList<String>> doInBackground(String[]...params) {
+    protected  ArrayList<ArrayList<String>> doInBackground(String[]...params) {
 
         ArrayList<ArrayList<String>> ClipArtJson = new ArrayList<ArrayList<String>>();
-        //ArrayList<String> color = new ArrayList<>();
-
 
         if (params.length == 0)
             return null;
@@ -208,17 +198,17 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 if (adapter instanceof  ButtonTextAdapter){
                     for (int i = 0; i < params[0].length; i++){
                         if (!addColorDataIfColor(ClipArtJson, params[0][i])){
-                            ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][i], "1"),params[0][i]));
+                            ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/",params[0][i], "1"),params[0][i]));
                         }
                     }
                 }else if(adapter instanceof WordCategoryAdapter){
                     Log.d("Instance of ", "WordCategoryAdapter");
                     if(!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
-                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][0], "2"), params[0][0]));
+                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/",params[0][0], "2"), params[0][0]));
                     }
                 }else{
                     if (!addColorDataIfColor(ClipArtJson, params[0][0].toLowerCase())){
-                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/","table",params[0][0], "10"), params[0][0]));
+                        ClipArtJson.add(getJSONData(buildOpenClipArtUri("https://openclipart.org/search/json/",params[0][0], "10"), params[0][0]));
                     }
                 }
                 break;
@@ -244,9 +234,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
     }
 
-    private Uri buildOpenClipArtUri(String baseUrl, String apiKey, String queryParameter, String amount){
-        final String CLIPART_BASE_URL = baseUrl;
-        //final String API_KEY = apiKey;
+    private Uri buildOpenClipArtUri(String baseUrl, String queryParameter, String amount){
         final String QUERY = "query";
         final String AMOUNT = "amount";
 
@@ -254,7 +242,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
         Uri buildUri;
 
-        buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+        buildUri = Uri.parse(baseUrl).buildUpon()
                 .appendQueryParameter(QUERY, queryParameter)
                 .appendQueryParameter(AMOUNT,amount)
                 .appendQueryParameter(SORT, "downloads")
@@ -266,13 +254,12 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
 
     private Uri buildPixaBayUri(String baseUrl, String apiKey, String queryParameter){
-        final String CLIPART_BASE_URL = baseUrl;
         final String API_KEY = "key";
         final String QUERY = "q";
 
         Uri buildUri;
 
-        buildUri = Uri.parse(CLIPART_BASE_URL).buildUpon()
+        buildUri = Uri.parse(baseUrl).buildUpon()
                 .appendQueryParameter(API_KEY,apiKey)
                 .appendQueryParameter(QUERY, queryParameter)
 
@@ -281,7 +268,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     }
 
 
-    protected  ArrayList<String> getJSONData(Uri SearchUri, String queryParameter /*String baseUrl, String apiKey, String queryParameter, String amount*/){
+    private ArrayList<String> getJSONData(Uri SearchUri, String queryParameter /*String baseUrl, String apiKey, String queryParameter, String amount*/){
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -291,7 +278,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
             Uri buildUri;
 
-            buildUri = SearchUri; //buildOpenClipArtUri(baseUrl, apiKey, queryParameter, amount);
+            buildUri = SearchUri;
 
             URL url = new URL(buildUri.toString());
             Log.v(LOG_TAG,"The built Uri " + url);
@@ -417,16 +404,20 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
             mDatabaseQuery.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()){
                         final HashMap wordsHashMap = new HashMap<>();
-                        for (DataSnapshot child: dataSnapshot.getChildren()){
+
+                        for (final DataSnapshot child: dataSnapshot.getChildren()){
                             String wordEntries = (String) child.getValue();
                             String[] getFileName = wordEntries.split("/");
                             Log.d("The category entries: ", wordEntries);
                             StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
                             final String category = getFileName[0];
                             String fileName = getFileName[2];
+
+
+
 
                             firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + category + "/" + fileName).getDownloadUrl()
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -446,13 +437,15 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                                     //addInternetItem(searchString, Result, position);
                                     Log.d("Download error ", e.toString());
                                 }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                }
                             });
                         }
                         //after going through the data
                         //addInternetItem(searchString,Result,position);
 
-                    }else{
-                        //addInternetItem(searchString, Result, position);
                     }
                 }
 
@@ -461,6 +454,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
 
                 }
             });
+
+
 
     }
 

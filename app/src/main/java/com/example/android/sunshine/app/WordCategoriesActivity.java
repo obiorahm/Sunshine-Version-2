@@ -2,35 +2,25 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.Adapter.ButtonTextAdapter;
 import com.example.android.sunshine.app.Adapter.GridAdapter;
 import com.example.android.sunshine.app.Adapter.WordCategoryAdapter;
-import com.example.android.sunshine.app.Adapter.Words;
-import com.example.android.sunshine.app.data.AddWord;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by mgo983 on 11/13/17.
@@ -40,15 +30,15 @@ public class WordCategoriesActivity extends ActionBarActivity {
 
     public static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-    private GridAdapter adapter;
 
-    private HashMap adapterItem = new HashMap();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_sense_disambiguation);
 
+        GridAdapter adapter;
 
         Intent intent = this.getIntent();
         String[] searchParam = {""};
@@ -60,6 +50,9 @@ public class WordCategoriesActivity extends ActionBarActivity {
 
         TextView textView = (TextView) findViewById(R.id.search_word);
         textView.setText(searchParam[0]);
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.explanationProgress);
+        progressBar.setVisibility(View.INVISIBLE);
 
         adapter = new WordCategoryAdapter(this, R.layout.item_category, prefSearchParam);
 

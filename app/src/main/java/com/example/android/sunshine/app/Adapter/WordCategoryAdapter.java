@@ -2,22 +2,20 @@ package com.example.android.sunshine.app.Adapter;
 
 import android.content.Context;
 import android.net.Uri;
+
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.example.android.sunshine.app.CheckInternetConnection;
 import com.example.android.sunshine.app.FetchClipArt;
 import com.example.android.sunshine.app.JSONHandler;
@@ -25,7 +23,6 @@ import com.example.android.sunshine.app.OpenClipArtJSONHandler;
 import com.example.android.sunshine.app.OpenGalleryObjectActivity;
 import com.example.android.sunshine.app.PixabayJSONHandler;
 import com.example.android.sunshine.app.R;
-import com.example.android.sunshine.app.WordCategoriesActivity;
 import com.example.android.sunshine.app.data.AddWord;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -97,13 +94,15 @@ public class WordCategoryAdapter extends GridAdapter {
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.image_category);
 
+        ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.more_category);
+
         final String category = word.getCategory();
 
         textView.setText(category);
 
         String url = word.getUrl();
         String[] jsonUrl ={};
-        JSONHandler jsonHandler = new JSONHandler();
+        JSONHandler jsonHandler;
         final int FIRST_POSITION = 0;
         try{
             switch (searchEngine){
@@ -125,6 +124,8 @@ public class WordCategoryAdapter extends GridAdapter {
 
         setImageOnClickListener(imageView, category, word);
 
+        setMoreOnClickListener(imageButton, category, word);
+
         if (jsonUrl != null) url = jsonUrl[FIRST_POSITION];
 
         Glide
@@ -145,6 +146,9 @@ public class WordCategoryAdapter extends GridAdapter {
                 CheckInternetConnection checkInternetConnection = new CheckInternetConnection(context);
 
                 GridAdapter adapter = new GridAdapter(context, R.id.item_grid);
+
+                TextView textView = (TextView) ((ActionBarActivity) context).findViewById(R.id.search_word);
+                textView.setText(searchWord[0]);
 
                 if (category.equals("INTERNET")){
                     if (checkInternetConnection.isNetworkConnected()){
@@ -175,10 +179,7 @@ public class WordCategoryAdapter extends GridAdapter {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()){
-                        long count = dataSnapshot.getChildrenCount();
-                        final String [] urls = new String[(int)count];
                         final ArrayList lUrls = new ArrayList();
-                        int i = 0;
                         for (DataSnapshot child: dataSnapshot.getChildren()){
                             String wordEntries = (String) child.getValue();
                             String[] getFileName = wordEntries.split("/");
@@ -193,7 +194,6 @@ public class WordCategoryAdapter extends GridAdapter {
                                             @Override
                                             public void onSuccess(Uri uri) {
                                                 lUrls.add(uri.toString());
-                                                urls[lUrls.size() - 1] = uri.toString();
                                                 setImageAdapter(adapter,lUrls);
 
                                             }
@@ -233,8 +233,105 @@ public class WordCategoryAdapter extends GridAdapter {
 
             ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
             progressBar.setVisibility(View.INVISIBLE);
-
-
-
         }
+
+
+
+    private void setMoreOnClickListener(ImageButton imageButton, final String category, final Words word){
+        final String[] searchWord = {""};
+        searchWord[0] = word.getWord();
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+                progressBar.setVisibility(View.VISIBLE);
+
+                TextView textView = (TextView) ((ActionBarActivity) context).findViewById(R.id.search_word);
+                textView.setText(category);
+
+                GridAdapter adapter = new GridAdapter(context, R.id.item_grid);
+
+                if (!category.equals("INTERNET")){
+
+                    localCategorySearch(category, adapter);
+                }
+
+            }
+        });
+    }
+
+    private void localCategorySearch( final String category, final GridAdapter adapter){
+
+
+        FirebaseUser firebaseUser = OpenGalleryObjectActivity.firebaseAuth.getCurrentUser();
+        if (firebaseUser == null){
+            ((OpenGalleryObjectActivity) context).signInAnonymously();
+        }
+        final Query mDatabaseQuery = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD).child(category);
+        final String WORD_IMAGE_REFERENCE  = "symbols";
+        Log.d("the Query", mDatabaseQuery.toString());
+
+        final StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
+
+        final ArrayList<HashMap>  Allentries = new ArrayList<>();
+
+        mDatabaseQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    final ArrayList lUrls = new ArrayList();
+                    for (DataSnapshot child: dataSnapshot.getChildren()){
+                        HashMap wordEntries = (HashMap) child.getValue();
+                        Allentries.add(wordEntries);
+                        Log.d("The entries: ", wordEntries.toString());
+                    }
+                    getImageUrl(0,
+                            Allentries,
+                            firebaseStorage,
+                            category,
+                            WORD_IMAGE_REFERENCE,
+                            adapter,
+                            lUrls);
+                }else{
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getImageUrl(final int count, final ArrayList<HashMap> AllEntries, final StorageReference firebaseStorage, final String category,
+                             final String WORD_IMAGE_REFERENCE,
+                             final GridAdapter adapter,
+                             final ArrayList lUrls
+    ){
+        if (count < AllEntries.size()) {
+
+
+            String fileName = (String) AllEntries.get(count).get("fileName");
+            firebaseStorage.child(WORD_IMAGE_REFERENCE + "/" + category + "/" + fileName).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            lUrls.add(uri.toString());
+
+                            getImageUrl(count + 1, AllEntries, firebaseStorage, category, WORD_IMAGE_REFERENCE, adapter, lUrls);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("Download error ", e.toString());
+                }
+            });
+        }else{
+            setImageAdapter(adapter, lUrls);
+        }
+    }
 }
