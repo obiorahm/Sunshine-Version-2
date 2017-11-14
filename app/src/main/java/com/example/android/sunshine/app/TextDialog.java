@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -149,9 +150,59 @@ public class TextDialog extends DialogFragment{
                         break;
 
                     case CREATE_WORD_DATABASE:
+                        /*final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_REFERENCE);
+                        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                HashMap UniqueFileName = new HashMap();
+                                for (DataSnapshot child: dataSnapshot.getChildren()){
+                                    if (child.getValue() instanceof String){
+                                        String databasePath = (String) child.getValue();
+                                        String[] getFileName = databasePath.split("/");
+                                        String fileName = getFileName[2];
+                                        String key = getFileName[1];
+                                        String category = getFileName[0];
+                                        Log.d("The FileNames: ", fileName + UniqueFileName.get(fileName));
+                                        if (UniqueFileName.get(fileName + category) == null){
+                                            // place in UniqueFileName
+                                            UniqueFileName.put(fileName + category, category);
+
+                                        }else if (UniqueFileName.get(fileName + category).equals(category)){
+                                            //remove from word category
+                                            child.getRef().removeValue();
+                                            //Log.d("Word Reference: ", child.getRef().toString());
+                                            //remove from word
+                                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("word_categories/" + category ).child(key);
+                                            ref.removeValue();
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
 
                         //remove children with smarty symbol children
-                        final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
+                        /*final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
                         mDatabaseReference.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -211,7 +262,7 @@ public class TextDialog extends DialogFragment{
                             public void onCancelled(DatabaseError databaseError) {
 
                             }
-                        });
+                        });*/
 
                         //created all of the words children
                         /*final DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference(AddWord.WORD_CATEGORY_CHILD);
