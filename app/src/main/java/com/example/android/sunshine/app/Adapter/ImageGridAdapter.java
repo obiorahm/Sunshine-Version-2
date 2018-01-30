@@ -152,7 +152,8 @@ public class ImageGridAdapter extends GridAdapter {
                 imageAnimation(frameLayout,position);
                 final ActionBar actionBar = ((GalleryActivity) context).getSupportActionBar();
                 actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-                final CheckBox imageButton = (CheckBox) ((GalleryActivity) context).findViewById(R.id.btn_slide);
+                //final CheckBox imageButton = (CheckBox) ((GalleryActivity) context).findViewById(R.id.btn_slide);
+                final CheckBox imageButton = (CheckBox) ((GalleryActivity) context).findViewById(R.id.image_checkbox);
 
                 if(!GalleryActivity.ONLONGCLICKMODE){
                     ((GalleryActivity) context).invalidateOptionsMenu(); // this causes the onprepareOptionsMenu to be called
@@ -160,11 +161,13 @@ public class ImageGridAdapter extends GridAdapter {
 
                     //set current grid item checkbox to true
 
+                    if (imageButton != null){
+                        imageButton.setVisibility(View.VISIBLE);
+                        GalleryActivity.ONLONGCLICKMODE = true;
+                        checked[position] = true;
+                        notifyDataSetChanged();
+                    }
 
-                    imageButton.setVisibility(View.VISIBLE);
-                    GalleryActivity.ONLONGCLICKMODE = true;
-                    checked[position] = true;
-                    notifyDataSetChanged();
                 }
 
                 imageButton.setOnClickListener(new View.OnClickListener() {
