@@ -96,8 +96,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 ArrayList<String> currResult = Result.get(FIRST_POSITION);
                 if (currResult != null){
                     String searchString = currResult.get(FIRST_POSITION);
-                    localCategorySearch(searchString);
-                    addInternetItem(searchString,Result,FIRST_POSITION);
+                    localCategorySearch(searchString, Result, FIRST_POSITION);
+                    //addInternetItem(searchString,Result,FIRST_POSITION);
 
                 }
 
@@ -377,9 +377,14 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                     }else{
                         final int QUERY_PARAMETER = 0;
                         final int URL_JSON = 1;
-                        ArrayList<String> currResult = Result.get(position);
-                        adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
-                        localSearch(listOfWords, Result, position + 1, lengthOfResult);
+                        if (Result != null){
+                            ArrayList<String> currResult = Result.get(position);
+                            if (currResult != null){
+                                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                                localSearch(listOfWords, Result, position + 1, lengthOfResult);
+                            }
+                        }
+
 
                     }
                 }
@@ -392,7 +397,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
     }
 
-    private void localCategorySearch(final String searchString){
+    private void localCategorySearch(final String searchString, final ArrayList Result, final int position){
 
             FirebaseUser firebaseUser = WordCategoriesActivity.firebaseAuth.getCurrentUser();
             if (firebaseUser == null){
@@ -407,6 +412,8 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                 public void onDataChange(final DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()){
                         final HashMap wordsHashMap = new HashMap<>();
+                        final ArrayList count = new ArrayList();
+
 
                         for (final DataSnapshot child: dataSnapshot.getChildren()){
                             String wordEntries = (String) child.getValue();
@@ -415,8 +422,6 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                             StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
                             final String category = getFileName[0];
                             String fileName = getFileName[2];
-
-
 
 
                             firebaseStorage.child( WORD_IMAGE_REFERENCE + "/" + category + "/" + fileName).getDownloadUrl()
@@ -440,12 +445,16 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
+                                    count.add("counter");
+                                    if (count.size() == dataSnapshot.getChildrenCount()) addInternetItem(searchString, Result, position);
                                 }
                             });
                         }
                         //after going through the data
                         //addInternetItem(searchString,Result,position);
 
+                    }else{
+                        addInternetItem(searchString,Result,position);
                     }
                 }
 

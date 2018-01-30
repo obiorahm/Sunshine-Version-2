@@ -4,36 +4,49 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.AccessorsAndSetters.Color;
 import com.example.android.sunshine.app.R;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
- * Created by mgo983 on 11/6/17.
+ * Created by mgo983 on 11/15/17.
  */
+/*
+Named array list grid adapter because the other grid adapters did not accept an array of items
+as a whole. THey were built to deal with an item at a time.
+* */
 
-public class GridAdapter extends AphasiaAdapter {
-
+public class ArrayListGridAdapter extends AphasiaAdapter {
     public Context context;
 
     public LayoutInflater inflater;
 
     public String[] imageUrls;
 
+    public ArrayList mData = new ArrayList();
+
+    public ArrayList mWord = new ArrayList();
+
     private Color availableColor = new Color();
 
-    public GridAdapter(Context context, int resource){
+    public ArrayListGridAdapter(Context context, int resource){
         super(context,resource);
+
+        this.context = context;
+
+        inflater = LayoutInflater.from(context);
+
     }
 
 
 
-    public GridAdapter(Context context, String[] imageUrls){
+    public ArrayListGridAdapter(Context context, String[] imageUrls){
         super(context, R.layout.item_grid,imageUrls);
 
         this.context = context;
@@ -44,13 +57,39 @@ public class GridAdapter extends AphasiaAdapter {
 
     }
 
-    public GridAdapter(Context context, int resource, String [] objects){
+    public ArrayListGridAdapter(Context context, int resource, String [] objects){
         super(context, resource, objects);
+
+        this.context = context;
+
+        inflater = LayoutInflater.from(context);
 
     }
 
-    public void addItem(final String item){
+    public void addItem(final String item, final String word){
+        mData.add(item);
+        mWord.add(word);
+        notifyDataSetChanged();
+    }
 
+    @Override
+    public int getCount(){
+        return mData.size();
+    }
+
+    @Override
+    public String getItem(int position){
+        return (String) mData.get(position);
+    }
+
+    @Override
+    public long getItemId(int position){
+        return position;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
     }
 
     public void setImageUrls(String[] imageUrls){
@@ -64,17 +103,22 @@ public class GridAdapter extends AphasiaAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (null == convertView){
-            convertView = inflater.inflate(R.layout.item_grid,parent,false);
+            convertView = inflater.inflate(R.layout.item_text_grid,parent,false);
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.film_fragment_image_view);
 
-        String searchParam = imageUrls[position];
+        TextView textView = (TextView) convertView.findViewById(R.id.image_text_view);
+        textView.setVisibility(View.VISIBLE);
+        textView.setText((String) mWord.get(position));
+
+        String searchParam = (String) mData.get(position);
 
         isColor(searchParam, imageView);
 
+
         Glide
                 .with(context)
-                .load(imageUrls[position])
+                .load(searchParam)
                 .into(imageView);
 
         return convertView;
@@ -104,5 +148,3 @@ public class GridAdapter extends AphasiaAdapter {
 
     }
 }
-
-

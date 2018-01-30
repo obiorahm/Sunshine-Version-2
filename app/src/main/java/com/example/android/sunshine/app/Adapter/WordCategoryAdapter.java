@@ -235,6 +235,15 @@ public class WordCategoryAdapter extends GridAdapter {
             progressBar.setVisibility(View.INVISIBLE);
         }
 
+    private void setImageAdapter(ArrayListGridAdapter adapter){
+
+        GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+        gridView.setAdapter(adapter);
+
+        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
 
 
     private void setMoreOnClickListener(ImageButton imageButton, final String category, final Words word){
@@ -251,7 +260,7 @@ public class WordCategoryAdapter extends GridAdapter {
                 TextView textView = (TextView) ((ActionBarActivity) context).findViewById(R.id.search_word);
                 textView.setText(category);
 
-                GridAdapter adapter = new GridAdapter(context, R.id.item_grid);
+                ArrayListGridAdapter adapter = new ArrayListGridAdapter(context, R.id.item_grid);
 
                 if (!category.equals("INTERNET")){
 
@@ -262,7 +271,7 @@ public class WordCategoryAdapter extends GridAdapter {
         });
     }
 
-    private void localCategorySearch( final String category, final GridAdapter adapter){
+    private void localCategorySearch( final String category, final ArrayListGridAdapter adapter){
 
 
         FirebaseUser firebaseUser = OpenGalleryObjectActivity.firebaseAuth.getCurrentUser();
@@ -283,17 +292,18 @@ public class WordCategoryAdapter extends GridAdapter {
                 if (dataSnapshot.exists()){
                     final ArrayList lUrls = new ArrayList();
                     for (DataSnapshot child: dataSnapshot.getChildren()){
-                        HashMap wordEntries = (HashMap) child.getValue();
-                        Allentries.add(wordEntries);
-                        Log.d("The entries: ", wordEntries.toString());
+                        if (child.getValue() instanceof HashMap){
+                            HashMap wordEntries = (HashMap) child.getValue();
+                            Allentries.add(wordEntries);
+                            Log.d("The entries: ", wordEntries.toString());
+                        }
                     }
                     getImageUrl(0,
                             Allentries,
                             firebaseStorage,
                             category,
                             WORD_IMAGE_REFERENCE,
-                            adapter,
-                            lUrls);
+                            adapter);
                 }else{
                 }
             }
@@ -303,25 +313,26 @@ public class WordCategoryAdapter extends GridAdapter {
 
             }
         });
+        setImageAdapter(adapter);
     }
 
 
     private void getImageUrl(final int count, final ArrayList<HashMap> AllEntries, final StorageReference firebaseStorage, final String category,
                              final String WORD_IMAGE_REFERENCE,
-                             final GridAdapter adapter,
-                             final ArrayList lUrls
+                             final ArrayListGridAdapter adapter
     ){
         if (count < AllEntries.size()) {
 
 
             String fileName = (String) AllEntries.get(count).get("fileName");
+            final String word = (String) AllEntries.get(count).get("word");
             firebaseStorage.child(WORD_IMAGE_REFERENCE + "/" + category + "/" + fileName).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            lUrls.add(uri.toString());
-
-                            getImageUrl(count + 1, AllEntries, firebaseStorage, category, WORD_IMAGE_REFERENCE, adapter, lUrls);
+                            //lUrls.add(uri.toString());
+                            adapter.addItem(uri.toString(), word);
+                            getImageUrl(count + 1, AllEntries, firebaseStorage, category, WORD_IMAGE_REFERENCE, adapter);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -330,8 +341,8 @@ public class WordCategoryAdapter extends GridAdapter {
                     Log.d("Download error ", e.toString());
                 }
             });
-        }else{
-            setImageAdapter(adapter, lUrls);
-        }
+        }/*else{
+            setImageAdapter(adapter);
+        }*/
     }
 }
