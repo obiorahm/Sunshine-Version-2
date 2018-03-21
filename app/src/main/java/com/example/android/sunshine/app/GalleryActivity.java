@@ -227,7 +227,7 @@ public class GalleryActivity extends ActionBarActivity implements  SafeAction.On
     private void addCategory(){
         android.app.DialogFragment newFragment = new TextDialog();
         Bundle bundle = new Bundle();
-        bundle.putString(TextDialog.DATABASECALLERTYPE,"addCategory");
+        bundle.putString(TextDialog.DATABASECALLERTYPE, "nil"/*TextDialog.UPDATEWORD*/);
         newFragment.setArguments(bundle);
         newFragment.show(getFragmentManager(), "TextDialog");
     }

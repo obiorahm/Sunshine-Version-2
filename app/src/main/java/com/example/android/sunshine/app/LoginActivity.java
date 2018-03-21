@@ -55,11 +55,8 @@ public class LoginActivity extends ActionBarActivity{
                 final String newFirstName = mFirstNameEditText.getText().toString();
                 final String newLastName = mLastNameEditText.getText().toString();
 
-
                 DeviceTesters deviceTesters = new DeviceTesters(newFirstName, newLastName);
                 mFirebaseReference.child(newFirstName.toLowerCase() + newLastName.toLowerCase()).setValue(deviceTesters);
-
-
 
                 mFirstNameEditText.setText("");
                 mLastNameEditText.setText("");
