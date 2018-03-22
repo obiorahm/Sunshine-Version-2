@@ -82,6 +82,17 @@ public class SelectActionFragment extends android.support.v4.app.Fragment {
         });
 
 
+        Button speakButton = (Button) rootView.findViewById(R.id.speak);
+
+        speakButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent speakActivityIntent = new Intent (getActivity(), SpeakActivity.class);
+                startActivity(speakActivityIntent);
+            }
+        });
+
+
         return rootView;
 
     }

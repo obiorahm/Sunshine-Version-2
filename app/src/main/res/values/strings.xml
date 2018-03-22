@@ -36,6 +36,7 @@
     <string name="gallery_edit">edit</string>
     <string name="gallery_add_category">Add category</string>
     <string name="gallery_add_word">Add Word</string>
+    <string name="Speak">Speak</string>
 
     <string-array name="pref_search_engine">
         <item>Pixabay</item>
