@@ -431,7 +431,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
 
 
-    private String[] getImageUrl (String searchEngine, String JSONString, int position){
+    private String[] getImageUrl (String searchEngine, String JSONString){
 
         String[] imageUrl = {};
         JSONHandler jsonHandler;
@@ -485,7 +485,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         }
             String[] ImageUrl;
 
-            ImageUrl = this.getImageUrl(this.searchEngine,JSONString,FIRST_POSITION);
+            ImageUrl = this.getImageUrl(this.searchEngine,JSONString);
             if (ImageUrl != null){
                 Glide.with(context).load(Uri.parse(ImageUrl[FIRST_POSITION])).centerCrop().into(mHolder.mImage);
             }
