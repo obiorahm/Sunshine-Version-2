@@ -26,7 +26,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:id="@+id/word_list"/>
+            android:columnWidth="200sp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:id="@+id/word_grid"
+            android:background="@drawable/text_border"
+            android:layout_margin="10sp"/>
 
     </LinearLayout>
 
