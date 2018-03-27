@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,8 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.AccessorsAndSetters.Word;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.data.DatabaseConstants;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -71,30 +75,62 @@ public class SpeechWordAdapter extends ArrayAdapter {
         if(null == view){
             view = inflater.inflate(R.layout.grid_item_word, null);
         }
-        TextView textView = (TextView) view.findViewById(R.id.text_word);
+
+        WordViewHolder wordViewHolder = new WordViewHolder(view);
+
         Word currWord = mWord.get(position);
         String word = currWord.getWord();
         String fileName = currWord.getFileName();
-        textView.setText(word);
+        wordViewHolder.mTextView.setText(word);
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.image_word);
-        loadImage(fileName, imageView);
+        loadImage(fileName, wordViewHolder);
+        setOnClickListener(wordViewHolder);
         return view;
     }
 
-    public void loadImage(String fileName, final ImageView imageView){
+    private static class WordViewHolder{
+        TextView mTextView;
+        ImageView mImageView;
+
+        public WordViewHolder(View view){
+            mTextView = (TextView) view.findViewById(R.id.text_word);
+            mImageView = (ImageView) view.findViewById(R.id.image_word);
+        }
+    }
+
+    private void setOnClickListener(final WordViewHolder wordViewHolder){
+        wordViewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = (EditText) ((Activity) mContext).getWindow().getDecorView().findViewById(R.id.compose_word);
+                String  sentence = editText.getText().toString();
+                int position = editText.getSelectionStart();
+                Log.d("position", "" + position);
+                String word = wordViewHolder.mTextView.getText().toString() + " ";
+                editText.setText(sentence.substring(0, position) + word + sentence.substring(position));
+                editText.setSelection(position + word.length());
+            }
+        });
+    }
+
+    private void loadImage(String fileName, final WordViewHolder wordViewHolder){
         String referencePath = DatabaseConstants.WORD_IMAGE_REFERENCE + "/" + mCategory + "/" + fileName;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(referencePath);
         storageReference.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Glide.with(mContext).load(uri).into(imageView);
+                        Glide.with(mContext).load(uri).into(wordViewHolder.mImageView);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("image Error ", e.toString());
+                Log.e("image Error ", e.toString());
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+
             }
         });
     }
