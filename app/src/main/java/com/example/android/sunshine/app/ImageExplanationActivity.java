@@ -7,7 +7,8 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,7 @@ import java.util.Locale;
  * Created by mgo983 on 5/4/17.
  */
 
-public class ImageExplanationActivity extends ActionBarActivity implements TextToSpeech.OnInitListener{
+public class ImageExplanationActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
     public ImageExplanationActivity(){}
     public GridAdapter adapter;

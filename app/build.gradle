@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
@@ -33,24 +33,26 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.2'
-    compile 'com.google.api-client:google-api-client:1.22.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.0.0'
+    implementation 'com.google.api-client:google-api-client:1.22.0'
 
-    compile 'com.google.firebase:firebase-core:10.2.1'
-    compile 'com.google.firebase:firebase-database:10.2.1'
-    compile 'com.google.firebase:firebase-auth:10.2.1'
-    compile 'com.google.firebase:firebase-storage:10.2.1'
+    implementation 'com.google.firebase:firebase-core:10.2.1'
+    implementation 'com.google.firebase:firebase-database:10.2.1'
+    implementation 'com.google.firebase:firebase-auth:10.2.1'
+    implementation 'com.google.firebase:firebase-storage:10.2.1'
 
-    compile 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.1'
 
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.bumptech.glide:glide:3.5.2'
-    compile 'com.clarifai.clarifai-api2:core:2.2.6'
-    compile files('libs/opennlp-tools-1.6.0.jar')
-    compile files('libs/opennlp-uima-1.6.0.jar')
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation'com.github.bumptech.glide:glide:3.5.2'
+    implementation 'com.clarifai.clarifai-api2:core:2.2.6'
+    implementation files('libs/opennlp-tools-1.6.0.jar')
+    implementation files('libs/opennlp-uima-1.6.0.jar')
 
-    compile files('libs/edu.mit.jwi_2.4.0.jar')
+    implementation files('libs/edu.mit.jwi_2.4.0.jar')
+
+    implementation 'com.android.support:recyclerview-v7:26.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

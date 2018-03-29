@@ -4,7 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
@@ -89,7 +90,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         }
         if (adapter instanceof ButtonTextAdapter){
             localSearch(listOfWords, Result, 0, listOfWords.length);
-            hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.search_complete));
+            hideProgressBar((ProgressBar) ((AppCompatActivity) context).findViewById(R.id.search_complete));
 
         }else if(adapter instanceof WordCategoryAdapter){
             final int FIRST_POSITION = 0;
@@ -114,7 +115,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
             else{
                 ImageUrls[0] = searchString ;
                 setGridViewAdapter(ImageUrls);
-                hideProgressBar((ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress));
+                hideProgressBar((ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress));
 
             }
         }
@@ -125,7 +126,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
         PorterStemmer stemmer = new PorterStemmer();
         String word = stemmer.stem(searchString);
         setGridViewAdapter(ImageUrls);
-        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+        ProgressBar progressBar = (ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress);
         hideProgressBar(progressBar);
 
         //CBIR tryClarify = new CBIR(word, (ImageGridAdapter) adapter, context);
@@ -138,7 +139,7 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
     private void setGridViewAdapter(String[] ImageUrls){
         if (ImageUrls != null){
             adapter = new GridAdapter(context, ImageUrls /*ImgStringArr*/);
-            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            GridView gridView = (GridView) ((AppCompatActivity) context).findViewById(R.id.image_gridview);
             gridView.setAdapter(adapter);
 
         }

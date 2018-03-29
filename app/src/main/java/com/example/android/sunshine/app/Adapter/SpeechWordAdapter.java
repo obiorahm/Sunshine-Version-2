@@ -36,11 +36,13 @@ public class SpeechWordAdapter extends ArrayAdapter {
     private LayoutInflater inflater;
     private Context mContext;
     private String mCategory;
+    private ComposeImageAdapter mComposeImageAdapter;
 
-    public SpeechWordAdapter(Context context, int resource){
+    public SpeechWordAdapter(Context context, int resource, ComposeImageAdapter composeImageAdapter){
         super(context, resource);
         inflater = LayoutInflater.from(context);
         mContext = context;
+        mComposeImageAdapter = composeImageAdapter;
     }
 
     public boolean compareWord(Word word){
@@ -57,6 +59,10 @@ public class SpeechWordAdapter extends ArrayAdapter {
 
     public void setmCategory(String category){
         mCategory = category;
+    }
+
+    public void clearMWord(){
+        mWord.clear();
     }
 
     @Override
@@ -83,8 +89,8 @@ public class SpeechWordAdapter extends ArrayAdapter {
         String fileName = currWord.getFileName();
         wordViewHolder.mTextView.setText(word);
 
-        loadImage(fileName, wordViewHolder);
-        setOnClickListener(wordViewHolder);
+        //setOnClickListener(wordViewHolder, position);
+        loadImage(fileName, wordViewHolder, position);
         return view;
     }
 
@@ -98,28 +104,31 @@ public class SpeechWordAdapter extends ArrayAdapter {
         }
     }
 
-    private void setOnClickListener(final WordViewHolder wordViewHolder){
+    private void setOnClickListener(final WordViewHolder wordViewHolder, final int position){
         wordViewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditText editText = (EditText) ((Activity) mContext).getWindow().getDecorView().findViewById(R.id.compose_word);
                 String  sentence = editText.getText().toString();
-                int position = editText.getSelectionStart();
-                Log.d("position", "" + position);
+                int textPosition = editText.getSelectionStart();
+                Log.d("position", "" + textPosition);
                 String word = wordViewHolder.mTextView.getText().toString() + " ";
-                editText.setText(sentence.substring(0, position) + word + sentence.substring(position));
-                editText.setSelection(position + word.length());
+                editText.setText(sentence.substring(0, textPosition) + word + sentence.substring(textPosition));
+                editText.setSelection(textPosition + word.length());
+                mComposeImageAdapter.addItem(mWord.get(position));
             }
         });
     }
 
-    private void loadImage(String fileName, final WordViewHolder wordViewHolder){
+    private void loadImage(String fileName, final WordViewHolder wordViewHolder, final int position){
         String referencePath = DatabaseConstants.WORD_IMAGE_REFERENCE + "/" + mCategory + "/" + fileName;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(referencePath);
         storageReference.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        mWord.get(position).setUri(uri);
+                        setOnClickListener(wordViewHolder, position);
                         Glide.with(mContext).load(uri).into(wordViewHolder.mImageView);
                     }
                 }).addOnFailureListener(new OnFailureListener() {

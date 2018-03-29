@@ -2,7 +2,8 @@ package com.example.android.sunshine.app.data;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
  * Created by mgo983 on 11/6/17.
  */
 
-public class AddWord extends ActionBarActivity {
+public class AddWord extends AppCompatActivity {
 
     public static String WORD_CATEGORY_CHILD = "word_categories";
     public static String WORD_REFERENCE = "word";

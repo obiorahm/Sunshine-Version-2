@@ -12,7 +12,8 @@ import android.os.Handler;
 import android.support.v4.app.NavUtils;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +48,7 @@ import java.util.List;
  * Created by mgo983 on 4/21/17.
  */
 
-public class GalleryActivity extends ActionBarActivity implements  SafeAction.OnokOrCancel{
+public class GalleryActivity extends AppCompatActivity implements  SafeAction.OnokOrCancel{
 
     public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
     public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";

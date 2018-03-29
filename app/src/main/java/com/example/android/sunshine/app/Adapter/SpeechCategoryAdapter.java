@@ -80,6 +80,7 @@ public class SpeechCategoryAdapter extends ArrayAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                speechWordAdapter.clearMWord();
                 speechWordAdapter.setmCategory(category);
                 populateSpeechWordAdapter(category);
             }

@@ -6,7 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -239,7 +240,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                             bundle.putString(EXTRA_DIALOG_IMAGE, imgFile.toString());
 
                             newFragment.setArguments(bundle);
-                            newFragment.show(((ActionBarActivity) context).getSupportFragmentManager(),"what?");
+                            newFragment.show(((AppCompatActivity) context).getSupportFragmentManager(),"what?");
 
                         }
                     });
@@ -338,7 +339,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, editOrDelete);
 
                 newFragment.setArguments(bundle);
-                newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
+                newFragment.show(((AppCompatActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
             }
         });
     }
@@ -376,7 +377,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                 bundle.putString(EXTRA_SAFE_ACTION_MENU_ITEM, editOrDelete);
 
                 newFragment.setArguments(bundle);
-                newFragment.show(((ActionBarActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
+                newFragment.show(((AppCompatActivity) context).getFragmentManager(),"SAFE_ACTION_MSG");
             }
         });
 

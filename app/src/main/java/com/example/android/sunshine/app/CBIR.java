@@ -3,7 +3,8 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
@@ -190,7 +191,7 @@ public class CBIR extends  AsyncTask<String[], Void, ArrayList<String[]>>{
         protected void onPostExecute(ArrayList<String []> Result){
         String[] confidenceUrls = Result.get(0);
         if (confidenceUrls != null){
-            setGridViewAdapter(confidenceUrls, (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview));
+            setGridViewAdapter(confidenceUrls, (GridView) ((AppCompatActivity) context).findViewById(R.id.image_gridview));
         }
         if (Result.size() > 1){
             String[] noConfidenceUrls = Result.get(1);
@@ -199,7 +200,7 @@ public class CBIR extends  AsyncTask<String[], Void, ArrayList<String[]>>{
             }
 
         }
-        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+        ProgressBar progressBar = (ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress);
         progressBar.setVisibility(View.INVISIBLE);
     }
 

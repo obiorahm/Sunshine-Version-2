@@ -1,11 +1,15 @@
 package com.example.android.sunshine.app;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.GridView;
 import android.widget.ListView;
 
+import com.example.android.sunshine.app.Adapter.ComposeImageAdapter;
 import com.example.android.sunshine.app.Adapter.SpeechCategoryAdapter;
 import com.example.android.sunshine.app.Adapter.SpeechWordAdapter;
 import com.example.android.sunshine.app.data.DatabaseConstants;
@@ -19,13 +23,15 @@ import com.google.firebase.database.FirebaseDatabase;
  * Created by mgo983 on 3/21/18.
  */
 
-public class SpeakActivity extends ActionBarActivity {
+public class SpeakActivity extends AppCompatActivity {
 
     SpeechCategoryAdapter speechCategoryAdapter;
     SpeechWordAdapter speechWordAdapter;
+    ComposeImageAdapter composeImageAdapter;
 
     ListView categoryListView;
     GridView wordGridView;
+    RecyclerView recyclerView;
 
     @Override
 
@@ -33,17 +39,25 @@ public class SpeakActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speak);
 
-        speechWordAdapter = new SpeechWordAdapter(this, R.layout.grid_item_word);
+        composeImageAdapter = new ComposeImageAdapter(this);
+        speechWordAdapter = new SpeechWordAdapter(this, R.layout.grid_item_word, composeImageAdapter);
         speechCategoryAdapter = new SpeechCategoryAdapter(this, R.layout.item_category, speechWordAdapter);
 
         categoryListView = (ListView) findViewById(R.id.category_list);
         wordGridView = (GridView) findViewById(R.id.word_grid);
+        recyclerView = (RecyclerView) findViewById(R.id.compose_image);
 
         getAllCategories();
         //getAllWords();
 
         categoryListView.setAdapter(speechCategoryAdapter);
         wordGridView.setAdapter(speechWordAdapter);
+        recyclerView.setAdapter(composeImageAdapter);
+
+        // LinearLayoutManager.HORIZONTAL allows for horizontal scrolling
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
 
 
     }

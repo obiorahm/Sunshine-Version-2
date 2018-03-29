@@ -4,7 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -147,7 +148,7 @@ public class WordCategoryAdapter extends GridAdapter {
 
                 GridAdapter adapter = new GridAdapter(context, R.id.item_grid);
 
-                TextView textView = (TextView) ((ActionBarActivity) context).findViewById(R.id.search_word);
+                TextView textView = (TextView) ((AppCompatActivity) context).findViewById(R.id.search_word);
                 textView.setText(searchWord[0]);
 
                 if (category.equals("INTERNET")){
@@ -228,19 +229,19 @@ public class WordCategoryAdapter extends GridAdapter {
                 count++;
             }
             adapter = new GridAdapter(context, url);
-            GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+            GridView gridView = (GridView) ((AppCompatActivity) context).findViewById(R.id.image_gridview);
             gridView.setAdapter(adapter);
 
-            ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+            ProgressBar progressBar = (ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress);
             progressBar.setVisibility(View.INVISIBLE);
         }
 
     private void setImageAdapter(ArrayListGridAdapter adapter){
 
-        GridView gridView = (GridView) ((ActionBarActivity) context).findViewById(R.id.image_gridview);
+        GridView gridView = (GridView) ((AppCompatActivity) context).findViewById(R.id.image_gridview);
         gridView.setAdapter(adapter);
 
-        ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+        ProgressBar progressBar = (ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -254,10 +255,10 @@ public class WordCategoryAdapter extends GridAdapter {
             @Override
             public void onClick(View view) {
 
-                ProgressBar progressBar = (ProgressBar) ((ActionBarActivity) context).findViewById(R.id.explanationProgress);
+                ProgressBar progressBar = (ProgressBar) ((AppCompatActivity) context).findViewById(R.id.explanationProgress);
                 progressBar.setVisibility(View.VISIBLE);
 
-                TextView textView = (TextView) ((ActionBarActivity) context).findViewById(R.id.search_word);
+                TextView textView = (TextView) ((AppCompatActivity) context).findViewById(R.id.search_word);
                 textView.setText(category);
 
                 ArrayListGridAdapter adapter = new ArrayListGridAdapter(context, R.id.item_grid);

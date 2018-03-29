@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -21,7 +22,7 @@ import java.io.OutputStreamWriter;
  * Created by mgo983 on 9/21/17.
  */
 
-public class CommonDetailOpen extends ActionBarActivity implements TextToSpeech.OnInitListener, SafeAction.OnokOrCancel{
+public class CommonDetailOpen extends AppCompatActivity implements TextToSpeech.OnInitListener, SafeAction.OnokOrCancel{
 
     //public final static String IMGFILENAME = "com.example.android.sunshine.IMG_FILE_NAME";
     //public final static String IMGFILEKEY = "com.example.android.sunshine.IMG_FILE_KEY";

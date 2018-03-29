@@ -6,7 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -26,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Created by mgo983 on 11/13/17.
  */
 
-public class WordCategoriesActivity extends ActionBarActivity {
+public class WordCategoriesActivity extends AppCompatActivity {
 
     public static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
