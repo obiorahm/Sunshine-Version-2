@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -97,10 +97,12 @@ public class SpeechWordAdapter extends ArrayAdapter {
     private static class WordViewHolder{
         TextView mTextView;
         ImageView mImageView;
+        LinearLayout linearLayout;
 
         public WordViewHolder(View view){
-            mTextView = (TextView) view.findViewById(R.id.text_word);
-            mImageView = (ImageView) view.findViewById(R.id.image_word);
+            mTextView =  view.findViewById(R.id.text_word);
+            mImageView =  view.findViewById(R.id.image_word);
+            linearLayout =  view.findViewById(R.id.l_grid_item_word);
         }
     }
 
@@ -108,13 +110,6 @@ public class SpeechWordAdapter extends ArrayAdapter {
         wordViewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText editText = (EditText) ((Activity) mContext).getWindow().getDecorView().findViewById(R.id.compose_word);
-                String  sentence = editText.getText().toString();
-                int textPosition = editText.getSelectionStart();
-                Log.d("position", "" + textPosition);
-                String word = wordViewHolder.mTextView.getText().toString() + " ";
-                editText.setText(sentence.substring(0, textPosition) + word + sentence.substring(textPosition));
-                editText.setSelection(textPosition + word.length());
                 mComposeImageAdapter.addItem(mWord.get(position));
             }
         });

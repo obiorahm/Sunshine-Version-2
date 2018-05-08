@@ -187,19 +187,19 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             switch (type){
                 case TYPE_ITEM:
                     mHolder = new ViewHolder();
-                    mHolder.mText = (TextView) view.findViewById(R.id.list_item_word_textview);
+                    mHolder.mText =  view.findViewById(R.id.list_item_word_textview);
                     final String[] newString = mData.get(position).toString().split("&&");
 
                     String capNewString = newString[0].substring(0,1).toUpperCase() + newString[0].substring(1);
 
                     mHolder.mText.setText(capNewString);
 
-                    mHolder.mImage = (ImageView) view.findViewById(R.id.search_image);
-                    mHolder.mImageButton = (ImageButton) view.findViewById(R.id.list_delete_button);
-                    mHolder.mImageButtonEdit = (ImageButton) view.findViewById(R.id.list_edit_button);
-                    mHolder.mImgBtnAcceptEdit = (ImageButton) view.findViewById(R.id.list_accept_edit_button);
-                    mHolder.mImgBtnRejectEdit = (ImageButton) view.findViewById(R.id.list_reject_edit_button);
-                    mHolder.mEditText = (EditText) view.findViewById(R.id.list_item_word_editview);
+                    mHolder.mImage =  view.findViewById(R.id.search_image);
+                    mHolder.mImageButton =  view.findViewById(R.id.list_delete_button);
+                    mHolder.mImageButtonEdit =  view.findViewById(R.id.list_edit_button);
+                    mHolder.mImgBtnAcceptEdit =  view.findViewById(R.id.list_accept_edit_button);
+                    mHolder.mImgBtnRejectEdit =  view.findViewById(R.id.list_reject_edit_button);
+                    mHolder.mEditText =  view.findViewById(R.id.list_item_word_editview);
 
                     glideLoadImage(newString[1], newString[0] ,mHolder);
 
@@ -228,7 +228,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
                     final File imgFile = new  File(mData.get(position).toString().replace("file://",""));
 
-                    mHolder.mImage = (ImageView) view.findViewById(R.id.list_captured_image);
+                    mHolder.mImage =  view.findViewById(R.id.list_captured_image);
                     Glide.with(context).load(imgFile).into(mHolder.mImage);
 
                     mHolder.mImage.setOnClickListener(new View.OnClickListener() {
@@ -249,7 +249,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
                     break;
                 case TYPE_RESULT:
                     mHolder = new ViewHolder();
-                    mHolder.mText = (TextView) view.findViewById(R.id.list_search_result_text);
+                    mHolder.mText = view.findViewById(R.id.list_search_result_text);
                     final String resultString = mData.get(position).toString();
 
                     String capResultString = resultString.substring(0,1).toUpperCase() + resultString.substring(1);
@@ -294,7 +294,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
 
     private  void makeProgressBarInvisible(ViewHolder mHolder, View view){
-        mHolder.mProgressBar = (ProgressBar) view.findViewById(R.id.image_load_complete);
+        mHolder.mProgressBar = view.findViewById(R.id.image_load_complete);
         mHolder.mProgressBar.setVisibility(View.INVISIBLE);
     }
     private void setImageOnClickListener(ViewHolder mHolder, final String focusWord){
@@ -481,7 +481,8 @@ public class ButtonTextAdapter extends AphasiaAdapter {
         final int FIRST_POSITION = 0;
         if (availableColor.searchColor(searchString.toLowerCase())){
             Log.v("search color content", JSONString + "and" + searchString);
-            Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
+            //Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
+            //Glide.with(context).load()
             return;
         }
             String[] ImageUrl;

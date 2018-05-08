@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -43,16 +45,19 @@ public class SpeakActivity extends AppCompatActivity {
         speechWordAdapter = new SpeechWordAdapter(this, R.layout.grid_item_word, composeImageAdapter);
         speechCategoryAdapter = new SpeechCategoryAdapter(this, R.layout.item_category, speechWordAdapter);
 
-        categoryListView = (ListView) findViewById(R.id.category_list);
-        wordGridView = (GridView) findViewById(R.id.word_grid);
-        recyclerView = (RecyclerView) findViewById(R.id.compose_image);
+        categoryListView = findViewById(R.id.category_list);
+        wordGridView = findViewById(R.id.word_grid);
+        recyclerView = findViewById(R.id.compose_image);
 
         getAllCategories();
         //getAllWords();
 
+
         categoryListView.setAdapter(speechCategoryAdapter);
         wordGridView.setAdapter(speechWordAdapter);
         recyclerView.setAdapter(composeImageAdapter);
+        //categoryListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //categoryListView.setSelector(getResources().getDrawable(R.drawable.list_item_select));
 
         // LinearLayoutManager.HORIZONTAL allows for horizontal scrolling
         LinearLayoutManager layoutManager

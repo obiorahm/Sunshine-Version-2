@@ -69,10 +69,10 @@ public class ImageExplanationActivity extends AppCompatActivity implements TextT
         }
 
 
-        final TextView textView = (TextView) findViewById(R.id.grid_text);
+        final TextView textView =  findViewById(R.id.grid_text);
         textView.setText(searchParamToUpperCase);
 
-        ImageButton textView1 = (ImageButton) findViewById(R.id.share_text);
+        ImageButton textView1 = findViewById(R.id.share_text);
 
         textView1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +88,7 @@ public class ImageExplanationActivity extends AppCompatActivity implements TextT
         });
 
 
-        final GridView gridView = (GridView) findViewById(R.id.image_gridview);
+        final GridView gridView =  findViewById(R.id.image_gridview);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -97,7 +97,7 @@ public class ImageExplanationActivity extends AppCompatActivity implements TextT
 
                 DialogFragment newFragment = new ImageDialog();
                 Bundle bundle = new Bundle();
-                TextView textInItem = (TextView) view.findViewById(R.id.list_item_word_textview);
+                TextView textInItem =  view.findViewById(R.id.list_item_word_textview);
                 bundle.putString(EXTRA_DIALOG_IMAGE, /*textInItem.getText().toString()*/  ((GridAdapter)gridView.getAdapter()).getImageUrl(position));
 
                 newFragment.setArguments(bundle);
@@ -133,8 +133,8 @@ public class ImageExplanationActivity extends AppCompatActivity implements TextT
 
                 if (args != null) {
 
-                    final ImageButton textView = (ImageButton) findViewById(R.id.speak_text);
-                    final TextView textView1 = (TextView) findViewById(R.id.grid_text);
+                    final ImageButton textView =  findViewById(R.id.speak_text);
+                    final TextView textView1 =  findViewById(R.id.grid_text);
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

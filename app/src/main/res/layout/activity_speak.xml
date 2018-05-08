@@ -2,13 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/text_border"
-        android:layout_margin="10sp"
-        android:id="@+id/compose_word"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,8 +22,10 @@
             android:layout_margin="10sp"
             android:divider="@android:color/transparent"
             android:dividerHeight="10.0sp"
-            android:id= "@+id/category_list"
-            />
+            android:id= "@+id/category_list"/>
+            <!--android:listSelector="@drawable/list_item_select"
+            android:choiceMode="singleChoice" /-->
+
         <GridView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
