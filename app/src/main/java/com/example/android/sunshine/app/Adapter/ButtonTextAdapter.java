@@ -483,6 +483,7 @@ public class ButtonTextAdapter extends AphasiaAdapter {
             Log.v("search color content", JSONString + "and" + searchString);
             //Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
             //Glide.with(context).load()
+            mHolder.mImage.setBackgroundColor(context.getResources().getColor(colorId));
             return;
         }
             String[] ImageUrl;
