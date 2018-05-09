@@ -19,9 +19,9 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:paddingRight="10dp"
-            android:src="@drawable/ic_image_black_24dp"
             android:background="@drawable/image_border"
             android:contentDescription="@string/search_image">
+            <!--android:src="@drawable/ic_image_black_24dp"/-->
         </ImageView>
 
         <FrameLayout

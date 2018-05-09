@@ -34,6 +34,7 @@ import com.example.android.sunshine.app.SafeAction;
 import org.json.JSONException;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -479,11 +480,12 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     private void glideLoadImage(String JSONString, String searchString, ViewHolder mHolder){
         final int FIRST_POSITION = 0;
-        if (availableColor.searchColor(searchString.toLowerCase())){
+        String color = searchString.toLowerCase();
+        if (availableColor.searchColor(color)){
             Log.v("search color content", JSONString + "and" + searchString);
             //Glide.with(context).load(R.drawable.colorwheel).centerCrop().into(mHolder.mImage);
             //Glide.with(context).load()
-            mHolder.mImage.setBackgroundColor(context.getResources().getColor(colorId));
+            setImageGridColor(mHolder.mImage, color);
             return;
         }
             String[] ImageUrl;
@@ -495,4 +497,24 @@ public class ButtonTextAdapter extends AphasiaAdapter {
 
     }
 
+    private  void setImageGridColor(ImageView imageView, String color){
+
+        try{
+
+            Class res = R.color.class;
+            Field field = res.getField( color );
+            int colorId = field.getInt(null);
+            if (availableColor.searchColor(color)){
+                imageView.setBackgroundColor(context.getResources().getColor(colorId));
+
+            }
+
+
+        }catch(NoSuchFieldException e){
+
+        }catch(IllegalAccessException e){
+
+        }
+
+    }
 }
