@@ -2,6 +2,8 @@ package com.example.android.sunshine.app.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +16,23 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.AccessorsAndSetters.Word;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.data.DatabaseConstants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -37,6 +47,7 @@ public class SpeechCategoryAdapter extends ArrayAdapter {
     private SpeechWordAdapter speechWordAdapter;
     private Context mContext;
     private int prevPosition = 0;
+    private  Word firstWord = new Word();
 
     private class CategoryViewHolder{
         public ImageView imageView;
@@ -88,11 +99,74 @@ public class SpeechCategoryAdapter extends ArrayAdapter {
         String CapCategory = repCategory.substring(0,1).toUpperCase() + repCategory.substring(1);
         viewHolder.textView.setText(CapCategory);
         viewHolder.imageButton.setVisibility(View.INVISIBLE);
+        getImageUrl(category, viewHolder);
+        getCategoryImage(firstWord, viewHolder, category);
+
 
         imageViewOnClickListener(view, viewHolder, category, parent, position);
 
 
         return view;
+    }
+
+    public void getImageUrl(final String category, final CategoryViewHolder viewHolder){
+        final DatabaseReference categoryReference = FirebaseDatabase.getInstance().getReference(DatabaseConstants.WORD_CATEGORY).child(category);
+
+        categoryReference.orderByChild(category).limitToFirst(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Word word = dataSnapshot.getValue(Word.class);
+                getCategoryImage(word, viewHolder, category);
+                Log.d("1st word in category ", word.getFileName().toString());
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void getCategoryImage(final Word word, final CategoryViewHolder viewHolder, String category){
+        if (word.getFileName() == null) return;
+        String referencePath = DatabaseConstants.WORD_IMAGE_REFERENCE + "/" + category + "/" + word.getFileName();
+        Log.d("reference path", referencePath);
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(referencePath);
+        storageReference.getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        word.setUri(uri);
+                        Glide.with(mContext).load(uri).into(viewHolder.imageView);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("image Error ", e.toString());
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+
+            }
+        });
     }
 
     private void imageViewOnClickListener(final View sview, final CategoryViewHolder viewHolder, final String category, final ViewGroup parent, final int position){

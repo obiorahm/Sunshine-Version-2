@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/image_gridview"
 
-                    android:columnWidth="150dp"
+                    android:columnWidth="200dp"
                     android:numColumns="auto_fit"
                     android:verticalSpacing="10dp"
                     android:horizontalSpacing="10dp"

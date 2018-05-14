@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.sunshine.app.AccessorsAndSetters.Word;
 import com.example.android.sunshine.app.CheckInternetConnection;
 import com.example.android.sunshine.app.FetchClipArt;
 import com.example.android.sunshine.app.JSONHandler;
@@ -272,6 +273,13 @@ public class WordCategoryAdapter extends GridAdapter {
         });
     }
 
+    public boolean compareWord(ArrayList<HashMap> allEntries, HashMap newEntry ){
+        //int i = mWord.size() - 1;
+        int i = allEntries.size() - 1;
+        if (i < 0) return false;
+        String prevWord =  (String) allEntries.get(i).get("word");
+        return (prevWord.equals(newEntry.get("word")));
+    }
     private void localCategorySearch( final String category, final ArrayListGridAdapter adapter){
 
 
@@ -295,6 +303,8 @@ public class WordCategoryAdapter extends GridAdapter {
                     for (DataSnapshot child: dataSnapshot.getChildren()){
                         if (child.getValue() instanceof HashMap){
                             HashMap wordEntries = (HashMap) child.getValue();
+                            // compare words do that unique words are displayed
+                            if (! compareWord(Allentries, wordEntries))
                             Allentries.add(wordEntries);
                             Log.d("The entries: ", wordEntries.toString());
                         }
