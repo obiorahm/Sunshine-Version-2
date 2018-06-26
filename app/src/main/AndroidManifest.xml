@@ -11,9 +11,9 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="android.support.multidex.MultiDexApplication" >
+        android:name="android.support.multidex.MultiDexApplication"
+        android:label="@string/app_name">
 
         <activity
             android:name="com.example.android.sunshine.app.LoginActivity"
@@ -32,7 +32,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.sunshine.app.NewMainActivity" />
+                android:value="com.example.android.sunshine.app.NewMainActivity"/>
         </activity>
         <activity
             android:name="com.example.android.sunshine.app.SpeakActivity"

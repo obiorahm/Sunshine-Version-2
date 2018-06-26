@@ -378,12 +378,22 @@ public class FetchClipArt extends AsyncTask<String[], Void, ArrayList<ArrayList<
                     }else{
                         final int QUERY_PARAMETER = 0;
                         final int URL_JSON = 1;
-                        if (Result != null){
-                            ArrayList<String> currResult = Result.get(position);
-                            if (currResult != null){
-                                adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                        try{
+                            if (Result != null && Result.size() != 0){
+                                Log.e("positionE", position + "" + Result.toString());
+
+                                ArrayList<String> currResult = Result.get(position);
+                                if (currResult != null){
+                                    adapter.addItem(currResult.get(QUERY_PARAMETER) + "&&" + currResult.get(URL_JSON));
+                                    localSearch(listOfWords, Result, position + 1, lengthOfResult);
+                                }
+                            }
+                            else if(Result.size() == 0){
                                 localSearch(listOfWords, Result, position + 1, lengthOfResult);
                             }
+
+                        }catch (Exception e){
+                            Log.e("position error", position + "");
                         }
 
 

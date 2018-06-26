@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity{
         Button mSignIn = (Button) findViewById(R.id.signin_submit);
         mFirstNameEditText = (EditText) findViewById(R.id.firstName);
         mLastNameEditText = (EditText) findViewById(R.id.lastName);
+        mFirstNameEditText.setText("mmachi");
+        mLastNameEditText.setText("obiorah");
 
         final DatabaseReference mFirebaseReference = FirebaseDatabase.getInstance().getReference("users").child("");
 
